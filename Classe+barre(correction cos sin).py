@@ -1,6 +1,7 @@
 import numpy
 import math
 import pandas
+from numpy import linalg
 
 class Element(object):
     def __init__(self, List_noeud, Aire_section, Largeur_section, Hauteur_section, E, I, Coef_poisson, Longueur_poutre, Angle_section):
@@ -138,6 +139,11 @@ def create_F_assemble(listForce,N_noeud):
     Tab = pandas.DataFrame(listForce,index = E,columns = ['F'])
  
     return Tab   
+def create_d_assemble(d,N_Noeud):
+    E = nommage_matrice_barre_lignes([i for i in range(1,N_noeud+1)])
+    
+    
+    return d_assemble
 
 if __name__ == '__main__':
     ElementSet = []
@@ -187,6 +193,7 @@ if __name__ == '__main__':
 
     
     N_noeud = len(list(set(List_noeud_save)))
+    
     for i in range(N_noeud):
         print("Fx pour noeud", i+1, " : ")
         Fx = float(input())
@@ -197,16 +204,47 @@ if __name__ == '__main__':
         N = Noeud(Fx, Fy, Mz)
         NoeudSet.append(N)
         
+    
         
     # ******************************** POUR ELEMENT BARRE **************************
-    
+    CL_d = [] # Contiendra les colonnes et les lignes à enlever
+    CL_f = [] 
+    for i in range(N_noeud):
+        print("**************** Noeud ",i+1,"***************\n")
+        print("liberté selon X")
+        a = int(input())
+        if a == 0 :
+            CL_d.append("d"+str(i+1)+"x")
+            CL_f.append("F"+str(i+1)+"x")
+        print("liberté selon Y")
+        a = int(input())
+        if a == 0 :
+            CL_d.append("d"+str(i+1)+"y")
+            CL_f.append("F"+str(i+1)+"y")
     K_final = creation_Kfinal(N_noeud, ElementSet)
+    K_assemble = K_final
     print(K_final)
     list_F = []
     for i in NoeudSet :
         list_F.append(i.Fx)
         list_F.append(i.Fy)
-    F_assemble = create_F_assemble(list_F,N_noeud)
+    F_final = create_F_assemble(list_F,N_noeud)
+    F_assemble = F_final
+    for i in CL_d:
+        K_final = K_final.drop(index = i,columns = i)
+        
+    for i in CL_f:
+        F_final = F_final.drop(index=i)
+  
+    
+    deplacement = linalg.solve(K_final.to_numpy(),F_final.to_numpy())
+    deplacement = 
+    print(deplacement)
+
+
+
+
+
     
     
     
