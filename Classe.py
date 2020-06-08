@@ -46,9 +46,9 @@ class Element(object):
         kk[3][0] = - C * S * K
 
         #nommage des colonnes et des lignes
-        A_colonnes = self.nommage_matrice_barre_colonnes(A)
-        A_lignes = self.nommage_matrice_barre_lignes(A)
-        kk = pandas.DataFrame(kk, columns=A_colonnes, index=A_lignes)
+        A_colonnes = nommage_matrice_barre_colonnes(A)
+        A_lignes = nommage_matrice_barre_lignes(A)
+        kk = pandas.DataFrame(kk, columns=A_colonnes, index=A_colonnes)
         return kk
 
     #Créer la matrice locale pour poutre
@@ -58,12 +58,17 @@ class Element(object):
         kk = [i * m for i in kk]
 
         # nommage des colonnes et lignes
-        A_colonnes = self.nommage_matrice_poutre_colonnes(A)
-        A_lignes = self.nommage_matrice_poutre_lignes(A)
-        kk = pandas.DataFrame(kk, columns=A_colonnes, index=A_lignes)
+        A_colonnes = nommage_matrice_poutre_colonnes(A)
+        A_lignes = nommage_matrice_poutre_lignes(A)
+        kk = pandas.DataFrame(kk, columns=A_colonnes, index=A_colonnes)
         return kk
-
-    def nommage_matrice_barre_colonnes(self, listnoeud):
+class Noeud(object):
+    def __init__(self, Fx, Fy, Mz):
+        self.Fx = Fx
+        self.Fy = Fy
+        self.Mz = Mz
+        
+def nommage_matrice_barre_colonnes(listnoeud):
         # Ici on créer une chaine composé des noms des colonnes des matrices barres
         A = []
 
@@ -73,7 +78,7 @@ class Element(object):
 
         return A
 
-    def nommage_matrice_barre_lignes(self, listnoeud):
+def nommage_matrice_barre_lignes(listnoeud):
         # Ici on créer une chaine composé des noms des lignes des matrices barres
         A = []
 
@@ -83,7 +88,7 @@ class Element(object):
 
         return A
 
-    def nommage_matrice_poutre_colonnes(self, listnoeud):
+def nommage_matrice_poutre_colonnes(listnoeud):
         # Ici on créer une chaine composé des noms des colonnes des matrices poutres
         A = []
 
@@ -93,7 +98,7 @@ class Element(object):
 
         return A
 
-    def nommage_matrice_poutre_lignes(self, listnoeud):
+def nommage_matrice_poutre_lignes(listnoeud):
         # Ici on créer une chaine composé des noms des lignes des matrices poutres
         A = []
 
@@ -103,11 +108,51 @@ class Element(object):
 
         return A
 
-class Noeud(object):
-    def __init__(self, Fx, Fy, Mz):
-        self.Fx = Fx
-        self.Fy = Fy
-        self.Mz = Mz
+
+
+# def Adaptation_matrice(K1,K2,commun):
+#     E = nommage_matrice_barre_colonnes(commun)
+#     print("e = ",E)
+#     for i in E:
+#         for j in E:
+#             K1[i][j] += K2[i][j]
+    
+#     return K1
+        
+        
+        
+# def fusion_matrice_barre(element,listelement): #Pour trouver les points commun entre plusieurs barres
+#     listelement = set(listelement) - set([element])
+#     for i in listelement:
+#         pointcommun = set(element.List_noeud) & set(i.List_noeud) #point commun aux 2 barres
+#         pointcommun = list(pointcommun)
+#         print("point commun=",pointcommun)
+#         print(element.K_local_barre)
+#         element.K_local_barre = Adaptation_matrice(element.K_local_barre,i.K_local_barre,pointcommun)
+        
+        
+        
+#     return element
+def creation_Kfinal(N_noeud,list_K):
+    #On commence par déterminer les noeuds qui seront dans le tableau final.
+    #Par exemple pour 2 élements il y'aura 3 noeuds
+    E= numpy.array([i for i in range(1,N_noeud+1)]) #On crée un tableau qui part de 1 jusqu'au nombre de noeud
+    E = nommage_matrice_barre_colonnes(E) #On en fait E = ["1x","1y","2x","2y",...,"nx","ny"]
+    K_final = pandas.DataFrame(0,columns = E,index = E) 
+    #On créer le K final. Cette table est initialement composé de 0 uniquement.
+    #Avec les elements de la liste E en titre de colonne et en titre de ligne
+    print(K_final)
+    for i in E:
+        for j in E:
+            for k in list_K:
+                 if i in k.K_local_barre.columns and j in k.K_local_barre.index : #Par exemple on compare 
+                     K_final[i][j]+= k.K_local_barre[i][j]
+                  
+          
+    
+    return K_final
+
+    
 
 if __name__ == '__main__':
     ElementSet = []
@@ -164,5 +209,9 @@ if __name__ == '__main__':
         Mz = float(input())
         N = Noeud(Fx, Fy, Mz)
         NoeudSet.append(N)
-
-
+        
+        
+    # TEST POUR MODELE BARRE
+    
+    K_final = creation_Kfinal(N_noeud, ElementSet)
+    print(K_final)
