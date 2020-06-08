@@ -122,7 +122,7 @@ def creation_Kfinal(N_noeud,list_K):
     K_final = pandas.DataFrame(0,columns = E,index = E) 
     #On créer le K final. Cette table est initialement composé de 0 uniquement.
     #Avec les elements de la liste E en titre de colonne et en titre de ligne
-    print(K_final)
+   
     for i in E:
         for j in E:
             for k in list_K:
@@ -139,11 +139,11 @@ def create_F_assemble(listForce,N_noeud):
     Tab = pandas.DataFrame(listForce,index = E,columns = ['F'])
  
     return Tab   
-def create_d_assemble(d,N_Noeud):
-    E = nommage_matrice_barre_lignes([i for i in range(1,N_noeud+1)])
+# def create_d_assemble(d,N_Noeud):
+#     E = nommage_matrice_barre_lignes([i for i in range(1,N_noeud+1)])
     
     
-    return d_assemble
+#     return d_assemble
 
 if __name__ == '__main__':
     ElementSet = []
@@ -223,7 +223,7 @@ if __name__ == '__main__':
             CL_f.append("F"+str(i+1)+"y")
     K_final = creation_Kfinal(N_noeud, ElementSet)
     K_assemble = K_final
-    print(K_final)
+   
     list_F = []
     for i in NoeudSet :
         list_F.append(i.Fx)
@@ -236,10 +236,11 @@ if __name__ == '__main__':
     for i in CL_f:
         F_final = F_final.drop(index=i)
   
-    
+    Coloon = list(K_final.columns)
     deplacement = linalg.solve(K_final.to_numpy(),F_final.to_numpy())
-    deplacement = 
+    
     print(deplacement)
+    print(Coloon)
 
 
 
