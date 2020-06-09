@@ -28,7 +28,7 @@ class Element(object):
 
         #Créer des matrices
         self.K_local_barre = self. __matrice_locale_barre(self.C, self.S, self.k_barre, self.List_noeud)
-        self.K_local_poutre = self.__matrice_locale_poutre(self.Longueur_poutre, self.EI, self.List_noeud)
+        #self.K_local_poutre = self.__matrice_locale_poutre(self.Longueur_poutre, self.EI, self.List_noeud)
 
     #Créer la matrice locale pour barre
     def __matrice_locale_barre(self, C, S, K, A):
@@ -106,7 +106,7 @@ def nommage_matrice_barre_lignes(listnoeud):
 
         return A
 
-def creation_Kfinal(N_noeud,list_K):
+def creation_K_assemble(N_noeud,list_K):
     #On commence par déterminer les noeuds qui seront dans le tableau final.
     #Par exemple pour 2 élements il y'aura 3 noeuds
     E= numpy.array([i for i in range(1,N_noeud+1)]) #On crée un tableau qui part de 1 jusqu'au nombre de noeud
@@ -236,9 +236,9 @@ if choix_forme=="Treillis":
 
         #exemple de sortie
         K_local_barre = Ele.K_local_barre
-        K_local_poutre = Ele.K_local_poutre
+       
         print("K_local_barre={}".format(K_local_barre))
-        print("K_local_poutre={}".format(K_local_poutre))
+        
 
     
     N_noeud = len(list(set(List_noeud_save)))
@@ -268,7 +268,7 @@ if choix_forme=="Treillis":
         if a == 0 :
             CL_d.append("d"+str(i+1)+"y")
             CL_f.append("F"+str(i+1)+"y")
-    K_final = creation_Kfinal(N_noeud, ElementSet)
+    K_final = creation_K_assemble(N_noeud, ElementSet)
     K_assemble = K_final
     print(K_final)
     list_F = []
