@@ -72,6 +72,7 @@ def Bouton_geometrie():
     
     
 def Bouton_materiaux():
+    global Aire_section,I,liste_points,E,liste_forces,liste_deplacements
     E=(simpledialog.askfloat("Matériaux","Quel est le module de Young du matériaux de la poutre ? (Pa)"))
     
 def Bouton_calculer():
@@ -86,7 +87,16 @@ def Bouton_contraintes():
         if liste.curselection()!=():
             liste_forces.insert(liste.curselection()[0],[Fx.get(), Fy.get(), Mz.get()])
             liste_deplacements.insert(liste.curselection()[0],[DeplacementX.get(), DeplacementY.get(), DeplacementZ.get()])
-            
+            Fx.delete(0,END)
+            Fx.insert(0,'0')
+            Fy.delete(0,END)
+            Fy.insert(0,'0')
+            Mz.delete(0,END)
+            Mz.insert(0,'0')
+            CheckX.deselect()
+            CheckY.deselect()
+            CheckZ.deselect()
+            liste.activate(liste.curselection()[0]+1)
     
     def Valider():
         return ''
@@ -116,9 +126,12 @@ def Bouton_contraintes():
     DeplacementX = IntVar()
     DeplacementY = IntVar()
     DeplacementZ = IntVar()
-    Checkbutton(frame_deplacement, variable= DeplacementX, text = "Bloquage selon x (m) :").grid(row=0)
-    Checkbutton(frame_deplacement, variable= DeplacementY, text = "Bloquage selon y (m) :").grid(row=1)
-    Checkbutton(frame_deplacement, variable= DeplacementZ, text = "Bloquage en rotation selon z (°) :").grid(row=2)
+    CheckX = Checkbutton(frame_deplacement, variable= DeplacementX, text = "Bloquage selon x (m) :")
+    CheckX.grid(row=0)
+    CheckY = Checkbutton(frame_deplacement, variable= DeplacementY, text = "Bloquage selon y (m) :")
+    CheckY.grid(row=1)
+    CheckZ = Checkbutton(frame_deplacement, variable= DeplacementZ, text = "Bloquage en rotation selon z (°) :")
+    CheckZ.grid(row=2)
     frame_deplacement.pack(side=RIGHT,fill="both", expand="yes")
     p3.add(frame)
     p3.add(Button(p3, text='Ajouter contraintes', command=Ajouter_contraintes))
