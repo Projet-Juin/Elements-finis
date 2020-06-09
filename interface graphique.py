@@ -6,6 +6,7 @@ Created on Mon Jun  8 14:15:37 2020
 """
 
 from tkinter import * 
+from tkinter import ttk
 
 Aire_section = 0
 I = 0
@@ -73,7 +74,9 @@ def Bouton_geometrie():
     
 def Bouton_materiaux():
     global Aire_section,I,liste_points,E,liste_forces,liste_deplacements
-    E=(simpledialog.askfloat("Matériaux","Quel est le module de Young du matériaux de la poutre ? (Pa)"))
+    temp_e=simpledialog.askfloat("Matériaux","Quel est le module de Young du matériaux de la poutre ? (Pa)")
+    if not(temp_e == None):
+        E=temp_e
     
 def Bouton_calculer():
     # global Aire_section,I,liste_points,E,liste_forces,liste_deplacements
@@ -83,19 +86,23 @@ def Bouton_calculer():
     
 def Bouton_contraintes():
     global Aire_section,I,liste_points,E,liste_forces,liste_deplacements
+    
     def Ajouter_contraintes():
+        
         if liste.curselection()!=():
             liste_forces.insert(liste.curselection()[0],[Fx.get(), Fy.get(), Mz.get()])
-            liste_deplacements.insert(liste.curselection()[0],[DeplacementX.get(), DeplacementY.get(), DeplacementZ.get()])
+            
+            liste_deplacements.insert(liste.curselection()[0],[int(CheckX.instate(['selected'])), int(CheckY.instate(['selected'])), int(CheckZ.instate(['selected']))])
+
             Fx.delete(0,END)
             Fx.insert(0,'0')
             Fy.delete(0,END)
             Fy.insert(0,'0')
             Mz.delete(0,END)
             Mz.insert(0,'0')
-            CheckX.deselect()
-            CheckY.deselect()
-            CheckZ.deselect()
+            CheckX.state(['!selected'])
+            CheckY.state(['!selected'])
+            CheckZ.state(['!selected'])
             liste.activate(liste.curselection()[0]+1)
     
     def Valider():
@@ -123,14 +130,14 @@ def Bouton_contraintes():
     Mz.grid(row=2,column=1)
     frame_force.pack(side=LEFT,fill="both", expand="yes")
     frame_deplacement = LabelFrame(frame, text="déplacements :")
-    DeplacementX = IntVar()
-    DeplacementY = IntVar()
-    DeplacementZ = IntVar()
-    CheckX = Checkbutton(frame_deplacement, variable= DeplacementX, text = "Bloquage selon x (m) :")
+    CheckX = ttk.Checkbutton(frame_deplacement, text = "Bloquage selon x (m) :")
+    CheckX.state(['!alternate'])
     CheckX.grid(row=0)
-    CheckY = Checkbutton(frame_deplacement, variable= DeplacementY, text = "Bloquage selon y (m) :")
+    CheckY = ttk.Checkbutton(frame_deplacement, text = "Bloquage selon y (m) :")
+    CheckY.state(['!alternate'])
     CheckY.grid(row=1)
-    CheckZ = Checkbutton(frame_deplacement, variable= DeplacementZ, text = "Bloquage en rotation selon z (°) :")
+    CheckZ = ttk.Checkbutton(frame_deplacement, text = "Bloquage en rotation selon z (°) :")
+    CheckZ.state(['!alternate'])
     CheckZ.grid(row=2)
     frame_deplacement.pack(side=RIGHT,fill="both", expand="yes")
     p3.add(frame)
@@ -148,8 +155,7 @@ main_w.title('Calcul de strucure par la Méthode éléments finis')
 p1 = PanedWindow(main_w, orient=VERTICAL)
 p2 = PanedWindow(main_w, orient=HORIZONTAL)
 #crée des onglets clickables
-bouton_geometrie = Button(p2, text='Géométrie', background='#4d0000', foreground='white', anchor=CENTER, command=Bouton_geometrie)
-p2.add(bouton_geometrie)
+p2.add(Button(p2, text='Géométrie', background='#4d0000', foreground='white', anchor=CENTER, command=Bouton_geometrie))
 p2.add(Button(p2, text='Matériaux', background='#4d0000', foreground='white', anchor=CENTER, command=Bouton_materiaux))
 p2.add(Button(p2, text='Contraintes', background='#4d0000', foreground='white', anchor=CENTER, command=Bouton_contraintes))
 p2.add(Button(p2, text='Calculer', background='#4d0000', foreground='white', anchor=CENTER, command=Bouton_calculer))
