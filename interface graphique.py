@@ -7,20 +7,35 @@ Created on Mon Jun  8 14:15:37 2020
 
 from tkinter import * 
 
+Aire_section = 0
+I = 0
+liste_points = ()
+E = 0
+liste_forces = []
+liste_deplacements = []
+
+donnees = [Aire_section,I,liste_points,E,liste_forces,liste_deplacements]
+print(donnees)
 
 def Bouton_geometrie():
-    
+    global Aire_section,I,liste_points,E,liste_forces,liste_deplacements
     def Ajouter_point():
         liste.insert(END,champ_point.get())
         champ_point.delete(0,END)
-        champ_point.insert(0, 'point ajouté!')
         
     def Supprimer_point():
-        liste.delete(liste.curselection())
+        if liste.curselection()!=():
+            liste.delete(liste.curselection())
         
     def Valider():
+        global Aire_section,I,liste_points,E,liste_forces,liste_deplacements
         if ((champ_aire.get() and champ_I.get())!='' and liste.size()>1):
-            return (TRUE, champ_aire.get(),champ_I.get(), liste.get(0,END))
+            Aire_section = champ_aire.get()
+            I = champ_I.get()
+            liste_points = liste.get(0,END)
+            fenetre_geometie.destroy()
+        else:
+            messagebox.showerror('Erreur','Pas de Données de Géométrie')
         
         
     fenetre_geometie = Tk()
@@ -43,31 +58,74 @@ def Bouton_geometrie():
     p6.add(Label(p6,text="Coordonnées du point (m) :"))
     champ_point = Entry(p6)
     p6.add(champ_point)
-    liste = Listbox(p3)
+    liste = Listbox(p3, selectmode = SINGLE)
     p6.add(Button(p6, text='Ajouter point', command=Ajouter_point))
     p6.pack(side=TOP, expand=Y, fill=BOTH, pady=2, padx=2)
     p3.add(p6)
     p3.add(liste)
     p3.add(Button(p3, text='Supprimer point', command=Supprimer_point))
-    bouton_valider = Button(p3, text='Valider', command=Valider)
-    p3.add(bouton_valider)
-    p3.add(Button(p3, text='Quitter', command=fenetre_geometie.quit))
+    p3.add(Button(p3, text='Valider', command=Valider))
+    p3.add(Button(p3, text='Quitter', command=fenetre_geometie.destroy))
     p3.pack(side=TOP, expand=Y, fill=X, pady=2, padx=2)
     fenetre_geometie.mainloop()
     
-    if bouton_valider.invoke()[0]:
-        return bouton_valider.invoke()[1:]
     
     
 def Bouton_materiaux():
-    Module_Young = simpledialog.askfloat("Matériaux","Quel est le module de Young du matériaux de la poutre ?")
-    
+    E=(simpledialog.askfloat("Matériaux","Quel est le module de Young du matériaux de la poutre ? (Pa)"))
     
 def Bouton_calculer():
-    if bouton_geometrie.invoke()==NONE:
-        messagebox.showshowerror('Erreur','Pas de Données de Géométrie')
+    # global Aire_section,I,liste_points,E,liste_forces,liste_deplacements
+    print(Aire_section,I,liste_points,E,liste_forces,liste_deplacements)
+    # if donnees==():
+    #     messagebox.showerror('Erreur','Pas de Données de Géométrie')
     
+def Bouton_contraintes():
+    global Aire_section,I,liste_points,E,liste_forces,liste_deplacements
+    def Ajouter_contraintes():
+        if liste.curselection()!=():
+            liste_forces.insert(liste.curselection()[0],[Fx.get(), Fy.get(), Mz.get()])
+            liste_deplacements.insert(liste.curselection()[0],[DeplacementX.get(), DeplacementY.get(), DeplacementZ.get()])
+            
     
+    def Valider():
+        return ''
+    
+    fenetre_contraintes = Tk()
+    fenetre_contraintes.geometry("380x500+470+150")
+    fenetre_contraintes.title('Renseigner les contraintes des points de la structure à étudier')
+    p3 = PanedWindow(fenetre_contraintes, orient=VERTICAL)
+    p3.add(Label(p3,text="Liste des points :"))
+    liste = Listbox(p3, selectmode = SINGLE)
+    for i in liste_points:
+        liste.insert(END, i)
+    p3.add(liste)
+    frame = Frame(p3)
+    frame_force = LabelFrame(frame, text="forces :")
+    Label(frame_force, text="Force selon x (N) :").grid(row=0,column=0)
+    Label(frame_force, text="Force selon y (N) :").grid(row=1,column=0)
+    Label(frame_force, text="Moment selon z (N) :").grid(row=2,column=0)
+    Fx = Entry(frame_force)
+    Fx.grid(row=0,column=1)
+    Fy = Entry(frame_force)
+    Fy.grid(row=1,column=1)
+    Mz = Entry(frame_force)
+    Mz.grid(row=2,column=1)
+    frame_force.pack(side=LEFT,fill="both", expand="yes")
+    frame_deplacement = LabelFrame(frame, text="déplacements :")
+    DeplacementX = IntVar()
+    DeplacementY = IntVar()
+    DeplacementZ = IntVar()
+    Checkbutton(frame_deplacement, variable= DeplacementX, text = "Bloquage selon x (m) :").grid(row=0)
+    Checkbutton(frame_deplacement, variable= DeplacementY, text = "Bloquage selon y (m) :").grid(row=1)
+    Checkbutton(frame_deplacement, variable= DeplacementZ, text = "Bloquage en rotation selon z (°) :").grid(row=2)
+    frame_deplacement.pack(side=RIGHT,fill="both", expand="yes")
+    p3.add(frame)
+    p3.add(Button(p3, text='Ajouter contraintes', command=Ajouter_contraintes))
+    p3.add(Button(p3, text='Valider', command=Valider))
+    p3.add(Button(p3, text='Quitter', command=fenetre_contraintes.destroy))
+    p3.pack(side=TOP, expand=Y, fill=X, pady=2, padx=2)
+    fenetre_contraintes.mainloop()
     
     
 main_w = Tk()
@@ -80,7 +138,7 @@ p2 = PanedWindow(main_w, orient=HORIZONTAL)
 bouton_geometrie = Button(p2, text='Géométrie', background='#4d0000', foreground='white', anchor=CENTER, command=Bouton_geometrie)
 p2.add(bouton_geometrie)
 p2.add(Button(p2, text='Matériaux', background='#4d0000', foreground='white', anchor=CENTER, command=Bouton_materiaux))
-p2.add(Button(p2, text='Contraintes', background='#4d0000', foreground='white', anchor=CENTER))
+p2.add(Button(p2, text='Contraintes', background='#4d0000', foreground='white', anchor=CENTER, command=Bouton_contraintes))
 p2.add(Button(p2, text='Calculer', background='#4d0000', foreground='white', anchor=CENTER, command=Bouton_calculer))
 
 p1.add(p2)
