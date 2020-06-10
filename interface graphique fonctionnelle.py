@@ -186,16 +186,33 @@ def Bouton_calculer():
     
         return K_assemblee    
     
-    
+    def nommage_matrice_poutre_colonnes(n_noeud):
+        # Ici on créer une chaine composé des noms des colonnes des matrices poutres
+        A = []
+        for i in range(n_noeud):
+            A.append("d" + str(i+1) + "y")
+            A.append("phi" +str(i+1))
+        return A
+
+
+    def nommage_matrice_poutre_lignes(n_noeud):
+
+        # Ici on créer une chaine composé des noms des lignes des matrices poutres
+        A = []
+        for i in range(n_noeud):
+            A.append("F" + str(i+1) + "y")
+            A.append("M" + str(i+1))
+        return A
     
     EI=float(I)
     listeabscisse=list(liste_points)
     temp_d=[]
     for i in range(len(liste_deplacements)):
         for j in range(len(liste_deplacements[0])):
-            temp_d.append(liste_deplacements[i][j])
+            temp_d.append([liste_deplacements[i][j]])
     
     d_assemblee=temp_d
+    print(d_assemblee)
     
     F_assemblee=[float(i) for i in liste_forces]
     
@@ -205,12 +222,10 @@ def Bouton_calculer():
     L=[]
 
     for k in range(0,len(d_assemblee)):
-
         if d_assemblee[k]==[0]:
-
             L.append(k)
 
-
+    
 
     L=list(reversed(L)) #inverse la liste des colonnes a supprimer
 
@@ -232,20 +247,13 @@ def Bouton_calculer():
     i=0
 
     for p in range(len(d_assemblee)) :
-
         if d_assemblee[p]==[1]:
-
             d_assemblee[p]=[deplacementinconnu[i]]
-
             i=i+1
 
     # pour afficher la matrice force
 
-
-
     F_assemblee=np.dot(K_assemblee,d_assemblee)
-
-
 
     #pour passer en dataframes
     print("***matrice rigidité assemblée : ")
@@ -258,6 +266,23 @@ def Bouton_calculer():
     F_assemblee=pd.DataFrame(F_assemblee,index=nommage_matrice_poutre_lignes(int(np.shape(F_assemblee)[0]-(np.shape(F_assemblee)[0]/2))),columns=['force'])
     print(F_assemblee)
     
+    canvas.update()
+    canvas.create_text(75,75, text='tester', font="Arial 16 italic", fill="blue")
+    p1.pack(side=TOP, expand=Y, fill=BOTH, pady=2, padx=2)
+    
+    texte=matrice_assemblee.to_string()+'\n'+d_assemblee.to_string()+'\n'+F_assemblee.to_string()
+    print(texte)
+    canvas.update()
+    canvas.create_text(75, 61, text=texte, font="Arial 16 italic", fill="blue")
+    p1.pack(side=TOP, expand=Y, fill=BOTH, pady=2, padx=2)
+    
+    fenetre = Tk()
+    Text=texte
+    l = LabelFrame(fenetre, text="Notre matrice", padx=20, pady=20, width=600)
+    l.pack(fill="both", expand="yes")
+    Label(l, text=Text).pack()
+    fenetre.mainloop()
+        
     
 def Bouton_contraintes():
     global Aire_section,I,liste_points,E,liste_forces,liste_deplacements
@@ -270,14 +295,12 @@ def Bouton_contraintes():
             
             liste_deplacements.insert(liste.curselection()[0],[ int(CheckY.instate(['!selected'])), int(CheckZ.instate(['!selected']))])
             if CheckY.instate(['!selected']) and CheckZ.instate(['!selected']):
-                print()
+                liste_forces.append(float(Fy.get()))
+                liste_forces.append(float(Mz.get()))
             elif CheckZ.instate(['!selected']):
                 liste_forces.append(float(Mz.get()))
             elif CheckY.instate(['!selected']):
                 liste_forces.append(float(Fy.get()))
-            else:
-                liste_forces.append(float(Fy.get()))
-                liste_forces.append(float(Mz.get()))
                 
             Fx.delete(0,END)
             Fx.insert(0,'0')
@@ -349,7 +372,7 @@ p2.add(Button(p2, text='Contraintes', background='#4d0000', foreground='white', 
 p2.add(Button(p2, text='Calculer', background='#4d0000', foreground='white', anchor=CENTER, command=Bouton_calculer))
 
 p1.add(p2)
-canvas = Canvas(p1, width = 1000, height = 600, background='#ffb3b3')
+canvas = Canvas(p1, width = 300, height = 200, background='#ffb3b3')
 p1.add(canvas)
 p1.pack(side=TOP, expand=Y, fill=BOTH, pady=2, padx=2)
 
