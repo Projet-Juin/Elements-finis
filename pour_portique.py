@@ -8,6 +8,28 @@ import scipy
 from scipy import *
 
 
+
+
+
+#fonctions a ajouter :
+
+def moment_charge_uniformement_repartie (force,longueur_section):
+    M_reparti=force*(longueur_section**2)/12
+    return M_reparti
+
+def force_charge_uniformement_repartie (force,longueur_section):
+    F_repartie=force*longueur_section/2
+    return F_repartie
+
+
+
+
+
+
+
+
+
+
 def nommage_matrice_portique_colonnes(listnoeud):
         # Ici on créer une chaine composé des noms des colonnes des matrices barres
         A = []
