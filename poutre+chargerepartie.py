@@ -2,15 +2,9 @@
 """
 Created on Thu Jun 11 13:33:09 2020
 
-@author: ombli
+@author: ombline delassus
 """
 
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jun  9 20:56:27 2020
-
-@author: ombli
-"""
 
 import numpy
 
@@ -147,8 +141,7 @@ def force_charge_uniformement_repartie (force,longueur_section):
 
 
 
-#pour version 2 du code (encore non utilisé)
-#Pour poutre
+
 def moment_quadratique_et_aire_section_rectangle(Largeur_section,Hauteur_section):
     I=Largeur_section*(Hauteur_section**3)/12
     return IGz
@@ -157,6 +150,10 @@ def moment_quadratique_et_aire_section_cylindrique(diametre_section):
     I=pi*(diametre_section**4)/64
     return I
 
+
+def calcul_du_pas(distance_entre_2_noeuds,nombrepointsentre2noeuds):
+    longueur_du_pas=distance_entre_2_noeuds/nombrepointsentre2noeuds
+    return longueur_du_pas
 
 
 print("Combien d'elements? :")                              #nombre de noeuds sur la poutre
@@ -174,7 +171,20 @@ for i in range(N_element):
     j = float(input())                                      #Récupération des différentes valeurs des abscisses des noeuds
 
     listeabscisse.append(j)
-
+    
+    
+liste_abscisse_allongee=[]
+print(len(listeabscisse)-1)
+for k in range(len(listeabscisse)-1):
+    nombrepointsentre2noeuds=50
+    pas=calcul_du_pas(listeabscisse[k+1]-listeabscisse[k],nombrepointsentre2noeuds)
+    liste_abscisse_allongee.append(listeabscisse[k])
+    for i in range (1,nombrepointsentre2noeuds):
+        liste_abscisse_allongee.append(listeabscisse[k]+pas*i*listeabscisse[k])
+print(liste_abscisse_allongee)        
+    
+    
+    
 print("Valeur de E :")
 
 E= float(input())
@@ -203,7 +213,6 @@ for i in range(N_element):
     j = str(input()) # str : pour la chaine de caracteres
     type_appui.append(j)
     print(type_appui)
-
 
 
 
