@@ -126,9 +126,8 @@ def force_charge_uniformement_repartie (force,longueur_section):
 
 
 
-
 def moment_quadratique_section_rectangle(Largeur_section,Hauteur_section):
-    I=Hauteur_section*(Largeur_section**3)/12    #################formules a verifier
+    I=Largeur_section*(Hauteur_section**3)/12    #################formules a verifier
     return I
 
 def moment_quadratique_section_cylindrique(diametre_section):
@@ -136,9 +135,8 @@ def moment_quadratique_section_cylindrique(diametre_section):
     return I
 
 def moment_quadratique_section_I(Largeur_section,Hauteur_section,epaisseur_partiecentrale,epaisseur_rebords):
-    I=((Hauteur_section*(Largeur_section**3))-((Hauteur_section-2*epaisseur_rebords)*((Largeur_section-epaisseur_partiecentrale)**3)))/12
+    I=((Largeur_section*(Hauteur_section**3))-((Largeur_section-epaisseur_partiecentrale)*((Hauteur_section-2*epaisseur_rebords)**3)))/12
     return I
-
 
 def calcul_du_pas(distance_entre_2_noeuds,nombrepointsentre2noeuds):
     longueur_du_pas=distance_entre_2_noeuds/nombrepointsentre2noeuds
@@ -465,8 +463,19 @@ print("***matrice déplacements")
 d_assemblee=pd.DataFrame(d_assemblee,index=nommage_matrice_poutre_colonnes(int(np.shape(d_assemblee)[0]-(np.shape(d_assemblee)[0]/2))) ,columns=['deplacement'])
 print(d_assemblee)
 
-F_assemblee=F_assemblee+F_repartie
+F_assemble=F_assemblee+F_repartie
+
+effort_tranchant=[]
+moment=[]
+for k in range(len(liste_abscisse_allongee)):
+    effort_tranchant[k]=F_assemble[2*k]
+    moment[k]=F_assemble[2*k+1]
+
+
 
 print("***matrice forces")
-F_assemblee=pd.DataFrame(F_assemblee,index=nommage_matrice_poutre_lignes(int(np.shape(F_assemblee)[0]-(np.shape(F_assemblee)[0]/2))),columns=['force'])
-print(F_assemblee)
+F_assemble=pd.DataFrame(F_assemble,index=nommage_matrice_poutre_lignes(int(np.shape(F_assemble)[0]-(np.shape(F_assemble)[0]/2))),columns=['force'])
+print(F_assemble)
+
+print(effort_tranchant)
+print(moment)
