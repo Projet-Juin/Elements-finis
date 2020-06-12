@@ -7,19 +7,12 @@ Created on Thu Jun 11 13:33:09 2020
 
 
 import numpy
-
 import math
-
 import pandas
-
 import pandas as pd
-
 from numpy import linalg
-
 import numpy as np
-
 import scipy
-
 from scipy import *
 
 
@@ -105,25 +98,17 @@ def fonction_matrice_totale_triangulairesup(tableau1,tableau2):
 def calcul_matrice_triangulaire_sup(tab,EI) :#faire la matrice assemblée #permet de dire où va le nouveau tableau : il faut bien dire que pour le premier il est en haut à gauche et quand on ajoute ca va sur le bloc en bas a droite
 
     for i in range (0,len(tab)-1):
-
         if i==0:
-
             f=matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(tab[i+1]-tab[i],EI)
-
         else :
-
             f=fonction_matrice_totale_triangulairesup(f,matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(tab[i+1]-tab[i],EI))
-
     return f
 
 
 
 def calcul_matrice_totale(listeabscisses,EI): #ajouter la partie symétrique a la matrice de rigidité
-
     K_assemblee=calcul_matrice_triangulaire_sup(sorted(listeabscisses),EI)
-
     K_assemblee=K_assemblee+np.transpose(K_assemblee)-np.diag(np.diag(K_assemblee))
-
     return K_assemblee
 
 #######################################################"" A SUPPRIMER
@@ -174,7 +159,6 @@ for i in range(N_element):
     
     
 liste_abscisse_allongee=[]
-print(len(listeabscisse)-1)
 for k in range(len(listeabscisse)-1):
     nombrepointsentre2noeuds=50 #######################a modifier si choix de l'utilisateur
     pas=calcul_du_pas(listeabscisse[k+1]-listeabscisse[k],nombrepointsentre2noeuds)
@@ -182,15 +166,12 @@ for k in range(len(listeabscisse)-1):
     for i in range (1,nombrepointsentre2noeuds):
         liste_abscisse_allongee.append(pas*i+listeabscisse[k])
 liste_abscisse_allongee.append(listeabscisse[-1])
-print(liste_abscisse_allongee)        
-    
+ 
     
     
 print("Valeur de E :")
-
 E= float(input())
 print("Valeur de I :")
-
 I= float(input())
 
 EI=E*I
@@ -199,24 +180,17 @@ matricerigidite=calcul_matrice_totale(liste_abscisse_allongee,EI) # pour la suit
 
 K_assemblee=matricerigidite #ne bougera plus
 
-print("nombre elements liste abscisse avec maillage")
-print(len(liste_abscisse_allongee))
-print("taille matrice rigidite")
-print(shape(matricerigidite))
 
 
 type_appui=[]
 
 for i in range(N_element):
 
-    print("***********Element n°",i+1,"**********")
-    
-    
+    print("***********Element n°",i+1,"**********")    
     print("type d'appui (encastrement, rotule ou rien :)")
-
     j = str(input()) # str : pour la chaine de caracteres
     type_appui.append(j)
-    print(type_appui)
+
 
 N_element_allongee=len(liste_abscisse_allongee)
 
@@ -230,9 +204,7 @@ d_assemblee=[] #pour la matrice de deplacements : en considerant qu'il a rentré
 
 for i in range(N_element_allongee-1):
     if liste_abscisse_allongee[i] in listeabscisse :
-        p=listeabscisse.index(liste_abscisse_allongee[i])
-
-    
+        p=listeabscisse.index(liste_abscisse_allongee[i])   
         print("***********Element n°",p+1,"**********")
         
         j=type_appui[p]
@@ -265,8 +237,6 @@ for i in range(N_element_allongee-1):
                 else :
                      F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
 
-            
-                     
                  
         if j=="rotule": #dy=0 et phi =/=0
     
@@ -300,9 +270,7 @@ for i in range(N_element_allongee-1):
                         F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i]) 
                 else :
                      F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                     
-    
-                    
+                                   
         if j=="rien":    
             d_assemblee.append([1])
             d_assemblee.append([1])
@@ -337,12 +305,10 @@ for i in range(N_element_allongee-1):
                 else :
                         F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
                         
-
     else : 
             d_assemblee.append([1])
             d_assemblee.append([1])
-            F_assemblee[i*2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-            
+            F_assemblee[i*2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])     
             
             if liste_abscisse_allongee[i+1] in listeabscisse :
                #print("liste_abscisse_allongee[i+1]")
@@ -390,87 +356,44 @@ if j=="rien": #dy et phi =/=0
     f = float(input())
     F_assemblee[-1]+=f                
 
-#print(F_assemblee)
-#print(F_repartie)       
 
-#print("taille F_assemblee totale")
-#print(shape(F_assemblee))
-#print("taille F_repartie totale")
-#print(shape(F_repartie))
-
-ppp=F_assemblee.copy()
-#print("shape(ppp)")
-#print(shape(ppp))
 
 for k in range (len(liste_abscisse_allongee)): #permet de supprimer tous les zeros de la liste utilisée pour le systeme
     if liste_abscisse_allongee[k] in listeabscisse :
         p=liste_abscisse_allongee.index(liste_abscisse_allongee[k])   #recuperer lindice dans liste_abscisse_allongee de la valeur a supprimer
         del F_assemblee[p]
 
-#print("apres suppression")
-#print("shape(F_assemblee)")
-#print(shape(F_assemblee))
-#print("shape(ppp)")
-#print(shape(ppp))
-#print("2*len(liste_abscisse_allongee)")
-#print(2*len(liste_abscisse_allongee))
-
-#for k in range(len(ppp)):
-#    if ppp[k] not in F_assemblee:
-#        print (F_assemblee.index(F_assemblee[k]))
-
-
-
-
 
 F_assemblee=np.asarray(F_assemblee).reshape(len(F_assemblee),1) #convertir la ligne en matrice colonne array
 F_repartie=np.asarray(F_repartie).reshape(len(F_repartie),1)               
 
 
-
 # pour supprimer tout ce qui est inutile pour calculer f dans f=K.u : en considerant qu'il a rentré les noeuds par ordre croissant abscisses
 
 L=[]
-
 for k in range(0,len(d_assemblee)):
-
     if d_assemblee[k]==[0]:
-
         L.append(k)
 
 L=list(reversed(L)) #inverse la liste des colonnes a supprimer
 
 for l in range (len(L)):
-
     matricerigidite=np.delete(matricerigidite, L[l], 1)
-
     matricerigidite=np.delete(matricerigidite, L[l], 0)
     #print(matricerigidite)
 
 # pour resoudre le système linéaire : a remodifié pour avoir les forces autrement que en demande au moment du choix des appuis
 
 
-print("taille F_assemblee totale")
-print(shape(F_assemblee))
-print("taille F_repartie totale")
-print(shape(F_repartie))
-print("taille matricerigidite")
-print(shape(matricerigidite))
-
-
 deplacementinconnu=linalg.solve(matricerigidite,F_assemblee)
 
-print("deplacementinconnu")
-print(deplacementinconnu)
 # pour afficher tous les déplacements :
 
 i=0
 for p in range(len(d_assemblee)) :
 
     if d_assemblee[p]==[1]:
-
-        d_assemblee[p]=[deplacementinconnu[i]]
-            
+        d_assemblee[p]=[deplacementinconnu[i]]     
         i=i+1
 # pour afficher la matrice force
 
@@ -490,6 +413,5 @@ print(d_assemblee)
 F_assemblee=F_assemblee+F_repartie
 
 print("***matrice forces")
-print(F_assemblee)
 F_assemblee=pd.DataFrame(F_assemblee,index=nommage_matrice_poutre_lignes(int(np.shape(F_assemblee)[0]-(np.shape(F_assemblee)[0]/2))),columns=['force'])
 print(F_assemblee)
