@@ -145,6 +145,11 @@ def calcul_du_pas(distance_entre_2_noeuds,nombrepointsentre2noeuds):
     return longueur_du_pas
 
 
+def force_ressort(constante_de_raideur,longueur_ressort):
+    valeur_force_ressort=-constante_de_raideur*longueur_ressort
+    return valeur_force_ressort
+
+
 
 print("Combien d'elements? :")                              #nombre de noeuds sur la poutre
 
@@ -259,19 +264,28 @@ for i in range(N_element_allongee-1):
                         F_repartie[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
                         F_repartie[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
         
-                    if z=="rotule":    
+                    if z=="rotule":
+                        ressort=0
+                        print("ressort ? (oui ou non)")
+                        ressort = str(input())
+                        if ressort=='oui':
+                            print("longueur_ressort")
+                            longueur_ressort=float(input())
+                            print("constante_de_raideur")
+                            constante_de_raideur=float(input())
+                            force_ressort=force_ressort(constante_de_raideur,longueur_ressort)
+                        F_repartie[i*2+2]+=force_ressort
                         F_repartie[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
                         F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
         
                     if z=="rien":   
-                         F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                         F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i]) 
+                        F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+                        F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i]) 
                 else :
                      F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
 
                  
         if j=="rotule": #dy=0 et phi =/=0
-    
             d_assemblee.append([0])
             d_assemblee.append([1])
             print("moment :")#IL FAUDRA VOIR POUR LES UNITES
@@ -303,7 +317,16 @@ for i in range(N_element_allongee-1):
                 else :
                      F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
                                    
-        if j=="rien":    
+        if j=="rien":   
+            print("ressort ? (oui ou non)")
+            ressort = str(input())
+            if ressort=='oui':
+                print("longueur_ressort")
+                longueur_ressort=float(input())
+                print("constante_de_raideur")
+                constante_de_raideur=float(input())
+                valeur_force_ressort=force_ressort(constante_de_raideur,longueur_ressort)
+                F_repartie[i*2+2]+=valeur_force_ressort
             d_assemblee.append([1])
             d_assemblee.append([1])
             print("force")
