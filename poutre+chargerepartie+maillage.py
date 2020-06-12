@@ -66,33 +66,18 @@ def nommage_matrice_poutre_lignes(n_noeud):
 #fonction combinant les matrices élémentaires 2 par 2 : # on garde la matrice des 2 premiers noeuds et on ajoute les matrices les une après les autres dans le sens croissants des abscisses des noeuds # on obtient à la fin la matrice triangulaire supérieure car la partie inférieure et symétrique
 
 def fonction_matrice_totale_triangulairesup(tableau1,tableau2):
-
     resultat=ettendre_1ligne_et_1colonne(ettendre_1ligne_et_1colonne(tableau1))
-
     lim21=shape(tableau1)[0]-2
-
     resultat[lim21][lim21]+=tableau2[0][0]
-
     resultat[lim21][lim21+1]+=tableau2[0][1]
-
     resultat[lim21+1][lim21+1]+=tableau2[1][1]
-
     resultat[lim21+2][lim21+2]+=tableau2[2][2]
-
     resultat[lim21+2][lim21+3]+=tableau2[2][3]
-
     resultat[lim21+3][lim21+3]+=tableau2[3][3]
-
     resultat[lim21][lim21+2]+=tableau2[0][2]
-
     resultat[lim21][lim21+3]+=tableau2[0][3]
-
     resultat[lim21+1][lim21+2]+=tableau2[1][2]
-
     resultat[lim21+1][lim21+3]+=tableau2[1][3]
-
-    print(resultat)
-
     return resultat #matrice de rigidité globale sans la partie symétrique
 
 
@@ -127,8 +112,6 @@ def force_charge_uniformement_repartie (force,longueur_section):
     return F_repartie
 
 
-
-
 def moment_quadratique_section_rectangle(Largeur_section,Hauteur_section):
     I=Largeur_section*(Hauteur_section**3)/12    #################formules a verifier
     return I
@@ -151,6 +134,47 @@ def force_ressort(constante_de_raideur,longueur_ressort):
     valeur_force_ressort=-constante_de_raideur*longueur_ressort
     return valeur_force_ressort
 
+def etendre_la_matrice_abscisse(listeabscisse,nombrepointsentre2noeuds):    
+    liste_abscisse_allongee=[]
+    for k in range(len(listeabscisse)-1):
+        pas=calcul_du_pas(listeabscisse[k+1]-listeabscisse[k],nombrepointsentre2noeuds)
+        liste_abscisse_allongee.append(listeabscisse[k])
+        for i in range (1,nombrepointsentre2noeuds):
+            liste_abscisse_allongee.append(pas*i+listeabscisse[k])
+    liste_abscisse_allongee.append(listeabscisse[-1])
+    return liste_abscisse_allongee
+
+
+def supprimer_valeurs_inutiles_dans_matrice_forces(liste_abscisse_allongee,listeabscisse,F_assemblee):
+    for k in range (len(liste_abscisse_allongee)): #permet de supprimer tous les zeros de la liste utilisée pour le systeme
+        if liste_abscisse_allongee[k] in listeabscisse :
+            p=liste_abscisse_allongee.index(liste_abscisse_allongee[k])   #recuperer lindice dans liste_abscisse_allongee de la valeur a supprimer
+            del F_assemblee[p]
+    return F_assemblee
+
+def supprimer_inutil_dans_matricerigidite(d_assemblee,matricerigidite):
+    L=[]
+    for k in range(0,len(d_assemblee)):
+        if d_assemblee[k]==[0]:
+            L.append(k)
+    L=list(reversed(L)) #inverse la liste des colonnes a supprimer
+    for l in range (len(L)):
+        matricerigidite=np.delete(matricerigidite, L[l], 1)
+        matricerigidite=np.delete(matricerigidite, L[l], 0)   
+    return matricerigidite
+    #print(matricerigidite)
+    
+def mettre_tous_les_deplacements_en_1matrice(d_assemblee,deplacementinconnu):
+    i=0
+    for p in range(len(d_assemblee)) :
+    
+        if d_assemblee[p]==[1]:
+            d_assemblee[p]=[deplacementinconnu[i]]     
+            i=i+1
+    return d_assemblee   
+    
+
+
 
 
 print("Combien d'elements? :")                              #nombre de noeuds sur la poutre
@@ -169,17 +193,9 @@ for i in range(N_element):
 
     listeabscisse.append(j)
     
-    
-liste_abscisse_allongee=[]
-for k in range(len(listeabscisse)-1):
-    nombrepointsentre2noeuds=50 #######################a modifier si choix de l'utilisateur
-    pas=calcul_du_pas(listeabscisse[k+1]-listeabscisse[k],nombrepointsentre2noeuds)
-    liste_abscisse_allongee.append(listeabscisse[k])
-    for i in range (1,nombrepointsentre2noeuds):
-        liste_abscisse_allongee.append(pas*i+listeabscisse[k])
-liste_abscisse_allongee.append(listeabscisse[-1])
- 
-    
+
+nombrepointsentre2noeuds=50 ###########modifier pour le demander a l'utilisateur
+liste_abscisse_allongee=etendre_la_matrice_abscisse(listeabscisse,nombrepointsentre2noeuds)    
     
 print("Valeur de E :")
 E= float(input())
@@ -425,11 +441,8 @@ if j=="rien": #dy et phi =/=0
 
 
 
-for k in range (len(liste_abscisse_allongee)): #permet de supprimer tous les zeros de la liste utilisée pour le systeme
-    if liste_abscisse_allongee[k] in listeabscisse :
-        p=liste_abscisse_allongee.index(liste_abscisse_allongee[k])   #recuperer lindice dans liste_abscisse_allongee de la valeur a supprimer
-        del F_assemblee[p]
 
+F_assemblee=supprimer_valeurs_inutiles_dans_matrice_forces(liste_abscisse_allongee,listeabscisse,F_assemblee)
 
 F_assemblee=np.asarray(F_assemblee).reshape(len(F_assemblee),1) #convertir la ligne en matrice colonne array
 F_repartie=np.asarray(F_repartie).reshape(len(F_repartie),1)               
@@ -437,17 +450,10 @@ F_repartie=np.asarray(F_repartie).reshape(len(F_repartie),1)
 
 # pour supprimer tout ce qui est inutile pour calculer f dans f=K.u : en considerant qu'il a rentré les noeuds par ordre croissant abscisses
 
-L=[]
-for k in range(0,len(d_assemblee)):
-    if d_assemblee[k]==[0]:
-        L.append(k)
 
-L=list(reversed(L)) #inverse la liste des colonnes a supprimer
 
-for l in range (len(L)):
-    matricerigidite=np.delete(matricerigidite, L[l], 1)
-    matricerigidite=np.delete(matricerigidite, L[l], 0)
-    #print(matricerigidite)
+matricerigidite=supprimer_inutil_dans_matricerigidite(d_assemblee,matricerigidite)
+
 
 # pour resoudre le système linéaire : a remodifié pour avoir les forces autrement que en demande au moment du choix des appuis
 
@@ -456,12 +462,9 @@ deplacementinconnu=linalg.solve(matricerigidite,F_assemblee)
 
 # pour afficher tous les déplacements :
 
-i=0
-for p in range(len(d_assemblee)) :
 
-    if d_assemblee[p]==[1]:
-        d_assemblee[p]=[deplacementinconnu[i]]     
-        i=i+1
+
+d_assemblee=mettre_tous_les_deplacements_en_1matrice(d_assemblee,deplacementinconnu)        
 # pour afficher la matrice force
 
 F_assemblee=np.dot(K_assemblee,d_assemblee)
