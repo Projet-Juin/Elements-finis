@@ -8,12 +8,14 @@ Created on Thu Jun 11 13:33:09 2020
 
 import numpy
 import math
+import matplotlib.pyplot as plt
 import pandas
 import pandas as pd
 from numpy import linalg
 import numpy as np
 import scipy
 from scipy import *
+from mpl_toolkits.mplot3d import Axes3D
 
 
 
@@ -126,6 +128,7 @@ def force_charge_uniformement_repartie (force,longueur_section):
 
 
 
+
 def moment_quadratique_section_rectangle(Largeur_section,Hauteur_section):
     I=Largeur_section*(Hauteur_section**3)/12    #################formules a verifier
     return I
@@ -137,6 +140,7 @@ def moment_quadratique_section_cylindrique(diametre_section):
 def moment_quadratique_section_I(Largeur_section,Hauteur_section,epaisseur_partiecentrale,epaisseur_rebords):
     I=((Largeur_section*(Hauteur_section**3))-((Largeur_section-epaisseur_partiecentrale)*((Hauteur_section-2*epaisseur_rebords)**3)))/12
     return I
+
 
 def calcul_du_pas(distance_entre_2_noeuds,nombrepointsentre2noeuds):
     longueur_du_pas=distance_entre_2_noeuds/nombrepointsentre2noeuds
@@ -324,7 +328,7 @@ for i in range(N_element_allongee-1):
                 print("constante_de_raideur")
                 constante_de_raideur=float(input())
                 valeur_force_ressort=force_ressort(constante_de_raideur,longueur_ressort)
-                F_repartie[i*2+2]+=valeur_force_ressort
+                F_repartie[i*2]+=valeur_force_ressort
             d_assemblee.append([1])
             d_assemblee.append([1])
             print("force")
@@ -400,6 +404,16 @@ if j=="rotule": #dy=0 et phi =/=0
     F_assemblee[-1]+=f
 
 if j=="rien": #dy et phi =/=0
+    ressort=0
+    print("ressort ? (oui ou non)")
+    ressort = str(input())
+    if ressort=='oui':
+        print("longueur_ressort")
+        longueur_ressort=float(input())
+        print("constante_de_raideur")
+        constante_de_raideur=float(input())
+        force_ressort=force_ressort(constante_de_raideur,longueur_ressort)
+        F_repartie[i*2]+=force_ressort
     d_assemblee.append([1])
     d_assemblee.append([1])
     print("force")
@@ -465,17 +479,27 @@ print(d_assemblee)
 
 F_assemble=F_assemblee+F_repartie
 
+
 effort_tranchant=[]
 moment=[]
 for k in range(len(liste_abscisse_allongee)):
-    effort_tranchant[k]=F_assemble[2*k]
-    moment[k]=F_assemble[2*k+1]
+    effort_tranchant.append(F_assemble[2*k][0])
+    moment.append(F_assemble[2*k+1][0])
+
+
+#plt.plot(liste_abscisse_allongee, effort_tranchant)
+#plt.grid() 
+#plt.show()
+#plt.plot(liste_abscisse_allongee, moment)
+#plt.grid() 
+#plt.show()
+
+ax = Axes3D(plt.figure()) 
+ax.plot(moment, effort_tranchant, liste_abscisse_allongee) 
+plt.show()
 
 
 
 print("***matrice forces")
 F_assemble=pd.DataFrame(F_assemble,index=nommage_matrice_poutre_lignes(int(np.shape(F_assemble)[0]-(np.shape(F_assemble)[0]/2))),columns=['force'])
 print(F_assemble)
-
-print(effort_tranchant)
-print(moment)
