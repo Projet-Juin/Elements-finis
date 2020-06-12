@@ -1,5 +1,7 @@
 import numpy
+import math
 import pandas
+from numpy import linalg
 
 class Element(object):
     def __init__(self, List_noeud, Aire_section, Largeur_section, Hauteur_section, E, I, Coef_poisson, Longueur_poutre, Angle_section):
@@ -18,8 +20,8 @@ class Element(object):
         self.Angle_section = Angle_section
 
         self.k_barre = self.Aire_section * self.E / self.Longueur_poutre
-        self.C = numpy.cos(self.Angle_section)
-        self.S = numpy.sin(self.Angle_section)
+        self.C = math.cos(math.radians(self.Angle_section))
+        self.S = math.sin(math.radians(self.Angle_section))
 
         #Créer des matrices
         self.K_local_barre = self. __matrice_locale_barre(self.C, self.S, self.k_barre, self.List_noeud)
@@ -27,6 +29,10 @@ class Element(object):
 
     #Créer la matrice locale pour barre
     def __matrice_locale_barre(self, C, S, K, A):
+        print("C",C)
+        print("C2",C**2)
+        print(K)
+        print(C**2*K)
         kk = numpy.array([[0 for i in range(4)] for i in range(4)])
         kk[0][0] = C ** 2 * K
         kk[2][2] = C ** 2 * K
@@ -44,7 +50,7 @@ class Element(object):
         kk[1][2] = - C * S * K
         kk[2][1] = - C * S * K
         kk[3][0] = - C * S * K
-
+     
         #nommage des colonnes et des lignes
         A_colonnes = nommage_matrice_barre_colonnes(A)
         A_lignes = nommage_matrice_barre_lignes(A)
@@ -62,17 +68,14 @@ class Element(object):
         A_lignes = nommage_matrice_poutre_lignes(A)
         kk = pandas.DataFrame(kk, columns=A_colonnes, index=A_colonnes)
         return kk
-      
 class Noeud(object):
     def __init__(self, Fx, Fy, Mz):
         self.Fx = Fx
         self.Fy = Fy
         self.Mz = Mz
         
-def nommage_matrice_barre_colonnes(listnoeud):      
-  
- 
-  # Ici on créer une chaine composé des noms des colonnes des matrices barres
+def nommage_matrice_barre_colonnes(listnoeud):
+        # Ici on créer une chaine composé des noms des colonnes des matrices barres
         A = []
 
         for i in range(len(listnoeud)):
@@ -92,7 +95,6 @@ def nommage_matrice_barre_lignes(listnoeud):
         return A
 
 def nommage_matrice_poutre_colonnes(listnoeud):
-
         # Ici on créer une chaine composé des noms des colonnes des matrices poutres
         A = []
 
@@ -112,30 +114,6 @@ def nommage_matrice_poutre_lignes(listnoeud):
 
         return A
 
-
-# def Adaptation_matrice(K1,K2,commun):
-#     E = nommage_matrice_barre_colonnes(commun)
-#     print("e = ",E)
-#     for i in E:
-#         for j in E:
-#             K1[i][j] += K2[i][j]
-    
-#     return K1
-        
-        
-        
-# def fusion_matrice_barre(element,listelement): #Pour trouver les points commun entre plusieurs barres
-#     listelement = set(listelement) - set([element])
-#     for i in listelement:
-#         pointcommun = set(element.List_noeud) & set(i.List_noeud) #point commun aux 2 barres
-#         pointcommun = list(pointcommun)
-#         print("point commun=",pointcommun)
-#         print(element.K_local_barre)
-#         element.K_local_barre = Adaptation_matrice(element.K_local_barre,i.K_local_barre,pointcommun)
-        
-        
-        
-#     return element
 def creation_Kfinal(N_noeud,list_K):
     #On commence par déterminer les noeuds qui seront dans le tableau final.
     #Par exemple pour 2 élements il y'aura 3 noeuds
@@ -144,7 +122,7 @@ def creation_Kfinal(N_noeud,list_K):
     K_final = pandas.DataFrame(0,columns = E,index = E) 
     #On créer le K final. Cette table est initialement composé de 0 uniquement.
     #Avec les elements de la liste E en titre de colonne et en titre de ligne
-    print(K_final)
+   
     for i in E:
         for j in E:
             for k in list_K:
@@ -155,13 +133,22 @@ def creation_Kfinal(N_noeud,list_K):
     
     return K_final
 
+def create_F_assemble(listForce,N_noeud):
     
+    E = nommage_matrice_barre_lignes([i for i in range(1,N_noeud+1)])
+    Tab = pandas.DataFrame(listForce,index = E,columns = ['F'])
+ 
+    return Tab   
+# def create_d_assemble(d,N_Noeud):
+#     E = nommage_matrice_barre_lignes([i for i in range(1,N_noeud+1)])
+    
+    
+#     return d_assemble
 
 if __name__ == '__main__':
     ElementSet = []
     NoeudSet = []
-
-
+    List_noeud_save = []
     print("Combien d'elements? :")
     N_element = int(input())
 
@@ -179,6 +166,8 @@ if __name__ == '__main__':
         print("Numero du 2eme noeud :")
         Noeud_label_j = int(input())
         List_noeud = []
+        List_noeud_save.append(Noeud_label_i)
+        List_noeud_save.append(Noeud_label_j)
         List_noeud.append(Noeud_label_i)
         List_noeud.append(Noeud_label_j)
         print("Module de Young :")
@@ -202,8 +191,9 @@ if __name__ == '__main__':
         print("K_local_barre={}".format(K_local_barre))
         print("K_local_poutre={}".format(K_local_poutre))
 
-    print("Combien de noeuds :")
-    N_noeud = int(input())
+    
+    N_noeud = len(list(set(List_noeud_save)))
+    
     for i in range(N_noeud):
         print("Fx pour noeud", i+1, " : ")
         Fx = float(input())
@@ -214,9 +204,48 @@ if __name__ == '__main__':
         N = Noeud(Fx, Fy, Mz)
         NoeudSet.append(N)
         
-        
-    # TEST POUR MODELE BARRE
     
+        
+    # ******************************** POUR ELEMENT BARRE **************************
+    CL_d = [] # Contiendra les colonnes et les lignes à enlever
+    CL_f = [] 
+    for i in range(N_noeud):
+        print("**************** Noeud ",i+1,"***************\n")
+        print("liberté selon X")
+        a = int(input())
+        if a == 0 :
+            CL_d.append("d"+str(i+1)+"x")
+            CL_f.append("F"+str(i+1)+"x")
+        print("liberté selon Y")
+        a = int(input())
+        if a == 0 :
+            CL_d.append("d"+str(i+1)+"y")
+            CL_f.append("F"+str(i+1)+"y")
     K_final = creation_Kfinal(N_noeud, ElementSet)
-    print(K_final)
+    K_assemble = K_final
+   
+    list_F = []
+    for i in NoeudSet :
+        list_F.append(i.Fx)
+        list_F.append(i.Fy)
+    F_final = create_F_assemble(list_F,N_noeud)
+    F_assemble = F_final
+    for i in CL_d:
+        K_final = K_final.drop(index = i,columns = i)
+        
+    for i in CL_f:
+        F_final = F_final.drop(index=i)
+  
+    Coloon = list(K_final.columns)
+    deplacement = linalg.solve(K_final.to_numpy(),F_final.to_numpy())
+    
+    print(deplacement)
+    print(Coloon)
 
+
+
+
+
+    
+    
+    
