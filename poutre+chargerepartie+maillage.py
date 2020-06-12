@@ -127,18 +127,23 @@ def force_charge_uniformement_repartie (force,longueur_section):
 
 
 
-def moment_quadratique_et_aire_section_rectangle(Largeur_section,Hauteur_section):
-    I=Largeur_section*(Hauteur_section**3)/12
-    return IGz
+def moment_quadratique_section_rectangle(Largeur_section,Hauteur_section):
+    I=Hauteur_section*(Largeur_section**3)/12    #################formules a verifier
+    return I
 
-def moment_quadratique_et_aire_section_cylindrique(diametre_section):
+def moment_quadratique_section_cylindrique(diametre_section):
     I=pi*(diametre_section**4)/64
+    return I
+
+def moment_quadratique_section_I(Largeur_section,Hauteur_section,epaisseur_partiecentrale,epaisseur_rebords):
+    I=((Hauteur_section*(Largeur_section**3))-((Hauteur_section-2*epaisseur_rebords)*((Largeur_section-epaisseur_partiecentrale)**3)))/12
     return I
 
 
 def calcul_du_pas(distance_entre_2_noeuds,nombrepointsentre2noeuds):
     longueur_du_pas=distance_entre_2_noeuds/nombrepointsentre2noeuds
     return longueur_du_pas
+
 
 
 print("Combien d'elements? :")                              #nombre de noeuds sur la poutre
@@ -171,8 +176,35 @@ liste_abscisse_allongee.append(listeabscisse[-1])
     
 print("Valeur de E :")
 E= float(input())
-print("Valeur de I :")
-I= float(input())
+
+print("type de section étudiée ? (rectangle ou cylindre ou I )")
+section = str(input())
+if section =="cylindre" :
+    print("Valeur du diamètre de la section :")
+    diametresection = float(input()) 
+    I=moment_quadratique_section_cylindrique(diametresection)
+
+if section =="rectangle":
+    print("Valeur de la largeur de la section :")
+    Largeur_section = float(input()) 
+    print("Valeur de la hauteur de la section :")
+    Hauteur_section = float(input())     
+    I=moment_quadratique_section_rectangle(Largeur_section,Hauteur_section)
+
+if section=="I":
+    print ("Valeur de la largeur de la section :")
+    Largeur_section = float(input()) 
+    print("Valeur de la hauteur de la section :")
+    Hauteur_section = float(input())  
+    print("Valeur de l'epaisseur de la partie centrale :")
+    epaisseur_partiecentrale = float(input()) 
+    print("Valeur de l'epaisseur des rebords :")
+    epaisseur_rebords = float(input())  
+    I=moment_quadratique_section_I(Largeur_section,Hauteur_section,epaisseur_partiecentrale,epaisseur_rebords)
+
+    
+#print("Valeur de I :")
+#I= float(input())
 
 EI=E*I
 
