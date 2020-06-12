@@ -62,14 +62,17 @@ class Element(object):
         A_lignes = nommage_matrice_poutre_lignes(A)
         kk = pandas.DataFrame(kk, columns=A_colonnes, index=A_colonnes)
         return kk
+      
 class Noeud(object):
     def __init__(self, Fx, Fy, Mz):
         self.Fx = Fx
         self.Fy = Fy
         self.Mz = Mz
         
-def nommage_matrice_barre_colonnes(listnoeud):
-        # Ici on créer une chaine composé des noms des colonnes des matrices barres
+def nommage_matrice_barre_colonnes(listnoeud):      
+  
+ 
+  # Ici on créer une chaine composé des noms des colonnes des matrices barres
         A = []
 
         for i in range(len(listnoeud)):
@@ -89,6 +92,7 @@ def nommage_matrice_barre_lignes(listnoeud):
         return A
 
 def nommage_matrice_poutre_colonnes(listnoeud):
+
         # Ici on créer une chaine composé des noms des colonnes des matrices poutres
         A = []
 
@@ -107,7 +111,6 @@ def nommage_matrice_poutre_lignes(listnoeud):
             A.append("M" + str(listnoeud[i]))
 
         return A
-
 
 
 # def Adaptation_matrice(K1,K2,commun):
@@ -157,6 +160,7 @@ def creation_Kfinal(N_noeud,list_K):
 if __name__ == '__main__':
     ElementSet = []
     NoeudSet = []
+
 
     print("Combien d'elements? :")
     N_element = int(input())
@@ -215,3 +219,4 @@ if __name__ == '__main__':
     
     K_final = creation_Kfinal(N_noeud, ElementSet)
     print(K_final)
+
