@@ -102,10 +102,7 @@ def Bouton_calculer():
     
         #Créer la matrice locale pour barre
         def __matrice_locale_barre(self, C, S, K, A):
-            print("C", C)
-            print("S", S)
-            print(K)
-            print(C ** 2 * K)
+
             kk = numpy.array([[0 for i in range(4)] for i in range(4)])
             
             kk[0][0] = C ** 2 * K
@@ -140,8 +137,6 @@ def Bouton_calculer():
             B = B.astype(float)
             c = self.C
             s = self.S
-            print("c=",c)
-            print("s=",s)
             B[0][0] = c
             B[0][1] = s
             B[1][2] = c
@@ -149,20 +144,17 @@ def Bouton_calculer():
             
             d = self.deplacement_local.to_numpy()
             self.force_axe = self.k_barre * numpy.mat(A) * numpy.mat(B) * numpy.mat(d)
-            print(self.force_axe)
+            
         
                 
         def create_d_local(self,deplacement,N_noeud):
     
             E = nommage_matrice_barre_colonnes([i for i in range(1,N_noeud+1)])
-            print(E)
             c = list(set(E) - set(nommage_matrice_barre_colonnes(self.List_noeud)))
-            print(c)
             for i in c:
                 
                 deplacement = deplacement.drop(index = i)
                 
-            print(deplacement)
             self.deplacement_local = deplacement
             
             
@@ -190,7 +182,6 @@ def Bouton_calculer():
             for i in E:
                 if i in self.resistance.columns:
                     Tab[i][i] = self.resistance[i][i]
-            print(Tab)
             return Tab
             
     
@@ -248,8 +239,6 @@ def Bouton_calculer():
         #On créer le K final. Cette table est initialement composé de 0 uniquement.
     
         #Avec les elements de la liste E en titre de colonne et en titre de ligne
-    
-        print(K_final)
     
         for i in E:
     
@@ -373,6 +362,7 @@ def Bouton_calculer():
     for i in range(len(liste_poutres)):
          ElementSet[i].create_d_local(deplacement, N_noeud)
          ElementSet[i].create_force_axial()
+         print("Matrice force : " ,ElementSet[i].force_axe )
         
 def Bouton_contraintes():
     global Aire_section,I,liste_points,E,liste_forces,liste_deplacements
