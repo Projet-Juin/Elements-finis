@@ -156,9 +156,6 @@ def Bouton_calculer():
                 deplacement = deplacement.drop(index = i)
                 
             self.deplacement_local = deplacement
-            
-            
-
 
     class Noeud(object):
         
@@ -212,8 +209,6 @@ def Bouton_calculer():
                 A.append("phi" +str(i+1))
             return A
     
-    
-    
     def nommage_matrice_poutre_lignes(n_noeud):
     
             # Ici on créer une chaine composé des noms des lignes des matrices poutres
@@ -222,7 +217,6 @@ def Bouton_calculer():
                 A.append("F" + str(i+1) + "y")
                 A.append("M" + str(i+1))
             return A
-    
     
     def creation_K_assemble(N_noeud,list_K,list_ressort):
     
@@ -258,8 +252,6 @@ def Bouton_calculer():
     
         return K_final
     
-    
-    
     def create_F_assemble(listForce,N_noeud):
     
         E = nommage_matrice_barre_lignes([i for i in range(1,N_noeud+1)])
@@ -285,6 +277,7 @@ def Bouton_calculer():
             Tab = pandas.DataFrame(B,index = E,columns = ["d"])
             
             return Tab
+        
         
     CL_d=[]
     CL_f=[]
