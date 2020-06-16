@@ -104,10 +104,27 @@ ax.add_collection3d(Poly3DCollection(verts,
 facecolors="cyan", linewidths=1, edgecolors="r", alpha=.25))
 #                                    liaisons,couleur fond, epaisseur ligne,couleur pourtour,opacite
 
-#afficher les forces
+#afficher les forces ponctuelles
 ax.annotate3D('force',(0,8,3),xytext=(0,30),textcoords='offset points',arrowprops = dict(ec='blue', fc='red',shrink=2.5))
 #             nom,position point,direction fleche,,couleur fleche
 
+#####################pour charges réparties
+ax.plot([0,0],marker=r'$\downarrow$',color = 'red',ms=10,ys=[0,9],zs=[4])
+"""
+[donne les x des fleches]
+ys : donne les positions des fleches selon y
+zs : donne la position de z
+color : couleur des fleches
+
+"""
+#################### pour les moments
+ax.plot([0,0],marker=r'$\circlearrowleft$',color = 'green',ms=10,ys=[0,9],zs=[4])
+"""
+[donne les x des fleches]
+ys : donne les positions des fleches selon y
+zs : donne la position de z
+color : couleur des fleches
+"""
 
 ax.set_xlabel("X")
 ax.set_ylabel("Y")
