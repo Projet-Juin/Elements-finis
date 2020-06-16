@@ -194,7 +194,7 @@ for i in range(N_element):
     listeabscisse.append(j)
     
 
-nombrepointsentre2noeuds=50 ###########modifier pour le demander a l'utilisateur
+nombrepointsentre2noeuds=3 ###########modifier pour le demander a l'utilisateur
 liste_abscisse_allongee=etendre_la_matrice_abscisse(listeabscisse,nombrepointsentre2noeuds)    
     
 print("Valeur de E :")
@@ -269,6 +269,7 @@ for i in range(N_element_allongee-1):
             d_assemblee.append([0])
             print("début de charge répartie ? (oui ou non)")
             chargepossible = str(input())
+            charge=0
             if chargepossible=='oui':
                 print("charge :")
                 charge = float(input())
@@ -308,7 +309,8 @@ for i in range(N_element_allongee-1):
             d_assemblee.append([1])
             print("moment :")#IL FAUDRA VOIR POUR LES UNITES
             f = float(input())
-            F_assemblee[i*2+1]+=f        
+            F_assemblee[i*2+1]+=f      
+            charge=0
             print("début de charge répartie ? (oui ou non")
             chargepossible = str(input())
     
@@ -353,6 +355,7 @@ for i in range(N_element_allongee-1):
             print("moment")
             f = float(input())
             F_assemblee[i*2]+=f#+F_repartie[i]
+            charge=0
             print("début de charge répartie ? (oui ou non")
             chargepossible = str(input())
     
