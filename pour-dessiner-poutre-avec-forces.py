@@ -129,5 +129,5 @@ color : couleur des fleches
 ax.set_xlabel("X")
 ax.set_ylabel("Y")
 ax.set_zlabel("Z")
-
+ax.grid(False)
 plt.show()
