@@ -45,5 +45,5 @@ for k in range(len(liste_abscisses)):
 
 
 
-plt.legend()
+pyplot.legend()
 pyplot.show()
