@@ -12,9 +12,9 @@ import matplotlib.pyplot as pyplot
 
 
 #entrees :
-liste_abscisses=[1,5,9,11]
-liste_type_appui=["encastrement","rien","rotule","encastrement"]
-liste_forces=[10,0,0,50,0,0,0,0]
+liste_abscisses=[1,5,9]
+liste_type_appui=["encastrement","rien","rotule"]
+liste_forces=[10,0,0,50,0,0]
 
 #code :
 liste_ordonnee=[]
@@ -39,11 +39,11 @@ for k in range(len(liste_abscisses)):
         pyplot.scatter(liste_abscisses[k], liste_ordonnee[k]-0.0002, s = 1000, c = 'g', marker = 'o', edgecolors = 'b',label="appui simple")
 
     if not liste_forces[2*k]==0:
-        pyplot.annotate('force', xy=(liste_abscisses[k], liste_ordonnee[k]),xycoords='data',xytext=(0.12, 1), textcoords='axes fraction',arrowprops=dict(facecolor='black', shrink=0.5),horizontalalignment='right', verticalalignment='top',)
+        pyplot.annotate('        ', xy=(liste_abscisses[k], liste_ordonnee[k]),xycoords='data',xytext=(0.12, 1), textcoords='axes fraction',arrowprops=dict(facecolor='black', shrink=0.5),horizontalalignment='right', verticalalignment='top',)
     if not liste_forces[2*k+1]==0:
-       pyplot.annotate('moment',xy=(liste_abscisses[k]+0.5, liste_ordonnee[k]-0.0003), xycoords='data', xytext=(-70,30), textcoords='offset points',arrowprops=dict(arrowstyle="->",connectionstyle="angle,angleA=10,angleB=90,rad=20"),fontsize=10)
+       pyplot.annotate('        ',xy=(liste_abscisses[k]+0.5, liste_ordonnee[k]-0.0003), xycoords='data', xytext=(-70,30), textcoords='offset points',arrowprops=dict(arrowstyle="->",connectionstyle="angle,angleA=10,angleB=90,rad=20"),fontsize=10)
 
 
-
+pyplot.ylim(-0.25, 1.5)
 pyplot.legend()
 pyplot.show()
