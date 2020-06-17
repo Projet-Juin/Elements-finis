@@ -145,12 +145,16 @@ def etendre_la_matrice_abscisse(listeabscisse,nombrepointsentre2noeuds):
     return liste_abscisse_allongee
 
 
-def supprimer_valeurs_inutiles_dans_matrice_forces(liste_abscisse_allongee,listeabscisse,F_assemblee):
-    for k in range (len(liste_abscisse_allongee)): #permet de supprimer tous les zeros de la liste utilisée pour le systeme
-        if liste_abscisse_allongee[k] in listeabscisse :
-            p=liste_abscisse_allongee.index(liste_abscisse_allongee[k])   #recuperer lindice dans liste_abscisse_allongee de la valeur a supprimer
-            del F_assemblee[p]
+def supprimer_valeurs_inutiles_dans_matrice_forces(liste_abscisse_allongee,listeabscisse,F_assemblee,d_assemblee):
+    M=[]
+
+    for k in range (0,len(d_assemblee),1):
+        if d_assemblee[k][0]!=0:
+            print(d_assemblee[k])
+            M.append(F_assemblee[k])
+    F_assemblee=M
     return F_assemblee
+    
 
 def supprimer_inutil_dans_matricerigidite(d_assemblee,matricerigidite):
     L=[]
@@ -274,6 +278,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
             if j=="encastrement": #dy=phi=0
                 d_assemblee.append([0])
                 d_assemblee.append([0])
+                charge=0
                 if not listedebutchargerepartie[i]==0:
                     charge = listedebutchargerepartie[i]
                     F_repartie[i*2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
@@ -299,6 +304,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     
                      
             if j=="rotule": #dy=0 et phi =/=0
+                charge=0
                 d_assemblee.append([0])
                 d_assemblee.append([1])
                 f=liste_force[i][1]
@@ -328,7 +334,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
                                        
             if j=="rien":   
                 
-                
+                charge=0
                 if not listeressort[i][0]==0:
                     longueur_ressort=listeressort[i][1]
                     listeressort[i][0]
@@ -425,7 +431,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     K_assemblee=matricerigidite #ne bougera plus
     
     
-    F_assemblee=supprimer_valeurs_inutiles_dans_matrice_forces(liste_abscisse_allongee,listeabscisse,F_assemblee)
+    F_assemblee=supprimer_valeurs_inutiles_dans_matrice_forces(liste_abscisse_allongee,listeabscisse,F_assemblee,d_assemblee)
     
     F_assemblee=np.asarray(F_assemblee).reshape(len(F_assemblee),1) #convertir la ligne en matrice colonne array
     F_repartie=np.asarray(F_repartie).reshape(len(F_repartie),1)               
