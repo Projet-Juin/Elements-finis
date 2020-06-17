@@ -40,10 +40,10 @@ for k in range(len(liste_abscisses)):
 
     if not liste_forces[2*k]==0:
         pyplot.annotate('force', xy=(liste_abscisses[k], liste_ordonnee[k]),xycoords='data',xytext=(0.12, 1), textcoords='axes fraction',arrowprops=dict(facecolor='black', shrink=0.5),horizontalalignment='right', verticalalignment='top',)
- #   if not liste_forces[2*k+1]==0:
-  #      pyplot.annotate('moment', xy = (1, 1),xytext = (1, 1),arrowprops = {'facecolor': 'red', 'shrink': 0.1})
+    if not liste_forces[2*k+1]==0:
+       pyplot.annotate('moment',xy=(liste_abscisses[k]+0.5, liste_ordonnee[k]-0.0003), xycoords='data', xytext=(-70,30), textcoords='offset points',arrowprops=dict(arrowstyle="->",connectionstyle="angle,angleA=10,angleB=90,rad=20"),fontsize=10)
 
-        
+
 
 plt.legend()
 pyplot.show()
