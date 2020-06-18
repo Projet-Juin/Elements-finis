@@ -17,6 +17,9 @@ import scipy
 from scipy import *
 from mpl_toolkits.mplot3d import Axes3D
 
+from matplotlib import patches
+
+import matplotlib.pyplot as pyplot
 
 
 ############# pour les poutres
@@ -270,6 +273,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     F_assemblee=[0 for i in range(2*N_element_allongee)] #va servir pour le systeme matrice colonne de 0 de taille 2*N_element : a remodifier pour que ca fonctionne
     d_assemblee=[] #pour la matrice de deplacements : en considerant qu'il a rentré les noeuds par ordre croissant abscisses
     
+    F_pour_dessin=[]
     
     for i in range(N_element_allongee-1):
         if liste_abscisse_allongee[i] in listeabscisse :
@@ -279,6 +283,8 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
                 d_assemblee.append([0])
                 d_assemblee.append([0])
                 charge=0
+                F_pour_dessin.append(0)
+                F_pour_dessin.append(0)
                 if not listedebutchargerepartie[i]==0:
                     charge = listedebutchargerepartie[i]
                     F_repartie[i*2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
@@ -308,7 +314,8 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
                 d_assemblee.append([0])
                 d_assemblee.append([1])
                 f=liste_force[i][1]
-    
+                F_pour_dessin.append(0)
+                F_pour_dessin.append(f)
                 F_assemblee[i*2+1]+=f        
                 if not listedebutchargerepartie[i]==0:
                     charge = listedebutchargerepartie[i]
@@ -344,8 +351,10 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
                 d_assemblee.append([1])
                 f=liste_force[i][0]
                 F_assemblee[i*2]+=f #+F_repartie[i]
+                F_pour_dessin.append(f)
                 f=liste_force[i][1]
                 F_assemblee[i*2]+=f#+F_repartie[i]
+                F_pour_dessin.append(f)
     
                 if not listedebutchargerepartie[i]==0:
                     charge = listedebutchargerepartie[i]
@@ -398,13 +407,15 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     if j=="encastrement": #dy=phi=0
         d_assemblee.append([0])
         d_assemblee.append([0])
-        
+        F_pour_dessin.append(0)
+        F_pour_dessin.append(0)
     if j=="rotule": #dy=0 et phi =/=0
         d_assemblee.append([0])
         d_assemblee.append([1])
         f=liste_force[-1][1]
         F_assemblee[-1]+=f
-    
+        F_pour_dessin.append(0)
+        F_pour_dessin.append(f)
     if j=="rien": #dy et phi =/=0
         ressort=0
         print("ressort ? (oui ou non)")
@@ -419,11 +430,45 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
         d_assemblee.append([1])
         d_assemblee.append([1])
         f=liste_force[-1][0]
+        F_pour_dessin.append(f)
         F_assemblee[-2]+=f 
         f=liste_force[-1][1]
-        F_assemblee[-1]+=f                
+        F_assemblee[-1]+=f     
+        F_pour_dessin.append(f)           
 
-
+    
+    liste_ordonnee=[]
+    for k in range(len(listeabscisse)):
+        liste_ordonnee.append(0)
+    
+    figure = pyplot.figure(figsize = (10, 10))
+    axes = figure.add_subplot(111)
+    
+    
+    
+    pyplot.plot(listeabscisse, liste_ordonnee, color='r', linestyle=':', marker='o')
+    
+    for k in range(len(listeabscisse)):
+        if type_appui[k]=='encastrement':
+            pyplot.scatter(listeabscisse[k], liste_ordonnee[k]-0.0002, s = 1000, c = 'g', marker = 's', edgecolors = 'b',label="encastrement")
+    
+        if type_appui[k]=="rotule":
+            pyplot.scatter(listeabscisse[k], liste_ordonnee[k]-0.0002, s = 1000, c = 'g', marker = '^', edgecolors = 'b',label="rotule")
+    
+        if type_appui[k]=="rien":
+            pyplot.scatter(listeabscisse[k], liste_ordonnee[k]-0.0002, s = 1000, c = 'g', marker = 'o', edgecolors = 'b',label="appui simple")
+    
+        if not F_pour_dessin[2*k]==0:
+            pyplot.annotate('        ', xy=(listeabscisse[k], liste_ordonnee[k]),xycoords='data',xytext=(0.12, 1), textcoords='axes fraction',arrowprops=dict(facecolor='black', shrink=0.5),horizontalalignment='right', verticalalignment='top',)
+        if not F_pour_dessin[2*k+1]==0:
+           pyplot.annotate('        ',xy=(listeabscisse[k]+0.5, liste_ordonnee[k]-0.0003), xycoords='data', xytext=(-70,30), textcoords='offset points',arrowprops=dict(arrowstyle="->",connectionstyle="angle,angleA=10,angleB=90,rad=20"),fontsize=10)
+    pyplot.ylim(-0.25, 1.5)
+    pyplot.legend()
+    pyplot.show()
+    
+    
+    
+    
     EI=E*I
     
     matricerigidite=calcul_matrice_totale(liste_abscisse_allongee,EI) # pour la suite car sera modifiee
