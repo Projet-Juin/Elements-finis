@@ -6,6 +6,9 @@ from numpy import linalg
 import numpy as np
 import scipy
 from scipy import *
+import matplotlib.pyplot as pyplot
+import matplotlib.pyplot as plt
+from matplotlib import patches
 
 class Element(object):
     def __init__(self, List_noeud = [], Aire_section = 0, Largeur_section = 0, Hauteur_section = 0, E = 0, I = 0, Coef_poisson = 0):
@@ -413,6 +416,7 @@ def Calculer_Barre(liste_points,liste_poutres):
         Ele = Element(List_noeud = List_noeud, Aire_section = Aire_section, E = E)
         ElementSet.append(Ele)
         ElementSet[i].__calcule__()
+        
     K_final = creation_K_assemble(N_noeud, ElementSet,RessortSet)
     K_assemble = K_final
 
@@ -441,7 +445,7 @@ def Calculer_Barre(liste_points,liste_poutres):
 
     print(deplacement)
     
-    for i in range(N_element):
+    for i in range(len(liste_poutres)):
          ElementSet[i].create_d_local(deplacement, N_noeud)
          ElementSet[i].create_force_axial()
     liste_abscisses = []

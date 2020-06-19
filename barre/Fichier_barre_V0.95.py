@@ -379,6 +379,7 @@ CL_f=[]
 RessortSet=[]
 ElementSet=[]
 NoeudSet=[]
+list_F = []
 
 def Calculer_Barre(liste_points,liste_poutres):
     N_noeud = len(liste_points)
@@ -417,8 +418,6 @@ def Calculer_Barre(liste_points,liste_poutres):
     K_assemble = K_final
 
     print(K_final)
-
-    list_F = []
 
     for i in NoeudSet :
 
