@@ -29,21 +29,15 @@ import matplotlib.pyplot as pyplot
 def matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(Longueur_poutre,EI):   #L est la longueur entre 2 noeuds
 
     k=np.array([[12,6*Longueur_poutre,-12,6*Longueur_poutre],[0,4*Longueur_poutre**2,-6*Longueur_poutre,2*Longueur_poutre**2],[0,0,12,-6*Longueur_poutre],[0,0,0,4*Longueur_poutre**2]]) #matrice  sans EI/Longueur_poutre
-
     m=EI/(Longueur_poutre**3)              #constante devant la matrice
-
     k=[i*m for i in k]                #matrice rigidité finie
-
     return k
 
 #fonction ajoutant 1 ligne et 1 colonne à un tableau
 
 def ettendre_1ligne_et_1colonne(tableau):
-
-    tableau.append(tableau,[zeros(shape(tableau)[0])],axis=0)
-
-    tableau.append(tableau,zeros((shape(tableau)[0],1)),axis=1)
-
+    tableau=append(tableau,[zeros(shape(tableau)[0])],axis=0)
+    tableau=append(tableau,zeros((shape(tableau)[0],1)),axis=1)
     return tableau
 
 
@@ -54,8 +48,6 @@ def nommage_matrice_poutre_colonnes(n_noeud):
             A.append("d" + str(i+1) + "y")
             A.append("phi" +str(i+1))
         return A
-
-
 
 def nommage_matrice_poutre_lignes(n_noeud):
 
@@ -137,12 +129,12 @@ def force_ressort(constante_de_raideur,longueur_ressort):
     valeur_force_ressort=-constante_de_raideur*longueur_ressort
     return valeur_force_ressort
 
-def etendre_la_matrice_abscisse(listeabscisse,nombrepointsentre2noeuds):    
+def etendre_la_matrice_abscisse(listeabscisse,nombrepointsentre2noeuds):
     liste_abscisse_allongee=[]
     for k in range(len(listeabscisse)-1):
-        pas=calcul_du_pas(listeabscisse[k+1]-listeabscisse[k],nombrepointsentre2noeuds)
+        pas=calcul_du_pas(listeabscisse[k+1]-listeabscisse[k],nombrepointsentre2noeuds+1)
         liste_abscisse_allongee.append(listeabscisse[k])
-        for i in range (1,nombrepointsentre2noeuds):
+        for i in range (1,nombrepointsentre2noeuds+1):
             liste_abscisse_allongee.append(pas*i+listeabscisse[k])
     liste_abscisse_allongee.append(listeabscisse[-1])
     return liste_abscisse_allongee
@@ -157,7 +149,7 @@ def supprimer_valeurs_inutiles_dans_matrice_forces(liste_abscisse_allongee,liste
             M.append(F_assemblee[k])
     F_assemblee=M
     return F_assemblee
-    
+
 
 def supprimer_inutil_dans_matricerigidite(d_assemblee,matricerigidite):
     L=[]
@@ -167,378 +159,404 @@ def supprimer_inutil_dans_matricerigidite(d_assemblee,matricerigidite):
     L=list(reversed(L)) #inverse la liste des colonnes a supprimer
     for l in range (len(L)):
         matricerigidite=np.delete(matricerigidite, L[l], 1)
-        matricerigidite=np.delete(matricerigidite, L[l], 0)   
+        matricerigidite=np.delete(matricerigidite, L[l], 0)
     return matricerigidite
     #print(matricerigidite)
-    
+
 def mettre_tous_les_deplacements_en_1matrice(d_assemblee,deplacementinconnu):
     i=0
     for p in range(len(d_assemblee)) :
-    
+
         if d_assemblee[p]==[1]:
-            d_assemblee[p]=[deplacementinconnu[i]]     
+            d_assemblee[p]=[deplacementinconnu[i]]
             i=i+1
-    return d_assemblee   
-    
+    return d_assemblee
+
+
+def fonction_listedebutchargerepartie_allongee(listedebutchargerepartie,nombrepointsentre2noeuds):
+    listedebutchargerepartie_allongee=[]
+    for k in range (len(listedebutchargerepartie)):
+        listedebutchargerepartie_allongee.append(listedebutchargerepartie[k])
+        for i in range (nombrepointsentre2noeuds):
+            listedebutchargerepartie_allongee.append(0)
+    #listedebutchargerepartie_allongee.append(0)
+    return listedebutchargerepartie_allongee
+
+
+def fonction_listeressort_allongee(listeressort,nombrepointsentre2noeuds):
+    listeressort_allongee=[]
+    for k in range (len(listeressort)-1):
+        listeressort_allongee.append([listeressort[k]])
+        for i in range (nombrepointsentre2noeuds):
+            listeressort_allongee.append([0,0])
+    listeressort_allongee.append([listeressort[k]])
+    return listeressort_allongee
+
+def fonction_liste_force_allongee(liste_force,nombrepointsentre2noeuds):
+    liste_force_allongee=[]
+    for k in range (len(liste_force)-1):
+        liste_force_allongee.append(liste_force[k])
+        for i in range (nombrepointsentre2noeuds):
+            liste_force_allongee.append([0,0])
+    liste_force_allongee.append(liste_force[-1])
+    return liste_force_allongee
+
+
+
+N_element=3
+
+listeabscisse=[1,4,7]
+
+nombrepointsentre2noeuds=1
+
+I=0.0004
+
+E=210000000
+
+type_appui=['encastrement','rien','encastrement']
+
+listedebutchargerepartie=[0,0]
+
+listeressort=[0,0,0]
+
+liste_force=[[0,0],[10,0],[0,0]]
+
+#def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force):
+"""
+N_element:nombre de noeuds
+listeabscisse :liste des abscisses des noeuds
+section : type de la section etudiée : cylindre,rectangle ou I
+E : Valeur de E
+type_appui : liste des appuis, exemple : ["encastrement","rien","rotule","encastrement"] : noeud1, noeud2, noeud3, noeud4
+liste_force : exemple : [[0,0],[125,625],[0,236],[0,0]] : force noeud1, moment noeud1, force noeud2, moment noeud2, ...
+listedebutchargerepartie : [0,256,0,0] : noeud1, noeud2, noeud3, noeud4 : s'arete au N_element-1
+listeressort : dans sous-ligne:constanteraideur,longueurressort] exemple: [[0,0],[566,2],[0,0],[0,0] : mettre des zeros si pas de ressort
 
 """
-#print("Combien d'elements? :")                              #nombre de noeuds sur la poutre
 
-#N_element = int(input())
 
-listeabscisse=[]
+liste_abscisse_allongee=etendre_la_matrice_abscisse(listeabscisse,nombrepointsentre2noeuds)
 
-for i in range(N_element):
 
-    print("***********Element n°",i+1,"**********")
+N_element_allongee=len(liste_abscisse_allongee)
+listedebutchargerepartie_allongee=[]
+listedebutchargerepartie_allongee=fonction_listedebutchargerepartie_allongee(listedebutchargerepartie,nombrepointsentre2noeuds)
+listeressort_allongee=[]
+listeressort_allongee=fonction_listeressort_allongee(listeressort,nombrepointsentre2noeuds)
 
-    print("Valeur du noeud :")
-
-    j = float(input())                                      #Récupération des différentes valeurs des abscisses des noeuds
-
-    listeabscisse.append(j)
-   
-
-nombrepointsentre2noeuds=50 ###########modifier pour le demander a l'utilisateur
-""" 
-
-def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noeuds,section,E,type_appui,listedebutchargerepartie,listeressort,liste_force):
-    """
-    N_element:nombre de noeuds
-    listeabscisse :liste des abscisses des noeuds
-    section : type de la section etudiée : cylindre,rectangle ou I    
-    E : Valeur de E
-    type_appui : liste des appuis, exemple : [encastrement,rien,rotule,encastrement] : noeud1, noeud2, noeud3, noeud4
-    liste_force : exemple : [[0,0],[125,625],[0,236],[0,0]] : force noeud1, moment noeud1, force noeud2, moment noeud2, ...  
-    listedebutchargerepartie : [0,256,0,0] : noeud1, noeud2, noeud3, noeud4
-    listeressort : dans sous-ligne:constanteraideur,longueurressort] exemple: [[0,0],[566,2],[0,0],[0,0] : a voir car nexiste que si appui = rien"""
-    liste_abscisse_allongee=etendre_la_matrice_abscisse(listeabscisse,nombrepointsentre2noeuds)  
-    
-      
-    """ 
-    print("Valeur de E :")
-    E= float(input())
-    """
-    
-    
-    print("type de section étudiée ? (rectangle ou cylindre ou I )")
-    section = str(input())
-    if section =="cylindre" :
-        print("Valeur du diamètre de la section :")
-        diametresection = float(input()) 
-        I=moment_quadratique_section_cylindrique(diametresection)
-    
-    if section =="rectangle":
-        print("Valeur de la largeur de la section :")
-        Largeur_section = float(input()) 
-        print("Valeur de la hauteur de la section :")
-        Hauteur_section = float(input())     
-        I=moment_quadratique_section_rectangle(Largeur_section,Hauteur_section)
-    
-    if section=="I":
-        print ("Valeur de la largeur de la section :")
-        Largeur_section = float(input()) 
-        print("Valeur de la hauteur de la section :")
-        Hauteur_section = float(input())  
-        print("Valeur de l'epaisseur de la partie centrale :")
-        epaisseur_partiecentrale = float(input()) 
-        print("Valeur de l'epaisseur des rebords :")
-        epaisseur_rebords = float(input())  
-        I=moment_quadratique_section_I(Largeur_section,Hauteur_section,epaisseur_partiecentrale,epaisseur_rebords)
-    
-    
-    
-        
-    #print("Valeur de I :")
-    #I= float(input())
-    
-    
-    """
-    type_appui=[]
-    
-    for i in range(N_element):
-    
-        print("***********Element n°",i+1,"**********")    
-        print("type d'appui (encastrement, rotule ou rien :)")
-        j = str(input()) # str : pour la chaine de caracteres
-        type_appui.append(j)
-    """
-    N_element_allongee=len(liste_abscisse_allongee)
+liste_force_allongee=[]
+liste_force_allongee=fonction_liste_force_allongee(liste_force,nombrepointsentre2noeuds)
 
 
 
+F_assemblee=[0 for i in range(2*N_element_allongee)] #va servir pour le systeme matrice colonne de 0 de taille 2*N_element : a remodifier pour que ca fonctionne
+d_assemblee=[] #pour la matrice de deplacements : en considerant qu'il a rentré les noeuds par ordre croissant abscisses
 
+F_pour_dessin=[]
 
-    F_repartie=[0 for i in range(2*N_element_allongee)] #va servir pour forces réparties : matrice colonne de 0 de taille 2*N_element : a remodifier pour que ca fonctionne
-    F_assemblee=[0 for i in range(2*N_element_allongee)] #va servir pour le systeme matrice colonne de 0 de taille 2*N_element : a remodifier pour que ca fonctionne
-    d_assemblee=[] #pour la matrice de deplacements : en considerant qu'il a rentré les noeuds par ordre croissant abscisses
-    
-    F_pour_dessin=[]
-    
-    for i in range(N_element_allongee-1):
-        if liste_abscisse_allongee[i] in listeabscisse :
-            p=listeabscisse.index(liste_abscisse_allongee[i])        
-            j=type_appui[p]
-            if j=="encastrement": #dy=phi=0
-                d_assemblee.append([0])
-                d_assemblee.append([0])
-                charge=0
-                F_pour_dessin.append(0)
-                F_pour_dessin.append(0)
-                if not listedebutchargerepartie[i]==0:
-                    charge = listedebutchargerepartie[i]
-                    F_repartie[i*2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                    F_repartie[i*2+1]+=moment_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                    if liste_abscisse_allongee[i+1] in listeabscisse :
-                        pp=listeabscisse.index(liste_abscisse_allongee[i+1])
-                        z=type_appui[pp]
-            
-                        if z=="encastrement": #dy=phi=0
-                            F_repartie[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                            F_repartie[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-            
-                        if z=="rotule":
-    
-                            F_repartie[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                            F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-            
-                        if z=="rien":                 
-                            F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                            F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i]) 
-                    else :
-                         F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-    
-                     
-            if j=="rotule": #dy=0 et phi =/=0
-                charge=0
-                d_assemblee.append([0])
-                d_assemblee.append([1])
-                f=liste_force[i][1]
-                F_pour_dessin.append(0)
-                F_pour_dessin.append(f)
-                F_assemblee[i*2+1]+=f        
-                if not listedebutchargerepartie[i]==0:
-                    charge = listedebutchargerepartie[i]
-                    F_repartie[i]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                    F_assemblee[i*2+1]+=moment_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-    
-                    if liste_abscisse_allongee[i+1] in listeabscisse :
-                        pp=listeabscisse.index(liste_abscisse_allongee[i+1])
-                        z=type_appui[pp]
-                        if z=="encastrement": #dy=phi=0
-                            F_repartie[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                            F_repartie[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])  
-            
-                        if z=="rotule":    
-                            F_repartie[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                            F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-            
-                        if z=="rien":      
-                            F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                            F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i]) 
-                    else :
-                         F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                                       
-            if j=="rien":   
-                
-                charge=0
-                if not listeressort[i][0]==0:
-                    longueur_ressort=listeressort[i][1]
-                    listeressort[i][0]
-                    valeurforce_ressort=force_ressort(listeressort[i][0],longueur_ressort)
-                    F_repartie[i*2]+=valeurforce_ressort
-                d_assemblee.append([1])
-                d_assemblee.append([1])
-                f=liste_force[i][0]
-                F_assemblee[i*2]+=f #+F_repartie[i]
-                F_pour_dessin.append(f)
-                f=liste_force[i][1]
-                F_assemblee[i*2]+=f#+F_repartie[i]
-                F_pour_dessin.append(f)
-    
-                if not listedebutchargerepartie[i]==0:
-                    charge = listedebutchargerepartie[i]
-                    F_assemblee[i*2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                    F_assemblee[i*2+1]+=moment_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                    if liste_abscisse_allongee[i+1] in listeabscisse :
-                        pp=listeabscisse.index(liste_abscisse_allongee[i+1])
-                        z=type_appui[pp]
-                        if z=="encastrement": #dy=phi=0
-                            F_repartie[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                            F_repartie[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])  
-            
-                        if z=="rotule":    
-                            F_repartie[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                            F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-            
-                        if z=="rien":   
-                            F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                            F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                    else :
-                            F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                            
-        else : 
-                d_assemblee.append([1])
-                d_assemblee.append([1])
-                F_assemblee[i*2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])     
+for i in range(N_element_allongee-1):
+    if liste_abscisse_allongee[i] in listeabscisse :
+        p=listeabscisse.index(liste_abscisse_allongee[i])
+        j=type_appui[p]
+        if j=="encastrement": #dy=phi=0
+            d_assemblee.append([0])
+            d_assemblee.append([0])
+            charge=0
+            F_pour_dessin.append(0)
+            F_pour_dessin.append(0)
+            if not listedebutchargerepartie_allongee[i]==0:
+                charge = listedebutchargerepartie_allongee[i]
                 if liste_abscisse_allongee[i+1] in listeabscisse :
-                   #print("liste_abscisse_allongee[i+1]")
-                    #print(liste_abscisse_allongee[i+1])
-                    #print(i)
+                    pp=listeabscisse.index(liste_abscisse_allongee[i+1])
+                    z=type_appui[pp]
+
+                    if z=="encastrement": #dy=phi=0
+                        print()
+                    if z=="rotule":
+                        F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+
+                    if z=="rien":
+                        F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+                        F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+                else :
+                     F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+                     F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+
+        if j=="rotule": #dy=0 et phi =/=0
+            charge=0
+            d_assemblee.append([0])
+            d_assemblee.append([1])
+            f=liste_force_allongee[i][1]
+            F_pour_dessin.append(0)
+            F_pour_dessin.append(f)
+            F_assemblee[i*2+1]+=f
+            if not listedebutchargerepartie_allongee[i]==0:
+                charge = listedebutchargerepartie_allongee[i]
+                F_assemblee[i*2+1]+=moment_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+
+                if liste_abscisse_allongee[i+1] in listeabscisse :
                     pp=listeabscisse.index(liste_abscisse_allongee[i+1])
                     z=type_appui[pp]
                     if z=="encastrement": #dy=phi=0
-                        F_repartie[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                        F_repartie[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])  
-        
-                    if z=="rotule":    
-                        F_repartie[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+                        print()
+
+                    if z=="rotule":
                         F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-        
-                    if z=="rien":   
+
+                    if z=="rien":
                         F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
                         F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-             
-                else : 
-                    F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
-                    
-    
-    j=type_appui[-1] # str : pour la chaine de caracteres
-    if j=="encastrement": #dy=phi=0
-        d_assemblee.append([0])
-        d_assemblee.append([0])
-        F_pour_dessin.append(0)
-        F_pour_dessin.append(0)
-    if j=="rotule": #dy=0 et phi =/=0
-        d_assemblee.append([0])
-        d_assemblee.append([1])
-        f=liste_force[-1][1]
-        F_assemblee[-1]+=f
-        F_pour_dessin.append(0)
-        F_pour_dessin.append(f)
-    if j=="rien": #dy et phi =/=0
-        ressort=0
-        print("ressort ? (oui ou non)")
-        ressort = str(input())
-        if ressort=='oui':
-            print("longueur_ressort")
-            longueur_ressort=float(input())
-            print("constante_de_raideur")
-            constante_de_raideur=float(input())
-            valeurforce_ressort=force_ressort(constante_de_raideur,longueur_ressort)
-            F_repartie[i*2]+=valeurforce_ressort
-        d_assemblee.append([1])
-        d_assemblee.append([1])
-        f=liste_force[-1][0]
-        F_pour_dessin.append(f)
-        F_assemblee[-2]+=f 
-        f=liste_force[-1][1]
-        F_assemblee[-1]+=f     
-        F_pour_dessin.append(f)           
+                else :
+                     F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+                     F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+            
+        if j=="rien":
 
+            charge=0
+            if not listeressort_allongee[i][0]==0:
+                longueur_ressort=listeressort_allongee[i][1]
+                listeressort_allongee[i][0]
+                valeurforce_ressort=force_ressort(listeressort_allongee[i][0],longueur_ressort)
+                F_assemblee[i*2]+=valeurforce_ressort
+            d_assemblee.append([1])
+            d_assemblee.append([1])
+            f=liste_force_allongee[i][0]
+            F_assemblee[i*2]+=f
+            F_pour_dessin.append(f)
+            f=liste_force_allongee[i][1]
+            F_assemblee[i*2]+=f
+            F_pour_dessin.append(f)
+            print(F_assemblee)
+
+            if not listedebutchargerepartie_allongee[i]==0:
+                charge = listedebutchargerepartie_allongee[i]
+                F_assemblee[i*2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+                F_assemblee[i*2+1]+=moment_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+                if liste_abscisse_allongee[i+1] in listeabscisse :
+                    pp=listeabscisse.index(liste_abscisse_allongee[i+1])
+                    z=type_appui[pp]
+                    if z=="encastrement": #dy=phi=0
+                        print()
+
+                    if z=="rotule":
+                        F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+
+                    if z=="rien":
+                        F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+                        F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+                else :
+                        F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+                        F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+                
+    else :
+            d_assemblee.append([1])
+            d_assemblee.append([1])
+            F_assemblee[i*2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+            if liste_abscisse_allongee[i+1] in listeabscisse :
+                pp=listeabscisse.index(liste_abscisse_allongee[i+1])
+                z=type_appui[pp]
+                if z=="encastrement": #dy=phi=0
+                    print()
+                if z=="rotule":
+                    F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+
+                if z=="rien":
+                    F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+                    F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+
+            else :
+                F_assemblee[i*2+2]+=force_charge_uniformement_repartie(charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+                F_assemblee[i*2+3]+=moment_charge_uniformement_repartie(-charge,liste_abscisse_allongee[i+1]-liste_abscisse_allongee[i])
+
+j=type_appui[-1] # str : pour la chaine de caracteres
+if j=="encastrement": #dy=phi=0
+    d_assemblee.append([0])
+    d_assemblee.append([0])
+    F_pour_dessin.append(0)
+    F_pour_dessin.append(0)
+if j=="rotule": #dy=0 et phi =/=0
+    d_assemblee.append([0])
+    d_assemblee.append([1])
+    f=liste_force_allongee[-1][1]
+    F_assemblee[-1]+=f
+    F_pour_dessin.append(0)
+    F_pour_dessin.append(f)
+if j=="rien": #dy et phi =/=0
+    if not listeressort_allongee[i][0]==0:
+        longueur_ressort=listeressort_allongee[i][1]
+        listeressort_allongee[i][0]
+        valeurforce_ressort=force_ressort(listeressort_allongee[i][0],longueur_ressort)
+        F_assemblee[i*2]+=valeurforce_ressort
+    d_assemblee.append([1])
+    d_assemblee.append([1])
+    f=liste_force_allongee[-1][0]
+    F_pour_dessin.append(f)
+    F_assemblee[-2]+=f
+    f=liste_force_allongee[-1][1]
+    F_assemblee[-1]+=f
+    F_pour_dessin.append(f)
+
+
+### pas ok pour les forces
+
+liste_ordonnee=[]
+for k in range(len(listeabscisse)):
+    liste_ordonnee.append(0)
+figure = pyplot.figure(figsize = (10, 10))
+axes = figure.add_subplot(111)
+
+pyplot.plot(listeabscisse, liste_ordonnee, color='r', linestyle=':', marker='o')
+
+for k in range(len(listeabscisse)):
+    if type_appui[k]=='encastrement':
+        pyplot.scatter(listeabscisse[k], liste_ordonnee[k]-0.0002, s = 1000, c = 'g', marker = 's', edgecolors = 'b',label="encastrement")
+
+    if type_appui[k]=="rotule":
+        pyplot.scatter(listeabscisse[k], liste_ordonnee[k]-0.0002, s = 1000, c = 'g', marker = '^', edgecolors = 'b',label="rotule")
+
+    if type_appui[k]=="rien":
+        pyplot.scatter(listeabscisse[k], liste_ordonnee[k]-0.0002, s = 1000, c = 'g', marker = 'o', edgecolors = 'b',label="appui simple")
+
+    if not F_pour_dessin[2*k]==0:
+        pyplot.annotate('        ', xy=(listeabscisse[k], liste_ordonnee[k]),xycoords='data',xytext=(0.12, 1), textcoords='axes fraction',arrowprops=dict(facecolor='black', shrink=0.5),horizontalalignment='right', verticalalignment='top',)
+    if not F_pour_dessin[2*k+1]==0:
+       pyplot.annotate('        ',xy=(listeabscisse[k]+0.5, liste_ordonnee[k]-0.0003), xycoords='data', xytext=(-70,30), textcoords='offset points',arrowprops=dict(arrowstyle="->",connectionstyle="angle,angleA=10,angleB=90,rad=20"),fontsize=10)
+pyplot.ylim(-0.25, 1.5)
+pyplot.legend()
+pyplot.show()
+
+
+
+
+EI=E*I
+
+matricerigidite=calcul_matrice_totale(liste_abscisse_allongee,EI) # pour la suite car sera modifiee
+
+K_assemblee=matricerigidite #ne bougera plus
+
+#calcul de la matrice des forces a utiliser dans le systeme a resoudre
+M=[]
+for k in range (0,len(d_assemblee),1):
+    if d_assemblee[k][0]!=0:
+        M.append(F_assemblee[k])
+F_assemblee=M
+
+F_assemblee=np.asarray(F_assemblee).reshape(len(F_assemblee),1) #convertir la ligne en matrice colonne array
+#F_repartie=np.asarray(F_repartie).reshape(len(F_repartie),1)
+
+
+
+#calcul de la matrice de rigidité a utiliser dans le systeme a resoudre
+L=[]
+for k in range(0,len(d_assemblee)):
+    if d_assemblee[k]==[0]:
+        L.append(k)
+L=list(reversed(L)) #inverse la liste des colonnes a supprimer
+
+for l in range (len(L)):
+    matricerigidite=np.delete(matricerigidite, L[l], 1)
+    matricerigidite=np.delete(matricerigidite, L[l], 0)
+
+
+
+
+#resolution systeme et obtention deplacements inconnus
+
+deplacementinconnu=linalg.solve(matricerigidite,F_assemblee)
+
+
+# pour afficher tous les déplacements :
+i=0
+for p in range(len(d_assemblee)) :
+    if d_assemblee[p]==[1]:
+        d_assemblee[p]=deplacementinconnu[i] #.tolist()
+        i=i+1
+
+
+#♣calcul de la matrice des forces externes
+F_assemblee=np.dot(K_assemblee,d_assemblee) ##########################"on enleve ?
+
+
+
+#pour passer en dataframes
+print("***matrice rigidité assemblée : ")
+matrice_assemblee=pd.DataFrame(K_assemblee,index=nommage_matrice_poutre_colonnes(int(np.shape(K_assemblee)[0]-(np.shape(K_assemblee)[0]/2))) ,columns=nommage_matrice_poutre_colonnes(int(np.shape(K_assemblee)[0]-(np.shape(K_assemblee)[0]/2))))
+print(matrice_assemblee)
+print("***matrice déplacements")
+d_assemblee=pd.DataFrame(d_assemblee,index=nommage_matrice_poutre_colonnes(int(np.shape(d_assemblee)[0]-(np.shape(d_assemblee)[0]/2))) ,columns=['deplacement'])
+print(d_assemblee)
+
+
+d_assemblee_liste = d_assemblee['deplacement'].values.tolist()
+
+
+deplacement_y=[]
+deplacement_phi=[]
+
+for k in range(int(len(d_assemblee_liste)/2)):
+    deplacement_y.append(d_assemblee_liste[2*k])
+    deplacement_phi.append(d_assemblee_liste[2*k+1])
+
+### calcul des forces internes
+forces_internes=[]
+force_internes_totales=[]
+d_pour_internes=[]
+
+rigidite_pour_internes=matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(liste_abscisse_allongee[1]-liste_abscisse_allongee[0],EI)
+rigidite_pour_internes=rigidite_pour_internes+np.transpose(rigidite_pour_internes)-np.diag(np.diag(rigidite_pour_internes))
+d_pour_internes.append(d_assemblee_liste[0])
+d_pour_internes.append(d_assemblee_liste[1])
+d_pour_internes.append(d_assemblee_liste[2])
+d_pour_internes.append(d_assemblee_liste[3])
+forces_internes=np.dot(rigidite_pour_internes,d_pour_internes)
+force_internes_totales.append(-forces_internes[0])
+force_internes_totales.append(-forces_internes[1])
+force_internes_totales.append(forces_internes[2])
+force_internes_totales.append(forces_internes[3])
+for k in range(1,len(liste_abscisse_allongee)-1):
+    d_pour_internes=[]
+    rigidite_pour_internes=matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(liste_abscisse_allongee[k]-liste_abscisse_allongee[k-1],EI)
+    rigidite_pour_internes=rigidite_pour_internes+np.transpose(rigidite_pour_internes)-np.diag(np.diag(rigidite_pour_internes))
+    d_pour_internes.append(d_assemblee_liste[2*k])
+    d_pour_internes.append(d_assemblee_liste[2*k+1])
+    d_pour_internes.append(d_assemblee_liste[2*k+2])
+    d_pour_internes.append(d_assemblee_liste[2*k+3])
+    forces_internes=np.dot(rigidite_pour_internes,d_pour_internes)
+    force_internes_totales.append(forces_internes[2])
+    force_internes_totales.append(forces_internes[3])
+
+print("force_internes_totales")
+print(force_internes_totales)
+
+
+plt.plot(liste_abscisse_allongee, deplacement_y)
+plt.plot(liste_abscisse_allongee, deplacement_phi)
+plt.grid()
+plt.legend(["deplacement y","deplacement phi"])
+plt.show()
+
+#F_assemblee=F_assemblee+F_repartie
+
+
+effort_tranchant=[]
+moment=[]
+
+for k in range(len(liste_abscisse_allongee)):
+    effort_tranchant.append(force_internes_totales[2*k])
+    moment.append(force_internes_totales[2*k+1])
+
+
+plt.plot(liste_abscisse_allongee, effort_tranchant)
+plt.grid()
+plt.legend(["effort tranchant"])
+plt.show()
+plt.plot(liste_abscisse_allongee, moment)
+plt.grid()
+plt.legend(["moment fléchissant"])
+plt.show()
+#print("***matrice forces externes")
+#F_assemblee=pd.DataFrame(F_assemblee,index=nommage_matrice_poutre_lignes(int(np.shape(F_assemblee)[0]-(np.shape(F_assemblee)[0]/2))),columns=['force'])
+#print(F_assemblee)
     
-    liste_ordonnee=[]
-    for k in range(len(listeabscisse)):
-        liste_ordonnee.append(0)
     
-    figure = pyplot.figure(figsize = (10, 10))
-    axes = figure.add_subplot(111)
-    
-    
-    
-    pyplot.plot(listeabscisse, liste_ordonnee, color='r', linestyle=':', marker='o')
-    
-    for k in range(len(listeabscisse)):
-        if type_appui[k]=='encastrement':
-            pyplot.scatter(listeabscisse[k], liste_ordonnee[k]-0.0002, s = 1000, c = 'g', marker = 's', edgecolors = 'b',label="encastrement")
-    
-        if type_appui[k]=="rotule":
-            pyplot.scatter(listeabscisse[k], liste_ordonnee[k]-0.0002, s = 1000, c = 'g', marker = '^', edgecolors = 'b',label="rotule")
-    
-        if type_appui[k]=="rien":
-            pyplot.scatter(listeabscisse[k], liste_ordonnee[k]-0.0002, s = 1000, c = 'g', marker = 'o', edgecolors = 'b',label="appui simple")
-    
-        if not F_pour_dessin[2*k]==0:
-            pyplot.annotate('        ', xy=(listeabscisse[k], liste_ordonnee[k]),xycoords='data',xytext=(0.12, 1), textcoords='axes fraction',arrowprops=dict(facecolor='black', shrink=0.5),horizontalalignment='right', verticalalignment='top',)
-        if not F_pour_dessin[2*k+1]==0:
-           pyplot.annotate('        ',xy=(listeabscisse[k]+0.5, liste_ordonnee[k]-0.0003), xycoords='data', xytext=(-70,30), textcoords='offset points',arrowprops=dict(arrowstyle="->",connectionstyle="angle,angleA=10,angleB=90,rad=20"),fontsize=10)
-    pyplot.ylim(-0.25, 1.5)
-    pyplot.legend()
-    pyplot.show()
-    
-    
-    
-    
-    EI=E*I
-    
-    matricerigidite=calcul_matrice_totale(liste_abscisse_allongee,EI) # pour la suite car sera modifiee
-    
-    K_assemblee=matricerigidite #ne bougera plus
-    
-    
-    F_assemblee=supprimer_valeurs_inutiles_dans_matrice_forces(liste_abscisse_allongee,listeabscisse,F_assemblee,d_assemblee)
-    
-    F_assemblee=np.asarray(F_assemblee).reshape(len(F_assemblee),1) #convertir la ligne en matrice colonne array
-    F_repartie=np.asarray(F_repartie).reshape(len(F_repartie),1)               
-    
-    
-    # pour supprimer tout ce qui est inutile pour calculer f dans f=K.u : en considerant qu'il a rentré les noeuds par ordre croissant abscisses
-    
-    
-    
-    matricerigidite=supprimer_inutil_dans_matricerigidite(d_assemblee,matricerigidite)
-    
-    
-    # pour resoudre le système linéaire : a remodifié pour avoir les forces autrement que en demande au moment du choix des appuis
-    
-    
-    deplacementinconnu=linalg.solve(matricerigidite,F_assemblee)
-    
-    # pour afficher tous les déplacements :
-    
-    
-    
-    d_assemblee=mettre_tous_les_deplacements_en_1matrice(d_assemblee,deplacementinconnu)        
-    # pour afficher la matrice force
-    
-    F_assemblee=np.dot(K_assemblee,d_assemblee)
-    #print(shape(F_assemblee))
-    
-    #print(F_assemblee)
-    #print(F_repartie)
-    #pour passer en dataframes
-    print("***matrice rigidité assemblée : ")
-    matrice_assemblee=pd.DataFrame(K_assemblee,index=nommage_matrice_poutre_colonnes(int(np.shape(K_assemblee)[0]-(np.shape(K_assemblee)[0]/2))) ,columns=nommage_matrice_poutre_colonnes(int(np.shape(K_assemblee)[0]-(np.shape(K_assemblee)[0]/2))))
-    print(matrice_assemblee)
-    print("***matrice déplacements")
-    d_assemblee=pd.DataFrame(d_assemblee,index=nommage_matrice_poutre_colonnes(int(np.shape(d_assemblee)[0]-(np.shape(d_assemblee)[0]/2))) ,columns=['deplacement'])
-    print(d_assemblee)
-    
-    F_assemble=F_assemblee+F_repartie
-    
-    
-    effort_tranchant=[]
-    moment=[]
-    for k in range(len(liste_abscisse_allongee)):
-        effort_tranchant.append(F_assemble[2*k][0])
-        moment.append(F_assemble[2*k+1][0])
-    
-    
-    #plt.plot(liste_abscisse_allongee, effort_tranchant)
-    #plt.grid() 
-    #plt.show()
-    #plt.plot(liste_abscisse_allongee, moment)
-    #plt.grid() 
-    #plt.show()
-    
-    ax = Axes3D(plt.figure()) 
-    ax.plot(moment, effort_tranchant, liste_abscisse_allongee) 
-    plt.show()
-    
-    
-    
-    print("***matrice forces")
-    F_assemble=pd.DataFrame(F_assemble,index=nommage_matrice_poutre_lignes(int(np.shape(F_assemble)[0]-(np.shape(F_assemble)[0]/2))),columns=['force'])
-    print(F_assemble)
-    
-    
+
