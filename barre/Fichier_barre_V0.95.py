@@ -350,6 +350,30 @@ def moment_quadratique_et_aire_section_cylindrique(diametre_section):
     I=pi*(diametre_section**4)/64
     return I
 
+def dessinBarres(liste_poutre,liste_noeud,liste_noeud2):
+    figure = pyplot.figure(figsize = (10, 10))
+    axes = figure.add_subplot(111)
+    for i in liste_poutre:
+        liste_abscisses = []
+        liste_ordonnee = []
+        liste_abscisses.append(liste_noeud[i.Noeud_label_i-1].X)
+        liste_ordonnee.append(liste_noeud[i.Noeud_label_i-1].Y)
+        liste_abscisses.append(liste_noeud[i.Noeud_label_j-1].X)
+        liste_ordonnee.append(liste_noeud[i.Noeud_label_j-1].Y)
+        print(liste_abscisses)
+        print(liste_ordonnee)
+        pyplot.plot(liste_abscisses,liste_ordonnee)
+        # if liste_points[i][2][0] == 0 & :
+    for i in liste_poutre:
+        liste_abscisses = []
+        liste_ordonnee = []
+        liste_abscisses.append(liste_noeud2[i.Noeud_label_i-1].X)
+        liste_ordonnee.append(liste_noeud2[i.Noeud_label_i-1].Y)
+        liste_abscisses.append(liste_noeud2[i.Noeud_label_j-1].X)
+        liste_ordonnee.append(liste_noeud2[i.Noeud_label_j-1].Y)
+        print(liste_abscisses)
+        print(liste_ordonnee)
+        pyplot.plot(liste_abscisses,liste_ordonnee,'r--')
 CL_d=[]
 CL_f=[]
 RessortSet=[]
@@ -420,4 +444,11 @@ def Calculer_Barre(liste_points,liste_poutres):
     for i in range(N_element):
          ElementSet[i].create_d_local(deplacement, N_noeud)
          ElementSet[i].create_force_axial()
+    liste_abscisses = []
+    liste_ordonnee = []
+    NoeudSet2 = []
+    for i in range(len(NoeudSet)):
+        N = Noeud(NoeudSet[i].X+ float(deplacement["d"]["d"+str(i+1)+"x"]), NoeudSet[i].Y+ float(deplacement["d"]["d"+str(i+1)+"y"]), NoeudSet[i].Fx,NoeudSet[i].Fy, NoeudSet[i].Mz)
+        NoeudSet2.append(N)
+    dessinBarres(ElementSet,NoeudSet,NoeudSet2)
          
