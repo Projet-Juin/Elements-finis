@@ -16,9 +16,10 @@ import numpy as np
 import scipy
 from scipy import *
 from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import patches
-import matplotlib.pyplot as pyplot
 
+from matplotlib import patches
+
+import matplotlib.pyplot as pyplot
 
 
 ############# pour les poutres
@@ -202,23 +203,23 @@ def fonction_liste_force_allongee(liste_force,nombrepointsentre2noeuds):
 
 
 
-N_element=3
+# N_element=3
 
-listeabscisse=[1,4,7]
+# listeabscisse=[1,4,7]
 
-nombrepointsentre2noeuds=1
+# nombrepointsentre2noeuds=1
 
-I=0.0004
+# I=0.0004
 
-E=210000000
+# E=210000000
 
-type_appui=['encastrement','rien','encastrement']
+# type_appui=['encastrement','rien','encastrement']
 
-listedebutchargerepartie=[0,0]
+# listedebutchargerepartie=[0,0]
 
-listeressort=[0,0,0]
+# listeressort=[0,0,0]
 
-liste_force=[[0,0],[10,0],[0,0]]
+# liste_force=[[0,0],[10,0],[0,0]]
 
 def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force):
     """
