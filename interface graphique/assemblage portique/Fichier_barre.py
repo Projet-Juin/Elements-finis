@@ -9,7 +9,7 @@ from scipy import *
 import matplotlib.pyplot as pyplot
 import matplotlib.pyplot as plt
 from matplotlib import patches
-
+#
 class Element(object):
     def __init__(self, List_noeud = [], Aire_section = 0, Largeur_section = 0, Hauteur_section = 0, E = 0, I = 0, Coef_poisson = 0):
 
