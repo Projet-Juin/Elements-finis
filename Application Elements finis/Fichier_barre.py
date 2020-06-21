@@ -29,11 +29,12 @@ class Element(object):
     def __calcule__(self):
         self.Longueur_poutre = numpy.sqrt(
             (NoeudSet[self.Noeud_label_i - 1].X - NoeudSet[self.Noeud_label_j - 1].X) ** 2 + (
-                        NoeudSet[self.Noeud_label_i - 1].Y - NoeudSet[self.Noeud_label_j - 1].Y) ** 2)
-        self.k_barre = self.Aire_section * self.E / self.Longueur_poutre
+                    NoeudSet[self.Noeud_label_i - 1].Y - NoeudSet[self.Noeud_label_j - 1].Y) ** 2)
         self.C = ((NoeudSet[self.Noeud_label_j - 1].X - NoeudSet[self.Noeud_label_i - 1].X)) / self.Longueur_poutre
         self.S = ((NoeudSet[self.Noeud_label_j - 1].Y - NoeudSet[self.Noeud_label_i - 1].Y)) / self.Longueur_poutre
-
+        
+        self.k_barre = self.Aire_section * self.E / self.Longueur_poutre
+       
         #Créer des matrices
         self.K_local_barre = self. __matrice_locale_barre(self.C, self.S, self.k_barre, self.List_noeud)
         #self.K_local_poutre = self.__matrice_locale_poutre(self.Longueur_poutre, self.EI, self.List_noeud)
@@ -368,15 +369,19 @@ def dessinBarres(liste_poutre,liste_noeud,liste_noeud2):
         pyplot.plot(liste_abscisses,liste_ordonnee)
         # if liste_points[i][2][0] == 0 & :
     for i in liste_poutre:
-        liste_abscisses = []
-        liste_ordonnee = []
-        liste_abscisses.append(liste_noeud2[i.Noeud_label_i-1].X)
-        liste_ordonnee.append(liste_noeud2[i.Noeud_label_i-1].Y)
-        liste_abscisses.append(liste_noeud2[i.Noeud_label_j-1].X)
-        liste_ordonnee.append(liste_noeud2[i.Noeud_label_j-1].Y)
-        print(liste_abscisses)
-        print(liste_ordonnee)
-        pyplot.plot(liste_abscisses,liste_ordonnee,'r--')
+        liste_abscisses2 = []
+        liste_ordonnee2 = []
+        liste_abscisses2.append(liste_noeud2[i.Noeud_label_i-1].X)
+        liste_ordonnee2.append(liste_noeud2[i.Noeud_label_i-1].Y)
+        liste_abscisses2.append(liste_noeud2[i.Noeud_label_j-1].X)
+        liste_ordonnee2.append(liste_noeud2[i.Noeud_label_j-1].Y)
+        print(liste_abscisses2)
+        print(liste_ordonnee2)
+        pyplot.plot(liste_abscisses2,liste_ordonnee2,'r--')
+        
+    return liste_abscisses,liste_ordonnee,liste_abscisses2,liste_ordonnee2 
+        
+        
 CL_d=[]
 CL_f=[]
 RessortSet=[]
