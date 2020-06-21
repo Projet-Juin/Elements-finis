@@ -46,9 +46,9 @@ def main():
             listeEntry[3].config(state= (tk.DISABLED if modele.get() in (1,2,3) or D2.get() else tk.NORMAL))
             listeEntry[4].config(state= (tk.DISABLED if modele.get() in (1,2,3) or D2.get() else tk.NORMAL))
             listeEntry[5].config(state= (tk.DISABLED if modele.get() in (2,) else tk.NORMAL))
-            listeEntryR[0].config(state= (tk.DISABLED if modele.get() in (3,) else tk.NORMAL))
-            listeEntryR[1].config(state= (tk.DISABLED if modele.get() in (3,) else tk.NORMAL))
-            listeEntryR[2].config(state= (tk.DISABLED if modele.get() in (3,) or D2.get() else tk.NORMAL))
+            listeEntryR[0].config(state= (tk.DISABLED if modele.get() in (1,3) else tk.NORMAL))
+            listeEntryR[1].config(state= (tk.DISABLED if modele.get() in (1,3) else tk.NORMAL))
+            listeEntryR[2].config(state= (tk.DISABLED if modele.get() in (1,3) or D2.get() else tk.NORMAL))
             for i in (2,3,4):
                 ListeCheck[i].config(state= (tk.DISABLED if D2.get() else tk.NORMAL))
             
@@ -184,10 +184,13 @@ def main():
             tk.Label(frameNoeud, text='Position selon Y (m) :').grid(row=3)
             tk.Label(frameNoeud, text='Position selon Z (m) :').grid(row=5)
             Xnoeud = tk.Entry(frameNoeud)
+            Xnoeud.insert(0,'0')
             Xnoeud.grid(row=2)
             Ynoeud = tk.Entry(frameNoeud)
+            Ynoeud.insert(0,'0')
             Ynoeud.grid(row=4)
             Znoeud = tk.Entry(frameNoeud)
+            Znoeud.insert(0,'0')
             Znoeud.grid(row=6)
             def Xnoeud_next(evt):
                 Ynoeud.focus()
@@ -415,7 +418,7 @@ def main():
             def suppr_poutre():
                 if Liste_listboxPoutres[0].curselection()!=():
                     del liste_poutres[Liste_listboxPoutres[0].curselection()[0]]
-                    update_poutres(Liste_listboxNoeuds[0].curselection()[0])
+                    update_poutres(Liste_listboxPoutres[0].curselection()[0])
                 else:
                     tk.messagebox.showerror('Erreur', 'Aucune poutre sélectionnée.')
             
@@ -499,7 +502,7 @@ def main():
                 for j in i[1]:
                     if not(j in temp_noeuds):
                         temp_noeuds.append(j)
-            if len(liste_noeuds)>len(temp_noeuds) and vert:
+            if len(liste_noeuds)==len(temp_noeuds) and vert:
                 if modele.get() == 1:
                     N_element = len(liste_noeuds)
                     listeabcisse = []
