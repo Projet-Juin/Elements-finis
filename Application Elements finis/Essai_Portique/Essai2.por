@@ -1,0 +1,85 @@
+
+   RDM - Ossatures
+   Calcul des Structures par la Méthode des Éléments Finis
+
+   Version  - 6.17 - 29 mars 2011
+
+   Utilisateur : support
+
+$debut du fichier
+$version
+6.17
+$SI unites
+$nom du fichier
+5.por
+$date
+22/6/2020
+$heure
+16/27/47
+$ossature
+plane
+$noeuds ( 3 )
+   1  0.00000000000E+00  0.00000000000E+00  0.00000000000E+00
+   2  5.00000000000E+00  3.00000000000E+00  0.00000000000E+00
+   3  5.00000000000E+00  0.00000000000E+00  0.00000000000E+00
+   0
+$poutres ( 2 )
+   1 RIRI     1    2  0.00000000000E+00 -0.00000000000E+00  1.00000000000E+00 11 11
+   2 RIRI     2    3  0.00000000000E+00  0.00000000000E+00  1.00000000000E+00 11 11
+   0
+$sections
+11
+TYPE QUELCONQUE
+NOM *
+DESIGNATION *
+LOGO 0
+AIRE  1.00000000000E-03
+IYY  0.00000000000E+00
+IZZ  8.33333300000E-08
+alpha  0.00000000000E+00
+WPY  0.00000000000E+00
+WPZ  0.00000000000E+00
+TORSION  0.00000000000E+00
+KYY  1.0000000
+KZZ  1.0000000
+IWW  0.00000000000E+00
+YCISAILLEMENT  0.00000000000E+00
+ZCISAILLEMENT  0.00000000000E+00
+BTY  0.00000000000E+00
+BTZ  0.00000000000E+00
+BTW  0.00000000000E+00
+///
+0
+$materiaux
+11
+NOM Acier
+MOD  2.100E+11
+POI 0.3000
+MAS 7800.00
+DIL  1.3000E-05
+LIM  2.500E+08
+///
+0
+$liaisons ( 2 )
+encastrement 1
+encastrement 3
+///
+$gpesanteur
+10.000
+$cas de charges
+1
+FUNL    1  0.00000000000E+00  2.00000000000E+06  0.00000000000E+00
+////
+$cas de charges
+2
+FUNL    1  0.00000000000E+00 -2.00000000000E+03  0.00000000000E+00
+////
+$modes propres
+nombre 1
+methode sous_espace
+precision 1.00000E-02
+decalage_spectral 0.00000E+00
+////
+$maillage
+20
+$fin du fichier
