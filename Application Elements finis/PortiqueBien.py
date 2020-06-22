@@ -171,6 +171,7 @@ def creation_K_assemble(N_noeud,list_K):
     E= numpy.array([i for i in range(1,N_noeud+1)]) #On crée un tableau qui part de 1 jusqu'au nombre de noeud
     E = nommage_matrice_portique_colonnes(E) #On en fait E = ["u1","v1","theta1",...,"un","vn","thetan"]
     K_final = pandas.DataFrame(0.0,columns = E,index = E)
+    K_final = K_final.astype(float)
 #On créer le K final. Cette table est initialement composé de 0 uniquement.
     #Avec les elements de la liste E en titre de colonne et en titre de ligne
 
@@ -234,6 +235,7 @@ def CalculerPortique(liste_points,liste_poutres) :
         ElementSet2[i].__calcule__()
         if ElementSet[i].Longueur_poutre > Max_L:
             Max_L = ElementSet[i].Longueur_poutre
+            
     plotun = []
     for i in ElementSet:
         list_X = []
@@ -246,14 +248,10 @@ def CalculerPortique(liste_points,liste_poutres) :
         plt.plot(list_X,list_Y,'-.', c="red", marker='o')
 
     Element_supprime = []
-    print("Combien de force repartie :")
-    N_force_repartie = int(input())
-    for i in range(N_force_repartie):
-        print("***********Force repartie n°", i + 1, "**********")
-        print("Numero du element :")  # Cette fore repartie agit sur quel élément
-        Nde = int(input())
-        print("Force(kN/m) :")
-        F = float(input())
+    for i in range(len(liste_poutres)):
+        Nde = int(liste_poutres[i][0].split()[1])
+        F = float(liste_poutres[i][5][0])
+        N_parties_maillage = taille_maillage
         L = ElementSet[Nde - 1].Longueur_poutre
         C = ElementSet[Nde - 1].C
         S = ElementSet[Nde - 1].S
