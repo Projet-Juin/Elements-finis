@@ -51,6 +51,7 @@ class Element(object):
         print(K)
         print(C ** 2 * K)
         kk = numpy.array([[0 for i in range(4)] for i in range(4)])
+        
         kk=kk.astype(float)
         
         kk[0][0] = C ** 2 * K
