@@ -32,15 +32,12 @@ class Element(object):
                     NoeudSet[self.Noeud_label_i - 1].Y - NoeudSet[self.Noeud_label_j - 1].Y) ** 2)
         self.C = ((NoeudSet[self.Noeud_label_j - 1].X - NoeudSet[self.Noeud_label_i - 1].X)) / self.Longueur_poutre
         self.S = ((NoeudSet[self.Noeud_label_j - 1].Y - NoeudSet[self.Noeud_label_i - 1].Y)) / self.Longueur_poutre
-        print(Longueur_poutre)
-        print(C)
-        print(S)
         self.k_barre = self.Aire_section * self.E / self.Longueur_poutre
        
         #Créer des matrices
         self.K_local_barre = self. __matrice_locale_barre(self.C, self.S, self.k_barre, self.List_noeud)
         #self.K_local_poutre = self.__matrice_locale_poutre(self.Longueur_poutre, self.EI, self.List_noeud)
-
+        print("k= ",self.k_barre)
     #Créer la matrice locale pour barre
     def __matrice_locale_barre(self, C, S, K, A):
         print("C", C)
@@ -48,6 +45,7 @@ class Element(object):
         print(K)
         print(C ** 2 * K)
         kk = numpy.array([[0 for i in range(4)] for i in range(4)])
+        kk=kk.astype(float)
         
         kk[0][0] = C ** 2 * K
         kk[2][2] = C ** 2 * K
@@ -185,6 +183,7 @@ def creation_K_assemble(N_noeud,list_K,list_ressort):
     E = nommage_matrice_barre_colonnes(E) #On en fait E = ["1x","1y","2x","2y",...,"nx","ny"]
 
     K_final = pandas.DataFrame(0,columns = E,index = E)
+    K_final = K_final.astype(float)
 
     #On créer le K final. Cette table est initialement composé de 0 uniquement.
 

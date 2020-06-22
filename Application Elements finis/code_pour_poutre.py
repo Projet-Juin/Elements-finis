@@ -582,8 +582,8 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
             
     graph3=[[str("effort tranchant en kN.m"),2+1],[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,moment]]
     
-    graph4=[dessin poutre????????]
+    #graph4=[dessin poutre????????]
     
-    liste_des_graphs=[graph1,graph2,graph3,graph4]
+    liste_des_graphs=[graph1,graph2,graph3]
     
     return nombre_graphes_a_afficher, liste_des_graphs
