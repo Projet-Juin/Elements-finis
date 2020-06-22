@@ -25,14 +25,16 @@ class Element(object):
         self.Largeur_section = Largeur_section
         self.Hauteur_section = Hauteur_section
         '''
-
+        
     def __calcule__(self):
         self.Longueur_poutre = numpy.sqrt(
             (NoeudSet[self.Noeud_label_i - 1].X - NoeudSet[self.Noeud_label_j - 1].X) ** 2 + (
                     NoeudSet[self.Noeud_label_i - 1].Y - NoeudSet[self.Noeud_label_j - 1].Y) ** 2)
         self.C = ((NoeudSet[self.Noeud_label_j - 1].X - NoeudSet[self.Noeud_label_i - 1].X)) / self.Longueur_poutre
         self.S = ((NoeudSet[self.Noeud_label_j - 1].Y - NoeudSet[self.Noeud_label_i - 1].Y)) / self.Longueur_poutre
-        
+        print(Longueur_poutre)
+        print(C)
+        print(S)
         self.k_barre = self.Aire_section * self.E / self.Longueur_poutre
        
         #Créer des matrices
@@ -122,7 +124,7 @@ class Ressort(object):
         self.noeud = noeud
         self.resistance = resistance
         self.k_matrice = self.matrice_Ressort()
-        
+    
     def matrice_Ressort(self):
         E = nommage_matrice_barre_colonnes(list(self.noeud))
         Tab = pandas.DataFrame(0,index=E,columns=E)
@@ -393,6 +395,8 @@ def Calculer_Barre(liste_points,liste_poutres):
     for i in range(len(liste_points)):
         N = Noeud(liste_points[i][1][0], liste_points[i][1][1], liste_points[i][3][0], liste_points[i][3][1], liste_points[i][3][2])
         NoeudSet.append(N)
+    print("check")
+    print(i.X for i in NoeudSet)
     for i in range(len(liste_points)):
         if liste_points[i][2][0] == 0 :#Selon X
             CL_d.append("d"+str(i+1)+"x")
@@ -419,6 +423,7 @@ def Calculer_Barre(liste_points,liste_poutres):
         E = liste_poutres[i][4] #A vérifier
         #Création d'objets
         Ele = Element(List_noeud = List_noeud, Aire_section = Aire_section, E = E)
+        
         ElementSet.append(Ele)
         ElementSet[i].__calcule__()
         
@@ -460,4 +465,13 @@ def Calculer_Barre(liste_points,liste_poutres):
         N = Noeud(NoeudSet[i].X+ float(deplacement["d"]["d"+str(i+1)+"x"]), NoeudSet[i].Y+ float(deplacement["d"]["d"+str(i+1)+"y"]), NoeudSet[i].Fx,NoeudSet[i].Fy, NoeudSet[i].Mz)
         NoeudSet2.append(N)
     dessinBarres(ElementSet,NoeudSet,NoeudSet2)
+    
+    del ElementSet[:]
+    del NoeudSet[:]
+    del NoeudSet2[:]
+    del CL_d[:]
+    del CL_f[:]
+    del RessortSet[:]
+    
+    
          
