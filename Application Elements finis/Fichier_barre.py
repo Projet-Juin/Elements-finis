@@ -27,17 +27,14 @@ class Element(object):
         '''
         
     def __calcule__(self):
-        vectA = (NoeudSet[self.Noeud_label_j - 1].X - NoeudSet[self.Noeud_label_i - 1].X)
-        vectB = (NoeudSet[self.Noeud_label_j - 1].Y - NoeudSet[self.Noeud_label_i - 1].Y)
         self.Longueur_poutre = numpy.sqrt(
             (NoeudSet[self.Noeud_label_i - 1].X - NoeudSet[self.Noeud_label_j - 1].X) ** 2 + (
                     NoeudSet[self.Noeud_label_i - 1].Y - NoeudSet[self.Noeud_label_j - 1].Y) ** 2)
         self.C = ((NoeudSet[self.Noeud_label_j - 1].X - NoeudSet[self.Noeud_label_i - 1].X)) / self.Longueur_poutre
         self.S = ((NoeudSet[self.Noeud_label_j - 1].Y - NoeudSet[self.Noeud_label_i - 1].Y)) / self.Longueur_poutre
-        print("Check")
-        print(self.Longueur_poutre)
-        print(self.C)
-        print(self.S)
+        print(Longueur_poutre)
+        print(C)
+        print(S)
         self.k_barre = self.Aire_section * self.E / self.Longueur_poutre
        
         #Créer des matrices
@@ -51,8 +48,6 @@ class Element(object):
         print(K)
         print(C ** 2 * K)
         kk = numpy.array([[0 for i in range(4)] for i in range(4)])
-        
-        kk=kk.astype(float)
         
         kk[0][0] = C ** 2 * K
         kk[2][2] = C ** 2 * K
@@ -70,7 +65,7 @@ class Element(object):
         kk[1][2] = - C * S * K
         kk[2][1] = - C * S * K
         kk[3][0] = - C * S * K
-        print(kk)
+
         #nommage des colonnes et des lignes
         A_colonnes = nommage_matrice_barre_colonnes(A)
         A_lignes = nommage_matrice_barre_lignes(A)
@@ -190,7 +185,6 @@ def creation_K_assemble(N_noeud,list_K,list_ressort):
     E = nommage_matrice_barre_colonnes(E) #On en fait E = ["1x","1y","2x","2y",...,"nx","ny"]
 
     K_final = pandas.DataFrame(0,columns = E,index = E)
-    K_final = K_final.astype(float)
 
     #On créer le K final. Cette table est initialement composé de 0 uniquement.
 
