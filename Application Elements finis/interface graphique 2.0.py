@@ -530,7 +530,7 @@ def main():
                         temp = i[2][0] +i[2][1] +i[2][5]
                         if temp == 0:
                             type_appui.append("encastrement")
-                        elif temp == 2:
+                        elif temp == 1:
                             type_appui.append("rotule")
                         elif temp == 3:
                             type_appui.append("rien")
