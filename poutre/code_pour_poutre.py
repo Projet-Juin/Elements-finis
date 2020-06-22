@@ -514,7 +514,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     force_internes_totales.append(forces_internes[3])
     for k in range(1,len(liste_abscisse_allongee)-1):
         d_pour_internes=[]
-        rigidite_pour_internes=matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(liste_abscisse_allongee[k]-liste_abscisse_allongee[k-1],EI)
+        rigidite_pour_internes=matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(liste_abscisse_allongee[k+1]-liste_abscisse_allongee[k],EI)
         rigidite_pour_internes=rigidite_pour_internes+np.transpose(rigidite_pour_internes)-np.diag(np.diag(rigidite_pour_internes))
         d_pour_internes.append(d_assemblee_liste[2*k])
         d_pour_internes.append(d_assemblee_liste[2*k+1])
