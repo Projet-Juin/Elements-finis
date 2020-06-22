@@ -126,8 +126,7 @@ class Element(object):
 
 
 class Noeud(object):
-    def __init__(self, X, Y, type="rien", Fx=0, Fy=0, Mz=0):
-        self.type = type
+    def __init__(self, X, Y, Fx=0, Fy=0, Mz=0):
         self.X = X
         self.Y = Y
         self.Fx = Fx
@@ -270,7 +269,7 @@ def CalculerPortique(liste_points,liste_poutres) :
             Y = (NoeudSet[ElementSet[Nde - 1].Noeud_label_j - 1].Y - NoeudSet[
                 ElementSet[Nde - 1].Noeud_label_i - 1].Y) / N_parties_maillage * (j + 1) + NoeudSet[
                     ElementSet[Nde - 1].Noeud_label_i - 1].Y
-            N = Noeud(X, Y, "rien", F_total / N_parties_maillage * S, - F_total / N_parties_maillage * C, 0)
+            N = Noeud(X, Y, F_total / N_parties_maillage * S, - F_total / N_parties_maillage * C, 0)
             NoeudSet.append(N)
 
         NoeudSet[ElementSet[Nde - 1].Noeud_label_i - 1].Fx += F_total * S / N_parties_maillage / 2
@@ -335,7 +334,7 @@ def CalculerPortique(liste_points,liste_poutres) :
             Y = (NoeudSet[i.Noeud_label_j - 1].Y - NoeudSet[
                 i.Noeud_label_i - 1].Y) / N_parties_maillage * (j + 1) + NoeudSet[
                     i.Noeud_label_i - 1].Y
-            N = Noeud(X, Y, "rien", 0, 0, 0)
+            N = Noeud(X, Y, 0, 0, 0)
             NoeudSet.append(N)
 
         # Ajout de nouveaux éléments
