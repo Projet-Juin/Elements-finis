@@ -395,7 +395,7 @@ def CalculerPortique(liste_points,liste_poutres) :
     
     # print(deplacement)
     j = 0
-
+    deplacement_total = []
     for i in range(N_noeud):
         ui = "u" + str(i + 1) + "°"
         vi = "v" + str(i + 1) + "°"
