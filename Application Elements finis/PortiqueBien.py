@@ -224,7 +224,7 @@ def CalculerPortique(liste_points,liste_poutres) :
         list_Y.append(NoeudSet[i.Noeud_label_i-1].Y)
         list_Y.append(NoeudSet[i.Noeud_label_j-1].Y)
         plotun.append([list_X,list_Y])
-        plt.plot(list_X,list_Y,'-.', c="red", marker='o')
+        # plt.plot(list_X,list_Y,'-.', c="red", marker='o')
         
     Element_supprime = []
     for i in range(len(liste_poutres)):

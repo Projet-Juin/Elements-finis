@@ -31,7 +31,18 @@ def main():
             if temp_filename!='':
                 with open(temp_filename, "r") as f:
                     liste_noeuds, liste_poutres = json.load(f)
-            
+                    for i in Liste_listboxNoeuds:
+                        i.delete(0,tk.END)
+                        for j in liste_noeuds[:-1]:
+                            i.insert(tk.END, j[0]+" "+str(j[1]))
+                    listboxNoeud_update(len(liste_noeuds)-1)
+                    for i in Liste_listboxPoutres:
+                        i.delete(0,tk.END)
+                        for j in liste_poutres[:-1]:
+                            i.insert(tk.END, j[0]+" "+str(j[1]))
+                    update_poutres(len(liste_poutres)-1)
+                    valid_chargement()
+                    
         def sauvegarder():
             temp_filename = tk.filedialog.asksaveasfilename()
             if temp_filename!='':
@@ -50,7 +61,10 @@ def main():
             listeEntryR[1].config(state= (tk.DISABLED if modele.get() in (1,3) else tk.NORMAL))
             listeEntryR[2].config(state= (tk.DISABLED if modele.get() in (1,3) or D2.get() else tk.NORMAL))
             for i in (2,3,4):
-                ListeCheck[i].config(state= (tk.DISABLED if D2.get() else tk.NORMAL))
+                ListeCheck[i].state((['disabled'] if D2.get() else ['!disabled']))
+            listeEntrees[0].config(state= (tk.DISABLED if modele.get() in (1,) else tk.NORMAL))
+            listeEntrees[1].config(state= (tk.DISABLED if modele.get() in (2,) else tk.NORMAL))
+            listeRepartie[0].config(state= (tk.DISABLED if modele.get() in (2,) else tk.NORMAL))
             
             
         barre_de_menu = tk.Menu(main_w)
@@ -213,13 +227,12 @@ def main():
         frameChargements = tk.Frame(ongletsInput)
         
         if True or 'Chargements / Degrés de liberté':
-            Fleche_rouge = tk.PhotoImage(file="images\\fleche_rouge.png").subsample(19,19)
+            Fleche_rouge = tk.PhotoImage(file="images\\fleche_rouge.png").subsample(20,20)
             Fleche_verte = tk.PhotoImage(file="images\\fleche_verte.png").subsample(16,16)
             
             def choix_liaison(evt):
                 if Combobox.current()>=0:
                     update_deg_liberte(ListeLibertes[Combobox.current()])
-                    Combobox.set('')
                 
             def update_deg_liberte(libertes):
                 for i in range(len(libertes)):
@@ -269,20 +282,23 @@ def main():
                         Liste_listboxNoeuds[1].selection_clear(selectd_index)
                         Liste_listboxNoeuds[1].selection_set(selectd_index+1)
                         
-                        vert = True
-                        for i in liste_noeuds:
-                            if i[2]==None:
-                                vert = False
-                                break
-                        if vert:
-                            ongletsInput.tab(1, image = Fleche_verte, compound=tk.LEFT)
-                        else:
-                            ongletsInput.tab(1, image = Fleche_rouge, compound=tk.LEFT)
+                        valid_chargement()
                     else:
                         tk.messagebox.showerror('Erreur', 'Une donnée ne peut pas être interprétée comme float')
                 else:
                     tk.messagebox.showerror('Erreur', 'Aucun nœud sélectionné')
             
+            def valid_chargement():
+                vert = True
+                for i in liste_noeuds:
+                    if i[2]==None:
+                        vert = False
+                        break
+                if vert:
+                    ongletsInput.tab(1, image = Fleche_verte, compound=tk.LEFT)
+                else:
+                    ongletsInput.tab(1, image = Fleche_rouge, compound=tk.LEFT)
+                    
             def lock(index):
                 listeEntry[index].config(state = (tk.NORMAL if ListeCheck[index].instate(['!selected']) else tk.DISABLED))
                 if index <=2:
@@ -300,6 +316,7 @@ def main():
             for i in range(6):
                 ListeCheck.append(ttk.Checkbutton(frameDeplacements, text = temp_text[i], command= lambda index=i: lock(index)))
                 ListeCheck[i].state(['!alternate'])
+                ListeCheck[i].bind("<Button-1>", lambda evt: Combobox.set(''))
                 ListeCheck[i].grid(row=i%3, column = i//3)
             tk.Label(frameDeplacements, text = 'liaisons standard :').grid(row=3, column = 0,sticky=tk.E)
             Listeliaisons = ['Encastrement','Rotule','Libre']
@@ -363,7 +380,7 @@ def main():
                     plein = True
                     for i in listeEntrees:
                         try:
-                            if not(float(i.get())):
+                            if not(float(i.get())) and i.cget(tk.state)!=tk.DISABLED:
                                 plein = False
                                 tk.messagebox.showerror('Erreur', 'Aucune propriété de poutre ne peut être nulle.')
                                 i.focus()
@@ -492,6 +509,7 @@ def main():
         
         def Calculer():
             print(liste_noeuds, '\n', liste_poutres)
+            
             vert = True
             for i in liste_noeuds:
                 if i[2]==None:
@@ -549,8 +567,8 @@ def main():
                     a.set_xlabel('x')
                     a.set_ylabel('y')
                     
-                    canvas = FigureCanvasTkAgg(f, master=framegraph)
-                    canvas.get_tk_widget().grid(row = 0)            
+                    graph = FigureCanvasTkAgg(f, master=framegraph)
+                    graph.get_tk_widget().grid(row = 0)            
             else:
                 tk.messagebox.showerror('Erreur', "Les données d'entrée sont incomplètes")
         
@@ -563,6 +581,7 @@ def main():
         ongletsEtape.add(panedCalc)
         ongletsEtape.tab(1, text="Résultats du calcul")
         ongletsEtape.pack(side=tk.LEFT, expand = tk.Y, fill = tk.BOTH)
+    change_model()
     main_w.mainloop()
 
 
