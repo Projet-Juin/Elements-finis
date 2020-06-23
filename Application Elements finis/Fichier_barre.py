@@ -27,23 +27,17 @@ class Element(object):
         '''
         
     def __calcule__(self):
-        vectA = (NoeudSet[self.Noeud_label_j - 1].X - NoeudSet[self.Noeud_label_i - 1].X)
-        vectB = (NoeudSet[self.Noeud_label_j - 1].Y - NoeudSet[self.Noeud_label_i - 1].Y)
         self.Longueur_poutre = numpy.sqrt(
             (NoeudSet[self.Noeud_label_i - 1].X - NoeudSet[self.Noeud_label_j - 1].X) ** 2 + (
                     NoeudSet[self.Noeud_label_i - 1].Y - NoeudSet[self.Noeud_label_j - 1].Y) ** 2)
         self.C = ((NoeudSet[self.Noeud_label_j - 1].X - NoeudSet[self.Noeud_label_i - 1].X)) / self.Longueur_poutre
         self.S = ((NoeudSet[self.Noeud_label_j - 1].Y - NoeudSet[self.Noeud_label_i - 1].Y)) / self.Longueur_poutre
-        print("Check")
-        print(self.Longueur_poutre)
-        print(self.C)
-        print(self.S)
         self.k_barre = self.Aire_section * self.E / self.Longueur_poutre
        
         #Créer des matrices
         self.K_local_barre = self. __matrice_locale_barre(self.C, self.S, self.k_barre, self.List_noeud)
         #self.K_local_poutre = self.__matrice_locale_poutre(self.Longueur_poutre, self.EI, self.List_noeud)
-
+        print("k= ",self.k_barre)
     #Créer la matrice locale pour barre
     def __matrice_locale_barre(self, C, S, K, A):
         print("C", C)
@@ -51,7 +45,6 @@ class Element(object):
         print(K)
         print(C ** 2 * K)
         kk = numpy.array([[0 for i in range(4)] for i in range(4)])
-        
         kk=kk.astype(float)
         
         kk[0][0] = C ** 2 * K
@@ -70,7 +63,7 @@ class Element(object):
         kk[1][2] = - C * S * K
         kk[2][1] = - C * S * K
         kk[3][0] = - C * S * K
-        print(kk)
+
         #nommage des colonnes et des lignes
         A_colonnes = nommage_matrice_barre_colonnes(A)
         A_lignes = nommage_matrice_barre_lignes(A)
