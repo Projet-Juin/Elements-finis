@@ -396,8 +396,8 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
         F_assemblee[-1]+=f
         F_pour_dessin.append(f)
     
-    
-    ### pas ok pour les forces
+    """
+    ########################### pour le dessin 
     
     liste_ordonnee=[]
     for k in range(len(listeabscisse)):
@@ -425,7 +425,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     pyplot.legend()
     pyplot.show()
     
-    
+    """
     
     
     EI=E*I
@@ -442,8 +442,6 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     F_assemblee=M
     
     F_assemblee=np.asarray(F_assemblee).reshape(len(F_assemblee),1) #convertir la ligne en matrice colonne array
-    #F_repartie=np.asarray(F_repartie).reshape(len(F_repartie),1)
-    
     
     
     #calcul de la matrice de rigidité a utiliser dans le systeme a resoudre
@@ -528,14 +526,13 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     print("force_internes_totales")
     print(force_internes_totales)
     
-    
+    """
     plt.plot(liste_abscisse_allongee, deplacement_y)
     plt.plot(liste_abscisse_allongee, deplacement_phi)
     plt.grid()
     plt.legend(["deplacement y","deplacement phi"])
     plt.show()
-    
-    #F_assemblee=F_assemblee+F_repartie
+    """
     
     
     effort_tranchant=[]
@@ -545,7 +542,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
         effort_tranchant.append(force_internes_totales[2*k])
         moment.append(force_internes_totales[2*k+1])
     
-    
+    """
     plt.plot(liste_abscisse_allongee, effort_tranchant)
     plt.grid()
     plt.legend(["effort tranchant"])
@@ -558,7 +555,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     #F_assemblee=pd.DataFrame(F_assemblee,index=nommage_matrice_poutre_lignes(int(np.shape(F_assemblee)[0]-(np.shape(F_assemblee)[0]/2))),columns=['force'])
     #print(F_assemblee)
 
-
+    """
 
 ###########################"modifié a partir d'ici pour ce qui est à retourner
     
@@ -575,16 +572,14 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
         
     poutre=[0 for i in range(listeabscisse)] #toujours 0 en ordonnées , 
     
-    nombre_graphes_a_afficher= 4 #len(liste_des_graphs)     #déplacements, effort_tranchant, moment fléchissant, dessin ? 
+    graph1=["déplacement en m",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,d_assemblee_liste]]
     
-    graph1=[[str("déplacement en m")],[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,d_assemblee_liste]]
-    
-    graph2=[[str("effort tranchant en kN")],[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,effort_tranchant]]
+    graph2=["effort tranchant en kN",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,effort_tranchant]]
             
-    graph3=[[str("effort tranchant en kN.m")],[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,moment]]
+    graph3=["effort tranchant en kN.m",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,moment]]
     
     #graph4=[dessin poutre????????]
     
     liste_des_graphs=[graph1,graph2,graph3]
     
-    return nombre_graphes_a_afficher, liste_des_graphs
+    return liste_des_graphs
