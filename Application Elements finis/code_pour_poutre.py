@@ -571,16 +571,17 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
         if k=="rien":
             deg_point.append((1,1,1))
             
-            
-    poutre=[0 for i in range(listeabscisse)] #toujours 0 en ordonnées 
+            #listeabscisse, poutre, liste_abscisse_allongee, d_assemblee_liste, effort_tranchant, moment sont des listes
+        
+    poutre=[0 for i in range(listeabscisse)] #toujours 0 en ordonnées , 
     
     nombre_graphes_a_afficher= 4 #len(liste_des_graphs)     #déplacements, effort_tranchant, moment fléchissant, dessin ? 
     
-    graph1=[[str("déplacement en m"),2+1],[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,d_assemblee_liste]]
+    graph1=[[str("déplacement en m")],[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,d_assemblee_liste]]
     
-    graph2=[[str("effort tranchant en kN"),2+1],[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,effort_tranchant]]
+    graph2=[[str("effort tranchant en kN")],[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,effort_tranchant]]
             
-    graph3=[[str("effort tranchant en kN.m"),2+1],[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,moment]]
+    graph3=[[str("effort tranchant en kN.m")],[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,moment]]
     
     graph4=[dessin poutre????????]
     
