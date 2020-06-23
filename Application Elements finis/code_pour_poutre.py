@@ -499,6 +499,10 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     forces_internes=[]
     force_internes_totales=[]
     d_pour_internes=[]
+    liste_abscisse_allongee_pour_forces_internes=[] 
+    
+    #en calculant les forces internes théoriquement on se rend compte que aux noeuds, si la longueur entre 2 noeuds n'est pas la même sur la même poutre alors les forces internes calculées ne sont pas les mêmes sur les 2 systemes prenant en commpte un même vrai noeud.
+    #on va donc représenter toutes les forces calculées pour les vrais noeuds (non maillage),
     
     rigidite_pour_internes=matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(liste_abscisse_allongee[1]-liste_abscisse_allongee[0],EI)
     rigidite_pour_internes=rigidite_pour_internes+np.transpose(rigidite_pour_internes)-np.diag(np.diag(rigidite_pour_internes))
@@ -511,6 +515,8 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     force_internes_totales.append(-forces_internes[1])
     force_internes_totales.append(forces_internes[2])
     force_internes_totales.append(forces_internes[3])
+    liste_abscisse_allongee_pour_forces_internes.append(liste_abscisse_allongee[0])
+    liste_abscisse_allongee_pour_forces_internes.append(liste_abscisse_allongee[1])
     for k in range(1,len(liste_abscisse_allongee)-1):
         d_pour_internes=[]
         rigidite_pour_internes=matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(liste_abscisse_allongee[k+1]-liste_abscisse_allongee[k],EI)
@@ -520,8 +526,14 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
         d_pour_internes.append(d_assemblee_liste[2*k+2])
         d_pour_internes.append(d_assemblee_liste[2*k+3])
         forces_internes=np.dot(rigidite_pour_internes,d_pour_internes)
+        if liste_abscisse_allongee[k] in listeabscisse :
+            liste_abscisse_allongee_pour_forces_internes.append(liste_abscisse_allongee[k])
+            force_internes_totales.append(-forces_internes[0])
+            force_internes_totales.append(-forces_internes[1])
         force_internes_totales.append(forces_internes[2])
         force_internes_totales.append(forces_internes[3])
+        liste_abscisse_allongee_pour_forces_internes.append(liste_abscisse_allongee[k+1])
+
     
     print("force_internes_totales")
     print(force_internes_totales)
@@ -538,16 +550,16 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     effort_tranchant=[]
     moment=[]
     
-    for k in range(len(liste_abscisse_allongee)):
+    for k in range(len(liste_abscisse_allongee_pour_forces_internes)):
         effort_tranchant.append(force_internes_totales[2*k])
         moment.append(force_internes_totales[2*k+1])
     
     """
-    plt.plot(liste_abscisse_allongee, effort_tranchant)
+    plt.plot(liste_abscisse_allongee_pour_forces_internes, effort_tranchant)
     plt.grid()
     plt.legend(["effort tranchant"])
     plt.show()
-    plt.plot(liste_abscisse_allongee, moment)
+    plt.plot(liste_abscisse_allongee_pour_forces_internes, moment)
     plt.grid()
     plt.legend(["moment fléchissant"])
     plt.show()
@@ -569,14 +581,15 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
             deg_point.append((1,1,1))
             
             #listeabscisse, poutre, liste_abscisse_allongee, d_assemblee_liste, effort_tranchant, moment sont des listes
-        
-    poutre=[0 for i in range(listeabscisse)] #toujours 0 en ordonnées , 
+
+    
+    poutre=[0 for i in range(len(listeabscisse))] #toujours 0 en ordonnées , 
     
     graph1=["déplacement en m",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,d_assemblee_liste]]
     
-    graph2=["effort tranchant en kN",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,effort_tranchant]]
+    graph2=["effort tranchant en kN",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee_pour_forces_internes,effort_tranchant]]
             
-    graph3=["effort tranchant en kN.m",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,moment]]
+    graph3=["effort tranchant en kN.m",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee_pour_forces_internes,moment]]
     
     #graph4=[dessin poutre????????]
     

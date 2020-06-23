@@ -11,6 +11,7 @@ from tkinter import ttk
 from PortiqueBien import CalculerPortique
 from code_pour_poutre import liste_des_demandes_utilisateur
 from Fichier_barre import Calculer_Barre
+from section_inertie import getInertie
 import matplotlib
 matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
@@ -441,6 +442,55 @@ def main():
                 else:
                     tk.messagebox.showerror('Erreur', 'Aucun nœud sélectionné.')
             
+            def selectionner_geométrie():
+                listargs = (('b',),('b','b1'),('b','h'),('b','h','b1','h1'),('b','h','b1','b2','h1'),('b','h','b1','h1'),('b','h','b1','h1'),('b','h','b1','b2','h1'),('b','h'),('R',),('R','R1'),('R',),('R',),('D2','D1'),('b','h'),('D2','D1'))
+                def choix_geo(evt):
+                    if ComboG.current()>=0:
+                        for i in range(len(listlabel)):
+                            listEntry[i].delete(0,tk.END)
+                            listEntry[i].insert(0,'0')
+                            try:
+                                listlabel[i].config(text= listargs[ComboG.current()][i])
+                                listEntry[i].config(state= tk.NORMAL)
+                            except IndexError:
+                                listlabel[i].config(text= '')
+                                listEntry[i].config(state= tk.DISABLED)
+                def choix_sec():
+                    valide = True
+                    for i in range(len(listlabel)):
+                        if listlabel[i].cget('text')!='' and float(listEntry[i].get())==0:
+                            valide = False
+                            listEntry[i].select(0,tk.END)
+                            break
+                    if valide and ComboG.current()>=0:
+                        entrees = []
+                        for i in range(len(listlabel)):
+                            if listlabel[i].cget('text')!='':
+                                entrees.append(float(listEntry[i].get()))
+                        inertie, aire = getInertie(ComboG.current(), entrees)
+                        listeEntrees[0].delete(0,tk.END)
+                        listeEntrees[0].insert(0,str(aire))
+                        listeEntrees[1].delete(0,tk.END)
+                        listeEntrees[1].insert(0,str(inertie))
+                geometrie = tk.Tk()
+                frameG = tk.Frame(geometrie)
+                frameG.pack(side=tk.LEFT, expand = tk.Y, fill = tk.BOTH)
+                tk.Label(frameG, text = 'Choix du type de section :').grid(row=0)
+                ComboG = ttk.Combobox(frameG, values = ('Carré','Carré creux','Rectangle','Rectangle creux','Profil I','Profil T','Profil L','Profil Z','Triangle rectangle','Cercle','Cercle creux','Demi-cercle','Quart de cercle','Ovale','Croix','Losange'), state = "readonly")
+                ComboG.grid(row=1)
+                ComboG.bind('<<ComboboxSelected>>', choix_geo)
+                listlabel = []
+                listEntry =[]
+                for i in range(5):
+                    listlabel.append(tk.Label(frameG, text=''))
+                    listlabel[i].grid(row = 2*i+2)
+                    listEntry.append(tk.Entry(frameG))
+                    listEntry[i].insert(0,'0')
+                    listEntry[i].grid(row = 2*i+3)
+                tk.Button(frameG, text='Appliquer section', command=choix_sec).grid(row=12)
+                geometrie.mainloop()
+                    
+    
             Poutre_rouge = tk.PhotoImage(file="images\\Poutre_rouge.png").subsample(6,6)
             Poutre_verte = tk.PhotoImage(file="images\\Poutre_verte.png").subsample(10,10)
             
@@ -453,9 +503,10 @@ def main():
             tk.Label(framePoutre, text='Choix des nœuds à lier :').grid(row=5)
             Liste_listboxNoeuds.append(tk.Listbox(framePoutre, selectmode=tk.MULTIPLE, exportselection=False))
             Liste_listboxNoeuds[2].grid(row=6)
-            tk.Label(framePoutre, text='Aire de la section (m²) :').grid(row=7)
-            tk.Label(framePoutre, text='Inertie de la poutre (m^4) :').grid(row=9)
-            tk.Label(framePoutre, text='Module de Young (Pa) :').grid(row=11)
+            tk.Button(framePoutre, text = "Sélectionner géométrie", command = selectionner_geométrie).grid(row=7)
+            tk.Label(framePoutre, text='Aire de la section (m²) :').grid(row=8)
+            tk.Label(framePoutre, text='Inertie de la poutre (m^4) :').grid(row=10)
+            tk.Label(framePoutre, text='Module de Young (Pa) :').grid(row=12)
             listeEntrees = []
             def next_Props(index):
                 if index==2:
@@ -467,11 +518,11 @@ def main():
             for i in range(3):
                 listeEntrees.append(tk.Entry(framePoutre))
                 listeEntrees[i].insert(0,'0')
-                listeEntrees[i].grid(row = 8+i*2)
+                listeEntrees[i].grid(row = 9+i*2)
                 listeEntrees[i].bind('<Return>', lambda evt, index=i:next_Props(index))
                 
             frameRepartie = tk.LabelFrame(framePoutre, text = 'Charge répartie sur la poutre')
-            frameRepartie.grid(row=13)
+            frameRepartie.grid(row=14)
             listeRepartie = []
             tk.Label(frameRepartie, text = 'Charge normale répartie (N/m) :').grid(row=0, column = 0) # ajouter ressort en torsion ?
             # tk.Label(frameRepartie, text = '').grid(row=1, column = 0) # Charge répartie selon Y (N/m) :
@@ -487,7 +538,7 @@ def main():
                 listeRepartie[i].insert(0,'0')
                 listeRepartie[i].grid(row=i, column = 1)
                 listeRepartie[i].bind('<Return>', lambda evt, index=i:next_Repartie(evt,index))
-            tk.Button(framePoutre, text = 'Ajouter poutre', command = ajouter_poutre).grid(row= 14)
+            tk.Button(framePoutre, text = 'Ajouter poutre', command = ajouter_poutre).grid(row= 15)
             
         ongletsInput.add(framePoutre)
         ongletsInput.tab(2, text='Poutres',image=Poutre_rouge, compound=tk.LEFT)
@@ -639,8 +690,8 @@ def main():
         graph.get_tk_widget().pack()
         # graph.show()
         ongletsOutput.tab(0, text='Lancer le calcul', compound=tk.LEFT)
-        PanedwindowPortique.add(ongletsOutput)
-        PanedwindowPortique.pack(side=tk.LEFT, expand = tk.Y, fill = tk.BOTH)
+    PanedwindowPortique.add(ongletsOutput)
+    PanedwindowPortique.pack(side=tk.LEFT, expand = tk.Y, fill = tk.BOTH)
     change_model()
     main_w.mainloop()
 
