@@ -40,10 +40,6 @@ class Element(object):
         print("k= ",self.k_barre)
     #Créer la matrice locale pour barre
     def __matrice_locale_barre(self, C, S, K, A):
-        print("C", C)
-        print("S", S)
-        print(K)
-        print(C ** 2 * K)
         kk = numpy.array([[0 for i in range(4)] for i in range(4)])
         kk=kk.astype(float)
         
@@ -79,8 +75,6 @@ class Element(object):
         B = B.astype(float)
         c = self.C
         s = self.S
-        print("c=",c)
-        print("s=",s)
         B[0][0] = c
         B[0][1] = s
         B[1][2] = c
@@ -96,12 +90,10 @@ class Element(object):
         E = nommage_matrice_barre_colonnes([i for i in range(1,N_noeud+1)])
         print(E)
         c = list(set(E) - set(nommage_matrice_barre_colonnes(self.List_noeud)))
-        print(c)
         for i in c:
             
             deplacement = deplacement.drop(index = i)
             
-        print(deplacement)
         self.deplacement_local = deplacement
         
         
@@ -388,6 +380,7 @@ CL_f=[]
 RessortSet=[]
 ElementSet=[]
 NoeudSet=[]
+Liaison = []
 
 def Calculer_Barre(liste_points,liste_poutres):
     N_noeud = len(liste_points)
@@ -397,13 +390,24 @@ def Calculer_Barre(liste_points,liste_poutres):
     print("check")
     print(i.X for i in NoeudSet)
     for i in range(len(liste_points)):
+        a = 1
+        b = 1
+        c = 1
         if liste_points[i][2][0] == 0 :#Selon X
             CL_d.append("d"+str(i+1)+"x")
             CL_f.append("F"+str(i+1)+"x")
+            a = 0
 
         if liste_points[i][2][1] == 0 : #Selon Y
             CL_d.append("d"+str(i+1)+"y")
             CL_f.append("F"+str(i+1)+"y")
+            b= 0
+        if liste_points[i][2][5] == 0 :
+            c = 0
+        
+        Liaison.append((a,b,c))
+            
+            
         axe = ["d"+str(i+1)+"x","d"+str(i+1)+"y"]
         a = liste_points[i][4][0]  #A modifier (k Ressort en X)
         b = liste_points[i][4][1]  #A modifier (k Ressort en Y)
@@ -463,7 +467,11 @@ def Calculer_Barre(liste_points,liste_poutres):
     for i in range(len(NoeudSet)):
         N = Noeud(NoeudSet[i].X+ float(deplacement["d"]["d"+str(i+1)+"x"]), NoeudSet[i].Y+ float(deplacement["d"]["d"+str(i+1)+"y"]), NoeudSet[i].Fx,NoeudSet[i].Fy, NoeudSet[i].Mz)
         NoeudSet2.append(N)
-    dessinBarres(ElementSet,NoeudSet,NoeudSet2)
+    
+    liste_abscisses,liste_ordonnee,liste_abscisses2,liste_ordonnee2 = dessinBarres(ElementSet,NoeudSet,NoeudSet2)
+    graph = ["déplacement (en m)",[liste_abscisses,liste_ordonnee,Liaison],[liste_abscisses2,liste_ordonnee]]
+
+    
     
     del ElementSet[:]
     del NoeudSet[:]
@@ -471,6 +479,8 @@ def Calculer_Barre(liste_points,liste_poutres):
     del CL_d[:]
     del CL_f[:]
     del RessortSet[:]
+    
+    return graph
     
     
          
