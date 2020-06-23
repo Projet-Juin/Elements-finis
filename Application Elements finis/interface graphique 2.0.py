@@ -20,7 +20,7 @@ from matplotlib.figure import Figure
 def main():
     global liste_noeuds, liste_poutres
     main_w = tk.Tk() # crée la fenêtre principale
-    main_w.geometry("750x750+0+8") # dimentions dimXxdimY+écartAuBordX+écartAuBordY
+    main_w.geometry("900x750+0+8") # dimentions dimXxdimY+écartAuBordX+écartAuBordY
     main_w.title('Calcul de strucure par la Méthode éléments finis') # titre
     
     if True or 'Barre de Menu':
@@ -548,32 +548,25 @@ def main():
     if True or 'Output': # juste pour structurer le programme
         
         def Calculer():
-            print(liste_noeuds, '\n', liste_poutres)
-            
+                        
             def afficher_results(text_result, graphresult):
                 
                 PanedwindowCalc.add(tk.Label(PanedwindowCalc, text = text_result))
+                listFrame = []
                 liste_figure = []
                 liste_graph = []
+                liste_frame = []
                 for i in range(len(graphresult)):
-                    temp_frame = tk.Frame(ongletsOutput)
+                    listFrame.append(tk.Frame(ongletsOutput))
                     liste_figure.append(Figure(figsize=(16, 9), dpi=80))
-                    liste_graph.append(f.add_subplot(111))
-                    for j in range(len(graphresult[i])-1):
-                        liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1],'-.', c="red", marker='o')
-                    liste_figure.draw()
-                        # temp_X = []
-                        # temp_Y = []
-                        # for i in liste_poutres:
-                        #     for j in liste_noeuds:
-                        #         if i[1][0]==j[0]:
-                        #             temp_X.append(j[1][0])
-                        #             temp_Y.append(j[1][1])
-                        #         elif i[1][1]==j[0]:
-                        #             temp_X.append(j[1][0])
-                        #             temp_Y.append(j[1][1])
-                        # a.plot(temp_X,temp_Y,'-.', c="red", marker='o')
-                        # graph.draw()
+                    liste_graph.append(liste_figure[i].add_subplot(111))
+                    liste_frame.append(FigureCanvasTkAgg(liste_figure[i], master=listFrame[i]))
+                    liste_graph[i].set_xlabel('x')
+                    liste_graph[i].set_ylabel(graphresult[i][0])
+                    NavigationToolbar2Tk(liste_frame[i], listFrame[i]).update()
+                    liste_frame[i].get_tk_widget().pack()
+                    ongletsOutput.add(listFrame[i])
+                    ongletsOutput.tab(i+1, text=graphresult[i][0], compound=tk.LEFT)
                         
                         # if len(graphresult[i][j+1])>2:
                         #     pass
@@ -582,15 +575,12 @@ def main():
                         #     imgliaison = 
                         #     fig, ax = plt.subplots()
                         #     ax.imshow(img, extent=[0, 400, 0, 300])
-                    liste_graph[i].set_xlabel('x')
-                    liste_graph[i].set_ylabel(graphresult[i][0])
-                    liste_figure = FigureCanvasTkAgg(f, master=temp_frame)
-                    NavigationToolbar2Tk(graph, temp_frame).update()
-                    graph.get_tk_widget().pack()
                     
-                    ongletsOutput.add(temp_frame)
-                    ongletsOutput.tab(i+1, text=graphresult[i][0], compound=tk.LEFT)
-                
+                    for j in range(len(graphresult[i])-1):
+                        liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1],'-.', c="red", marker='o')
+                    liste_frame[i].draw()
+                    
+            afficher_results('Strint \ntest', [['graphi1',[[0,1,2,3],[1,3,5,7]],[[0,1,2,3,4,5,6],[0,1,0,1,0,2,0]]],['graphi2',[[0,1,2,3],[0,1,4,9]]]])
             
             vert = True
             for i in liste_noeuds:
@@ -635,7 +625,7 @@ def main():
                     
                     
                 elif modele.get() == 2:
-                    Calculer_Barre(liste_noeuds, liste_poutres)
+                    afficher_results('',Calculer_Barre(liste_noeuds, liste_poutres))
                     
                 elif modele.get() == 3:
                     plotun, plotdeux = CalculerPortique(liste_noeuds, liste_poutres)
@@ -660,7 +650,6 @@ def main():
         
         PanedwindowCalc = ttk.Panedwindow(ongletsOutput, orient="horizontal")
         Calculframe = tk.Frame(PanedwindowCalc)
-        # Calculframe.pack(side=tk.LEFT, expand = tk.Y, fill = tk.BOTH)
         tk.Label(Calculframe, text = "taille du maillage (m)").grid(row=0)
         tailleMaillage = tk.Entry(Calculframe)
         tailleMaillage.grid(row=1)
@@ -687,7 +676,7 @@ def main():
         Combomodel.grid(row = 2)
         tk.Button(Calculframe,text = 'Recharger la structure', command = refresh_struct).grid(row = 4)
         tk.Button(Calculframe,text = 'Lancer le calcul', command = Calculer).grid(row = 5, rowspan = 2, sticky=tk.N+tk.S)
-        img = tk.PhotoImage(file="images\\Logo_EPF.png").subsample(3,3)
+        img = tk.PhotoImage(file="images\\Logo_EPF.png").subsample(2,2)
         tk.Label(Calculframe,image = img, compound=tk.LEFT).grid(row = 7)
         # tk.Label(Calculframe, text = 'coucou').grid(row = 7)
         PanedwindowCalc.add(Calculframe)
