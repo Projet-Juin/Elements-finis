@@ -374,7 +374,7 @@ def main():
                     plein = True
                     for i in listeEntrees:
                         try:
-                            if not(float(i.get())) and i.cget(tk.state)!=tk.DISABLED:
+                            if not(float(i.get())) and i.cget("state")!=tk.DISABLED:
                                 plein = False
                                 tk.messagebox.showerror('Erreur', 'Aucune propriété de poutre ne peut être nulle.')
                                 i.focus()
@@ -553,15 +553,28 @@ def main():
             def afficher_results(text_result, graphresult):
                 
                 PanedwindowCalc.add(tk.Label(PanedwindowCalc, text = text_result))
-                # liste_graphs = []
+                liste_figure = []
+                liste_graph = []
                 for i in range(len(graphresult)):
                     temp_frame = tk.Frame(ongletsOutput)
-                    # liste_graphs.append(temp_frame)
-                    
-                    f = Figure(figsize=(16, 9), dpi=80)
-                    a = f.add_subplot(111)
+                    liste_figure.append(Figure(figsize=(16, 9), dpi=80))
+                    liste_graph.append(f.add_subplot(111))
                     for j in range(len(graphresult[i])-1):
-                        a.plot(graphresult[i][j+1][0],graphresult[i][j+1][1])
+                        liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1],'-.', c="red", marker='o')
+                    liste_figure.draw()
+                        # temp_X = []
+                        # temp_Y = []
+                        # for i in liste_poutres:
+                        #     for j in liste_noeuds:
+                        #         if i[1][0]==j[0]:
+                        #             temp_X.append(j[1][0])
+                        #             temp_Y.append(j[1][1])
+                        #         elif i[1][1]==j[0]:
+                        #             temp_X.append(j[1][0])
+                        #             temp_Y.append(j[1][1])
+                        # a.plot(temp_X,temp_Y,'-.', c="red", marker='o')
+                        # graph.draw()
+                        
                         # if len(graphresult[i][j+1])>2:
                         #     pass
                         #     img = (plt.imread("images\\encastrement.jpg"), plt.imread("images\\rotule.jpg"))
@@ -569,9 +582,9 @@ def main():
                         #     imgliaison = 
                         #     fig, ax = plt.subplots()
                         #     ax.imshow(img, extent=[0, 400, 0, 300])
-                    a.set_xlabel('x')
-                    a.set_ylabel(graphresult[i][0])
-                    graph = FigureCanvasTkAgg(f, master=temp_frame)
+                    liste_graph[i].set_xlabel('x')
+                    liste_graph[i].set_ylabel(graphresult[i][0])
+                    liste_figure = FigureCanvasTkAgg(f, master=temp_frame)
                     NavigationToolbar2Tk(graph, temp_frame).update()
                     graph.get_tk_widget().pack()
                     
@@ -667,8 +680,6 @@ def main():
                         temp_X.append(j[1][0])
                         temp_Y.append(j[1][1])
             a.plot(temp_X,temp_Y,'-.', c="red", marker='o')
-            a.set_xlabel('x')
-            a.set_ylabel('y')
             graph.draw()
         
         Combomodel = ttk.Combobox(Calculframe, values = ('Modèle Poutre', 'Modèle Barre / Treillis', 'Modèle Portique'), state = "readonly")
