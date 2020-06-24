@@ -37,7 +37,7 @@ class Element(object):
         #Créer des matrices
         self.K_local_barre = self. __matrice_locale_barre(self.C, self.S, self.k_barre, self.List_noeud)
         #self.K_local_poutre = self.__matrice_locale_poutre(self.Longueur_poutre, self.EI, self.List_noeud)
-        print("k= ",self.k_barre)
+        
     #Créer la matrice locale pour barre
     def __matrice_locale_barre(self, C, S, K, A):
         kk = numpy.array([[0 for i in range(4)] for i in range(4)])
@@ -88,7 +88,6 @@ class Element(object):
     def create_d_local(self,deplacement,N_noeud):
 
         E = nommage_matrice_barre_colonnes([i for i in range(1,N_noeud+1)])
-        print(E)
         c = list(set(E) - set(nommage_matrice_barre_colonnes(self.List_noeud)))
         for i in c:
             
@@ -350,6 +349,8 @@ def moment_quadratique_et_aire_section_cylindrique(diametre_section):
 def dessinBarres(liste_poutre,liste_noeud,liste_noeud2):
     figure = pyplot.figure(figsize = (10, 10))
     axes = figure.add_subplot(111)
+    list_a = []
+    liste_b = []
     for i in liste_poutre:
         liste_abscisses = []
         liste_ordonnee = []
@@ -359,20 +360,19 @@ def dessinBarres(liste_poutre,liste_noeud,liste_noeud2):
         liste_ordonnee.append(liste_noeud[i.Noeud_label_j-1].Y)
         print(liste_abscisses)
         print(liste_ordonnee)
-        pyplot.plot(liste_abscisses,liste_ordonnee)
+        axes.plot(liste_abscisses,liste_ordonnee)
         # if liste_points[i][2][0] == 0 & :
     for i in liste_poutre:
-        liste_abscisses2 = []
-        liste_ordonnee2 = []
+        
         liste_abscisses2.append(liste_noeud2[i.Noeud_label_i-1].X)
         liste_ordonnee2.append(liste_noeud2[i.Noeud_label_i-1].Y)
         liste_abscisses2.append(liste_noeud2[i.Noeud_label_j-1].X)
         liste_ordonnee2.append(liste_noeud2[i.Noeud_label_j-1].Y)
         print(liste_abscisses2)
         print(liste_ordonnee2)
-        pyplot.plot(liste_abscisses2,liste_ordonnee2,'r--')
+        axes.plot(liste_abscisses2,liste_ordonnee2,'r--')
         
-    return liste_abscisses,liste_ordonnee,liste_abscisses2,liste_ordonnee2 
+    return axes
         
         
 CL_d=[]
@@ -387,12 +387,11 @@ def Calculer_Barre(liste_points,liste_poutres):
     for i in range(len(liste_points)):
         N = Noeud(liste_points[i][1][0], liste_points[i][1][1], liste_points[i][3][0], liste_points[i][3][1], liste_points[i][3][2])
         NoeudSet.append(N)
-    print("check")
-    print(i.X for i in NoeudSet)
+
     for i in range(len(liste_points)):
-        a = 1
-        b = 1
-        c = 1
+        a = 1 # Pour recuperer les liaisons de chaque points
+        b = 1 #
+        c = 1 #
         if liste_points[i][2][0] == 0 :#Selon X
             CL_d.append("d"+str(i+1)+"x")
             CL_f.append("F"+str(i+1)+"x")
@@ -401,7 +400,7 @@ def Calculer_Barre(liste_points,liste_poutres):
         if liste_points[i][2][1] == 0 : #Selon Y
             CL_d.append("d"+str(i+1)+"y")
             CL_f.append("F"+str(i+1)+"y")
-            b= 0
+            b = 0
         if liste_points[i][2][5] == 0 :
             c = 0
         
@@ -422,7 +421,7 @@ def Calculer_Barre(liste_points,liste_poutres):
         List_noeud.append(Noeud_label_i)
         List_noeud.append(Noeud_label_j)
         # List_noeud_save.append(Noeud_label_i)
-        # List_noeud_save.append(Noeud_label_j)
+        # List_noeud_save.append(Noeud_label_j);
         E = liste_poutres[i][4] #A vérifier
         #Création d'objets
         Ele = Element(List_noeud = List_noeud, Aire_section = Aire_section, E = E)
@@ -469,7 +468,7 @@ def Calculer_Barre(liste_points,liste_poutres):
         NoeudSet2.append(N)
     
     liste_abscisses,liste_ordonnee,liste_abscisses2,liste_ordonnee2 = dessinBarres(ElementSet,NoeudSet,NoeudSet2)
-    graph = ["déplacement (en m)",[liste_abscisses,liste_ordonnee,Liaison],[liste_abscisses2,liste_ordonnee]]
+    graph = ["déplacement (en m)",[liste_abscisses,liste_ordonnee,Liaison],[liste_abscisses2,liste_ordonnee2]]
 
     
     
