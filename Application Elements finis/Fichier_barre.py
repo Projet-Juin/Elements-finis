@@ -350,7 +350,7 @@ def dessinBarres(liste_poutre,liste_noeud,liste_noeud2):
     figure = pyplot.figure(figsize = (10, 10))
     axes = figure.add_subplot(111)
     list_a = []
-    liste_b = []
+    list_b = []
     for i in liste_poutre:
         liste_abscisses = []
         liste_ordonnee = []
@@ -360,19 +360,22 @@ def dessinBarres(liste_poutre,liste_noeud,liste_noeud2):
         liste_ordonnee.append(liste_noeud[i.Noeud_label_j-1].Y)
         print(liste_abscisses)
         print(liste_ordonnee)
-        axes.plot(liste_abscisses,liste_ordonnee)
+        list_a.append([liste_abscisses,liste_ordonnee])
+        pyplot.plot(liste_abscisses,liste_ordonnee)
         # if liste_points[i][2][0] == 0 & :
     for i in liste_poutre:
-        
+        liste_abscisses2 = []
+        liste_ordonnee2 = []
         liste_abscisses2.append(liste_noeud2[i.Noeud_label_i-1].X)
         liste_ordonnee2.append(liste_noeud2[i.Noeud_label_i-1].Y)
         liste_abscisses2.append(liste_noeud2[i.Noeud_label_j-1].X)
         liste_ordonnee2.append(liste_noeud2[i.Noeud_label_j-1].Y)
         print(liste_abscisses2)
         print(liste_ordonnee2)
-        axes.plot(liste_abscisses2,liste_ordonnee2,'r--')
+        list_b.append([liste_abscisses2,liste_ordonnee2])
+        pyplot.plot(liste_abscisses2,liste_ordonnee2,'r--')
         
-    return axes
+    return list_a,list_b
         
         
 CL_d=[]
@@ -467,9 +470,10 @@ def Calculer_Barre(liste_points,liste_poutres):
         N = Noeud(NoeudSet[i].X+ float(deplacement["d"]["d"+str(i+1)+"x"]), NoeudSet[i].Y+ float(deplacement["d"]["d"+str(i+1)+"y"]), NoeudSet[i].Fx,NoeudSet[i].Fy, NoeudSet[i].Mz)
         NoeudSet2.append(N)
     
-    liste_abscisses,liste_ordonnee,liste_abscisses2,liste_ordonnee2 = dessinBarres(ElementSet,NoeudSet,NoeudSet2)
-    graph = ["déplacement (en m)",[liste_abscisses,liste_ordonnee,Liaison],[liste_abscisses2,liste_ordonnee2]]
-
+    list_a , list_b = dessinBarres(ElementSet,NoeudSet,NoeudSet2)
+    graph = ["déplacement (en m)",*list_a,*list_b]
+    list_graph = []
+    list_graph.append(graph)
     
     
     del ElementSet[:]
@@ -479,7 +483,7 @@ def Calculer_Barre(liste_points,liste_poutres):
     del CL_f[:]
     del RessortSet[:]
     
-    return graph
+    return list_graph
     
     
          

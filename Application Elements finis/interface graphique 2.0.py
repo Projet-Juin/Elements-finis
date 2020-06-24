@@ -460,7 +460,7 @@ def main():
                     for i in range(len(listlabel)):
                         if listlabel[i].cget('text')!='' and float(listEntry[i].get())==0:
                             valide = False
-                            listEntry[i].select(0,tk.END)
+                            listEntry[i].select_range(0,tk.END)
                             break
                     if valide and ComboG.current()>=0:
                         entrees = []
@@ -473,6 +473,8 @@ def main():
                         listeEntrees[1].delete(0,tk.END)
                         listeEntrees[1].insert(0,str(inertie))
                 geometrie = tk.Tk()
+                geometrie.geometry("380x270+0+8") # dimentions dimXxdimY+écartAuBordX+écartAuBordY
+                geometrie.title("Choix de la section et calcul de l'inertie") # titre
                 frameG = tk.Frame(geometrie)
                 frameG.pack(side=tk.LEFT, expand = tk.Y, fill = tk.BOTH)
                 tk.Label(frameG, text = 'Choix du type de section :').grid(row=0)
@@ -551,6 +553,8 @@ def main():
                         
             def afficher_results(text_result, graphresult):
                 
+                print(graphresult)
+                
                 PanedwindowCalc.add(tk.Label(PanedwindowCalc, text = text_result))
                 listFrame = []
                 liste_figure = []
@@ -560,13 +564,18 @@ def main():
                     listFrame.append(tk.Frame(ongletsOutput))
                     liste_figure.append(Figure(figsize=(16, 9), dpi=80))
                     liste_graph.append(liste_figure[i].add_subplot(111))
+                    # liste_graph.append(graphresult[i])
+
                     liste_frame.append(FigureCanvasTkAgg(liste_figure[i], master=listFrame[i]))
                     liste_graph[i].set_xlabel('x')
                     liste_graph[i].set_ylabel(graphresult[i][0])
+                    # liste_graph[i].set_ylabel('y')
+
                     NavigationToolbar2Tk(liste_frame[i], listFrame[i]).update()
                     liste_frame[i].get_tk_widget().pack()
                     ongletsOutput.add(listFrame[i])
                     ongletsOutput.tab(i+1, text=graphresult[i][0], compound=tk.LEFT)
+                    # ongletsOutput.tab(i+1, text='', compound=tk.LEFT)
                         
                         # if len(graphresult[i][j+1])>2:
                         #     pass
@@ -577,10 +586,12 @@ def main():
                         #     ax.imshow(img, extent=[0, 400, 0, 300])
                     
                     for j in range(len(graphresult[i])-1):
-                        liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1],'-.', c="red", marker='o')
+                        liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1])
+
+                        # liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1],'-.', c="red", marker='o')
                     liste_frame[i].draw()
                     
-            afficher_results('Strint \ntest', [['graphi1',[[0,1,2,3],[1,3,5,7]],[[0,1,2,3,4,5,6],[0,1,0,1,0,2,0]]],['graphi2',[[0,1,2,3],[0,1,4,9]]]])
+            # afficher_results('Strint \ntest', [['graphi1',[[0,1,2,3],[1,3,5,7]],[[0,1,2,3,4,5,6],[0,1,0,1,0,2,0]]],['graphi2',[[0,1,2,3],[0,1,4,9]]]])
             
             vert = True
             for i in liste_noeuds:
@@ -618,10 +629,10 @@ def main():
                     listedebutchargerepartie = []
                     for i in temp_poutres:
                         listedebutchargerepartie.append(i[5][0])
-                    nombrepointsentre2noeuds = 1
+                    nombrepointsentre2noeuds = int(tailleMaillage.get())
                     print(N_element,listeabcisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force)
                     
-                    liste_des_demandes_utilisateur(N_element,listeabcisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force)
+                    afficher_results('',liste_des_demandes_utilisateur(N_element,listeabcisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force))
                     
                     
                 elif modele.get() == 2:
