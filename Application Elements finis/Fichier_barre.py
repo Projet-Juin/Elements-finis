@@ -347,6 +347,7 @@ def Calculer_Barre(liste_points,liste_poutres):
     del CL_f[:]
     del RessortSet[:]
     del Liaison[:]
+    del NoeudSet2[:]
     
     return list_graph
     
