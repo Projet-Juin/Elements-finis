@@ -6,6 +6,8 @@ Created on Sat Jun 13 17:48:31 2020
 """
 
 import tkinter as tk
+import pandas
+from pandastable import Table
 import json
 from tkinter import ttk
 from PortiqueBien import CalculerPortique
@@ -16,6 +18,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
+
 
 def main():
     global liste_noeuds, liste_poutres
@@ -581,7 +584,7 @@ def main():
                         #     ax.imshow(img, extent=[0, 400, 0, 300])
                     
                     for j in range(len(graphresult[i])-1):
-                        liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1])
+                        liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1],graphresult[i][j+1][2])
                     liste_frame[i].draw()
                     
             # afficher_results('Strint \ntest', [['graphi1',[[0,1,2,3],[1,3,5,7]],[[0,1,2,3,4,5,6],[0,1,0,1,0,2,0]]],['graphi2',[[0,1,2,3],[0,1,4,9]]]])
@@ -676,6 +679,7 @@ def main():
             a.plot(temp_X,temp_Y,'-.', c="red", marker='o')
             graph.draw()
         def disp_dataframe():
+            
             ####### emplacement du code pour afficher les dataframes
             pass
             ####### si tu veux tu peux le faire Lansana
