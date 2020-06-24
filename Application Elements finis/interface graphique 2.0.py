@@ -550,33 +550,28 @@ def main():
     if True or 'Output': # juste pour structurer le programme
         
         def Calculer():
-                        
+            
             def afficher_results(text_result, graphresult):
                 
-                print(graphresult)
-                
                 PanedwindowCalc.add(tk.Label(PanedwindowCalc, text = text_result))
-                listFrame = []
-                liste_figure = []
-                liste_graph = []
-                liste_frame = []
+                
                 for i in range(len(graphresult)):
-                    listFrame.append(tk.Frame(ongletsOutput))
-                    liste_figure.append(Figure(figsize=(16, 9), dpi=80))
-                    liste_graph.append(liste_figure[i].add_subplot(111))
-                    # liste_graph.append(graphresult[i])
-
-                    liste_frame.append(FigureCanvasTkAgg(liste_figure[i], master=listFrame[i]))
+                    if len(ongletsOutput.tabs())-1<i+1:
+                        listFrame.append(tk.Frame(ongletsOutput))
+                        liste_figure.append(Figure(figsize=(16, 9), dpi=80))
+                        liste_graph.append(liste_figure[i].add_subplot(111))
+    
+                        liste_frame.append(FigureCanvasTkAgg(liste_figure[i], master=listFrame[i]))
+                        
+                        
+                        NavigationToolbar2Tk(liste_frame[i], listFrame[i]).update()
+                        liste_frame[i].get_tk_widget().pack()
+                        ongletsOutput.add(listFrame[i])
+                        
+                    ongletsOutput.tab(i+1, text=graphresult[i][0], compound=tk.LEFT)
+                    liste_graph[i].cla()
                     liste_graph[i].set_xlabel('x')
                     liste_graph[i].set_ylabel(graphresult[i][0])
-                    # liste_graph[i].set_ylabel('y')
-
-                    NavigationToolbar2Tk(liste_frame[i], listFrame[i]).update()
-                    liste_frame[i].get_tk_widget().pack()
-                    ongletsOutput.add(listFrame[i])
-                    ongletsOutput.tab(i+1, text=graphresult[i][0], compound=tk.LEFT)
-                    # ongletsOutput.tab(i+1, text='', compound=tk.LEFT)
-                        
                         # if len(graphresult[i][j+1])>2:
                         #     pass
                         #     img = (plt.imread("images\\encastrement.jpg"), plt.imread("images\\rotule.jpg"))
@@ -587,8 +582,6 @@ def main():
                     
                     for j in range(len(graphresult[i])-1):
                         liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1])
-
-                        # liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1],'-.', c="red", marker='o')
                     liste_frame[i].draw()
                     
             # afficher_results('Strint \ntest', [['graphi1',[[0,1,2,3],[1,3,5,7]],[[0,1,2,3,4,5,6],[0,1,0,1,0,2,0]]],['graphi2',[[0,1,2,3],[0,1,4,9]]]])
@@ -671,6 +664,7 @@ def main():
         def refresh_struct():
             temp_X = []
             temp_Y = []
+            a.cla()
             for i in liste_poutres:
                 for j in liste_noeuds:
                     if i[1][0]==j[0]:
@@ -681,14 +675,23 @@ def main():
                         temp_Y.append(j[1][1])
             a.plot(temp_X,temp_Y,'-.', c="red", marker='o')
             graph.draw()
-        
+        def disp_dataframe():
+            ####### emplacement du code pour afficher les dataframes
+            pass
+            ####### si tu veux tu peux le faire Lansana
         Combomodel = ttk.Combobox(Calculframe, values = ('Modèle Poutre', 'Modèle Barre / Treillis', 'Modèle Portique'), state = "readonly")
         Combomodel.bind('<<ComboboxSelected>>', ComboChangeModel)
         Combomodel.grid(row = 2)
         tk.Button(Calculframe,text = 'Recharger la structure', command = refresh_struct).grid(row = 4)
+        listFrame = []
+        liste_figure = []
+        liste_graph = []
+        liste_frame = []
         tk.Button(Calculframe,text = 'Lancer le calcul', command = Calculer).grid(row = 5, rowspan = 2, sticky=tk.N+tk.S)
+        tk.Button(Calculframe,text = 'Afficher matrices', command = disp_dataframe()).grid(row = 6)
+        
         img = tk.PhotoImage(file="images\\Logo_EPF.png").subsample(2,2)
-        tk.Label(Calculframe,image = img, compound=tk.LEFT).grid(row = 7)
+        tk.Label(Calculframe,image = img, compound=tk.LEFT).grid(row = 8)
         # tk.Label(Calculframe, text = 'coucou').grid(row = 7)
         PanedwindowCalc.add(Calculframe)
         ongletsOutput.add(PanedwindowCalc)
