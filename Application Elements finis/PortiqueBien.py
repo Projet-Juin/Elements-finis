@@ -8,11 +8,16 @@ import scipy
 from scipy import *
 import matplotlib.pyplot as plt
 import matplotlib
-class Element(object):
-    
-    def __init__(self, List_noeud = [], Aire_section = 0, Largeur_section = 0, Hauteur_section = 0, E = 0, I = 0, Coef_poisson = 0):
 
-        #Importation de données
+pandas.set_option('display.max_columns', None)
+pandas.set_option('display.max_rows', None)
+numpy.set_printoptions(threshold=np.inf)
+
+matplotlib.use('TkAgg')
+
+class Element(object):
+    def __init__(self, List_noeud=[], Aire_section=0, Largeur_section=0, Hauteur_section=0, E=0, I=0, Coef_poisson=0):
+        # Importation de données
         self.List_noeud = List_noeud
         self.Noeud_label_i, self.Noeud_label_j = List_noeud
         self.Aire_section = Aire_section
@@ -28,18 +33,21 @@ class Element(object):
     def __calcule__(self):
         self.Longueur_poutre = numpy.sqrt(
             (NoeudSet[self.Noeud_label_i - 1].X - NoeudSet[self.Noeud_label_j - 1].X) ** 2 + (
-                        NoeudSet[self.Noeud_label_i - 1].Y - NoeudSet[self.Noeud_label_j - 1].Y) ** 2)
+                    NoeudSet[self.Noeud_label_i - 1].Y - NoeudSet[self.Noeud_label_j - 1].Y) ** 2)
         self.C = ((NoeudSet[self.Noeud_label_j - 1].X - NoeudSet[self.Noeud_label_i - 1].X)) / self.Longueur_poutre
         self.S = ((NoeudSet[self.Noeud_label_j - 1].Y - NoeudSet[self.Noeud_label_i - 1].Y)) / self.Longueur_poutre
 
-        #Créer des matrices
-        self.K_local_portique = self. __matrice_locale_portique_ko(self.C, self.S, self.Aire_section, self.E, self.I, self.Longueur_poutre, self.List_noeud)
-        #self.K_local_poutre = self.__matrice_locale_poutre(self.Longueur_poutre, self.EI, self.List_noeud)
+        # Créer des matrices
+        self.K_local_portique = self.__matrice_locale_portique_ko(self.C, self.S, self.Aire_section, self.E, self.I,
+                                                                  self.Longueur_poutre, self.List_noeud)
+        # self.K_local_poutre = self.__matrice_locale_poutre(self.Longueur_poutre, self.EI, self.List_noeud)
 
-    #Créer la matrice locale
+    # Créer la matrice locale
     def __matrice_locale_portique_ko(self, C, S, A, E, I, L, List_n):
-        # print(C)
-        # print(S)
+
+        #print(C)
+        #print(S)
+
         kro = numpy.array([[0.0 for i in range(6)] for i in range(6)])
         K = A * E / L
         kro[0][0] = C ** 2 * K
@@ -58,22 +66,26 @@ class Element(object):
         kro[1][3] = - C * S * K
         kro[3][1] = kro[1][3]
         kro[4][0] = kro[0][4]
-        # print("kro :")
-        # print(kro)
+        '''
+        print("K :")
+        print(K)
+        print("kro :")
+        print(kro)
+        '''
         kk = numpy.array([[0.0 for i in range(6)] for i in range(6)])
         P = E * I  # a modifier avec les classes
         kk[0][0] = P * 12 * (S ** 2) / (L ** 3)
-        kk[0][1] = P * 12 * C * (S ** 2) / (L ** 3)
+        kk[0][1] = - P * 12 * C * S/ (L ** 3)
         kk[0][2] = P * 6 * S / (L ** 2)
-        kk[0][3] = -P * 12 * (S ** 2) / (L ** 3)
-        kk[0][4] = P * 12 * C * (S ** 2) / (L ** 3)
+        kk[0][3] = - P * 12 * (S ** 2) / (L ** 3)
+        kk[0][4] = P * 12 * C * S / (L ** 3)
         kk[0][5] = P * 6 * S / (L ** 2)
         kk[1][0] = kk[0][1]
         kk[1][1] = P * 12 * (C ** 2) / (L ** 3)
         kk[1][2] = -P * 6 * C / (L ** 2)
         kk[1][3] = P * 12 * C * S / (L ** 3)
-        kk[1][4] = -P * 12 * (C ** 2) / (L ** 3)
-        kk[1][5] = -P * 6 * C / (L ** 2)
+        kk[1][4] = - P * 12 * (C ** 2) / (L ** 3)
+        kk[1][5] = - P * 6 * C / (L ** 2)
         kk[2][0] = kk[0][2]
         kk[2][1] = kk[1][2]
         kk[2][2] = P * 4 / L
@@ -98,8 +110,12 @@ class Element(object):
         kk[5][3] = kk[3][5]
         kk[5][4] = kk[4][5]
         kk[5][5] = P * 4 / L
-        # print("kbo :")
-        # print(kk)
+        '''
+        print("P :")
+        print(P)
+        print("kbo :")
+        print(kk)
+        '''
         K_elementaire = kk + kro
 
         # nommage des colonnes et des lignes
@@ -108,9 +124,9 @@ class Element(object):
         K_elementaire = pandas.DataFrame(K_elementaire, columns=A_colonnes, index=A_colonnes)
         return K_elementaire
 
+
 class Noeud(object):
-    def __init__(self, X, Y, type = "rien", Fx = 0, Fy = 0, Mz = 0):
-        self.type = type
+    def __init__(self, X, Y, Fx=0, Fy=0, Mz=0):
         self.X = X
         self.Y = Y
         self.Fx = Fx
@@ -154,6 +170,7 @@ def creation_K_assemble(N_noeud,list_K):
     E= numpy.array([i for i in range(1,N_noeud+1)]) #On crée un tableau qui part de 1 jusqu'au nombre de noeud
     E = nommage_matrice_portique_colonnes(E) #On en fait E = ["u1","v1","theta1",...,"un","vn","thetan"]
     K_final = pandas.DataFrame(0.0,columns = E,index = E)
+    K_final = K_final.astype(float)
 #On créer le K final. Cette table est initialement composé de 0 uniquement.
     #Avec les elements de la liste E en titre de colonne et en titre de ligne
 
@@ -180,7 +197,7 @@ def create_d_assemble(d,N_Noeud):
 def CalculerPortique(liste_points,liste_poutres) :
     N_noeud = len(liste_points)
     taille_maillage = 10
-    
+    Max_L = 0
     
     for i in range(len(liste_points)):
         N = Noeud(liste_points[i][1][0], liste_points[i][1][1], liste_points[i][3][0], liste_points[i][3][1], liste_points[i][3][2])
@@ -215,6 +232,9 @@ def CalculerPortique(liste_points,liste_poutres) :
     for i in range(len(liste_poutres)):
         ElementSet[i].__calcule__()
         ElementSet2[i].__calcule__()
+        if ElementSet[i].Longueur_poutre > Max_L:
+            Max_L = ElementSet[i].Longueur_poutre
+            
     plotun = []
     for i in ElementSet:
         list_X = []
@@ -224,8 +244,8 @@ def CalculerPortique(liste_points,liste_poutres) :
         list_Y.append(NoeudSet[i.Noeud_label_i-1].Y)
         list_Y.append(NoeudSet[i.Noeud_label_j-1].Y)
         plotun.append([list_X,list_Y])
-        # plt.plot(list_X,list_Y,'-.', c="red", marker='o')
-        
+        plt.plot(list_X,list_Y,'-.', c="red", marker='o')
+
     Element_supprime = []
     for i in range(len(liste_poutres)):
         Nde = int(liste_poutres[i][0].split()[1])
@@ -249,25 +269,17 @@ def CalculerPortique(liste_points,liste_poutres) :
             Y = (NoeudSet[ElementSet[Nde - 1].Noeud_label_j - 1].Y - NoeudSet[
                 ElementSet[Nde - 1].Noeud_label_i - 1].Y) / N_parties_maillage * (j + 1) + NoeudSet[
                     ElementSet[Nde - 1].Noeud_label_i - 1].Y
-            N = Noeud(X, Y, "rien", F_total / N_parties_maillage * S, - F_total / N_parties_maillage * C, 0)
+            N = Noeud(X, Y, F_total / N_parties_maillage * S, - F_total / N_parties_maillage * C, 0)
             NoeudSet.append(N)
-    
+
         NoeudSet[ElementSet[Nde - 1].Noeud_label_i - 1].Fx += F_total * S / N_parties_maillage / 2
         NoeudSet[ElementSet[Nde - 1].Noeud_label_i - 1].Fy += - F_total * C / N_parties_maillage / 2
         NoeudSet[ElementSet[Nde - 1].Noeud_label_i - 1].Mz += F * (L / N_parties_maillage) ** 2 / 12
         NoeudSet[ElementSet[Nde - 1].Noeud_label_j - 1].Fx += F_total * S / N_parties_maillage / 2
         NoeudSet[ElementSet[Nde - 1].Noeud_label_j - 1].Fy += - F_total * C / N_parties_maillage / 2
         NoeudSet[ElementSet[Nde - 1].Noeud_label_j - 1].Mz += - F * (L / N_parties_maillage) ** 2 / 12
-    
+
         # Ajout de nouveaux éléments
-        for j in range(N_parties_maillage - 2):
-            List_noeud = []
-            List_noeud.append(len(list(set(NoeudSet))) - j)
-            List_noeud.append(len(list(set(NoeudSet))) - 1 - j)
-            Ele = Element(List_noeud=List_noeud, Aire_section=ElementSet[Nde - 1].Aire_section, E=ElementSet[Nde - 1].E,
-                          I=ElementSet[Nde - 1].I)
-            ElementSet.append(Ele)
-    
         if N_parties_maillage > 1:
             List_noeud = []
             List_noeud.append(len(list(set(NoeudSet))))
@@ -275,9 +287,19 @@ def CalculerPortique(liste_points,liste_poutres) :
             Ele = Element(List_noeud=List_noeud, Aire_section=ElementSet[Nde - 1].Aire_section, E=ElementSet[Nde - 1].E,
                           I=ElementSet[Nde - 1].I)
             ElementSet.append(Ele)
+
+        for j in range(N_parties_maillage - 2):
             List_noeud = []
-            List_noeud.append(len(list(set(NoeudSet))) - N_parties_maillage + 2)
+            List_noeud.append(len(list(set(NoeudSet))) - 1 - j)
+            List_noeud.append(len(list(set(NoeudSet))) - j)
+            Ele = Element(List_noeud=List_noeud, Aire_section=ElementSet[Nde - 1].Aire_section, E=ElementSet[Nde - 1].E,
+                          I=ElementSet[Nde - 1].I)
+            ElementSet.append(Ele)
+
+        if N_parties_maillage > 1:
+            List_noeud = []
             List_noeud.append(ElementSet[Nde - 1].Noeud_label_i)
+            List_noeud.append(len(list(set(NoeudSet))) - N_parties_maillage + 2)
             Ele = Element(List_noeud=List_noeud, Aire_section=ElementSet[Nde - 1].Aire_section, E=ElementSet[Nde - 1].E,
                           I=ElementSet[Nde - 1].I)
             ElementSet.append(Ele)
@@ -301,17 +323,8 @@ def CalculerPortique(liste_points,liste_poutres) :
     for i in Element_supprime:
         ElementSet.remove(i)
         ElementSet2.remove(i)
-    
+
     for i in ElementSet2:
-        L = i.Longueur_poutre
-        C = i.C
-        S = i.S
-        F_total = L * F
-        '''
-        print(ElementSet[Nde - 1].Noeud_label_i)
-        print(ElementSet[Nde - 1].Noeud_label_j)
-        print(F_total)
-        '''
         N_noeud += N_parties_maillage - 1
         # Ajout de nouveaux noeuds
         for j in range(N_parties_maillage - 1):
@@ -321,18 +334,10 @@ def CalculerPortique(liste_points,liste_poutres) :
             Y = (NoeudSet[i.Noeud_label_j - 1].Y - NoeudSet[
                 i.Noeud_label_i - 1].Y) / N_parties_maillage * (j + 1) + NoeudSet[
                     i.Noeud_label_i - 1].Y
-            N = Noeud(X, Y, "rien", 0, 0, 0)
+            N = Noeud(X, Y, 0, 0, 0)
             NoeudSet.append(N)
-    
+
         # Ajout de nouveaux éléments
-        for j in range(N_parties_maillage - 2):
-            List_noeud = []
-            List_noeud.append(len(list(set(NoeudSet))) - j)
-            List_noeud.append(len(list(set(NoeudSet))) - 1 - j)
-            Ele = Element(List_noeud=List_noeud, Aire_section=ElementSet[Nde - 1].Aire_section, E=ElementSet[Nde - 1].E,
-                          I=ElementSet[Nde - 1].I)
-            ElementSet.append(Ele)
-    
         if N_parties_maillage > 1:
             List_noeud = []
             List_noeud.append(len(list(set(NoeudSet))))
@@ -340,15 +345,26 @@ def CalculerPortique(liste_points,liste_poutres) :
             Ele = Element(List_noeud=List_noeud, Aire_section=i.Aire_section, E=i.E,
                           I=i.I)
             ElementSet.append(Ele)
+
+        for j in range(N_parties_maillage - 2):
             List_noeud = []
-            List_noeud.append(len(list(set(NoeudSet))) - N_parties_maillage + 2)
-            List_noeud.append(i.Noeud_label_i)
+            List_noeud.append(len(list(set(NoeudSet))) - 1 - j)
+            List_noeud.append(len(list(set(NoeudSet))) - j)
             Ele = Element(List_noeud=List_noeud, Aire_section=i.Aire_section, E=i.E,
                           I=i.I)
             ElementSet.append(Ele)
-    
-    for i in ElementSet2:
-        ElementSet.remove(i)
+
+        if N_parties_maillage > 1:
+            List_noeud = []
+            List_noeud.append(i.Noeud_label_i)
+            List_noeud.append(len(list(set(NoeudSet))) - N_parties_maillage + 2)
+            Ele = Element(List_noeud=List_noeud, Aire_section=i.Aire_section, E=i.E,
+                          I=i.I)
+            ElementSet.append(Ele)
+
+    if N_parties_maillage > 1:
+        for i in ElementSet2:
+            ElementSet.remove(i)
     
     
     for i in range(len(list(set(ElementSet)))):
@@ -378,7 +394,155 @@ def CalculerPortique(liste_points,liste_poutres) :
     
     # print(deplacement)
     j = 0
+    deplacement_total = []
+    for i in range(N_noeud):
+        ui = "u" + str(i + 1) + "°"
+        vi = "v" + str(i + 1) + "°"
+        thi = "theta" + str(i + 1)
+        if ui in F_final.index:
+            deplacement_total.append(deplacement[j])
+            j += 1
+        else:
+            deplacement_total.append([0])
+        if vi in F_final.index:
+            deplacement_total.append(deplacement[j])
+            j += 1
+        else:
+            deplacement_total.append([0])
+        if thi in F_final.index:
+            deplacement_total.append(deplacement[j])
+            j += 1
+        else:
+            deplacement_total.append([0])
 
+    Max_F = 0
+    Max_M = 0
+    list_X_total_Fx = []
+    list_Y_total_Fx = []
+    list_X_total_Fy = []
+    list_Y_total_Fy = []
+    list_X_total_M = []
+    list_Y_total_M = []
+    Max_F_tranche = 0
+    Max_F_normal = 0
+    j = 0
+
+    F_total = numpy.dot(K_assemble, deplacement_total)
+    # print(F_total)
+    for i in range(N_noeud):
+        if Max_F < numpy.sqrt(F_total[i * 3] ** 2 + F_total[i * 3 + 1] ** 2):
+            Max_F = numpy.sqrt(F_total[i * 3] ** 2 + F_total[i * 3 + 1] ** 2)
+        if Max_M < numpy.abs(F_total[i * 3 + 2]):
+            Max_M = numpy.abs(F_total[i * 3 + 2])
+
+    print("Max_M = {}".format(Max_M))
+    plot3 = []
+    plot4 = []
+    plot5 = []
+    for i in ElementSet:
+        deplacement_local = []
+        deplacement_local.append(deplacement_total[(i.Noeud_label_i - 1) * 3])
+        deplacement_local.append(deplacement_total[(i.Noeud_label_i - 1) * 3 + 1])
+        deplacement_local.append(deplacement_total[(i.Noeud_label_i - 1) * 3 + 2])
+        deplacement_local.append(deplacement_total[(i.Noeud_label_j - 1) * 3])
+        deplacement_local.append(deplacement_total[(i.Noeud_label_j - 1) * 3 + 1])
+        deplacement_local.append(deplacement_total[(i.Noeud_label_j - 1) * 3 + 2])
+        # print(deplacement_local)
+        Matrice_D = pandas.DataFrame(deplacement_local)
+        # print(Matrice_D.to_numpy())
+        K_local = i.K_local_portique
+        Force_interne = numpy.dot(K_local.to_numpy(), Matrice_D.to_numpy())
+        '''
+        print("force_interne")
+        print(Force_interne)
+        '''
+        list_X = []
+        list_Y = []
+        '''
+        print("**************************")
+        print(i.Noeud_label_i)
+        print(NoeudSet[i.Noeud_label_i - 1].X)
+        print(NoeudSet[i.Noeud_label_i - 1].Y)
+        print(i.Noeud_label_j)
+        print(NoeudSet[i.Noeud_label_j - 1].X)
+        print(NoeudSet[i.Noeud_label_j - 1].Y)
+        print(i.C)
+        print(i.S)
+        '''
+        list_X.append(NoeudSet[i.Noeud_label_i - 1].X)
+        list_X.append(NoeudSet[i.Noeud_label_j - 1].X)
+        list_Y.append(NoeudSet[i.Noeud_label_i - 1].Y)
+        list_Y.append(NoeudSet[i.Noeud_label_j - 1].Y)
+        plt.figure(2)
+        plt.plot(list_X, list_Y, c='r')
+        plt.figure(3)
+        plt.plot(list_X, list_Y, c='r')
+        plt.figure(4)
+        plt.plot(list_X, list_Y, c='r')
+        F_tranche = - Force_interne[0] * i.S + Force_interne[1] * i.C
+        F_normal = Force_interne[0] * i.C + Force_interne[1] * i.S
+        M = Force_interne[2]
+        if Max_F_tranche < F_tranche:
+            Max_F_tranche = F_tranche
+        if Max_F_normal < F_normal:
+            Max_F_normal = F_normal
+        L_F_tranche = Max_L / 10 * F_tranche / Max_F
+        L_F_normal = Max_L / 10 * F_normal / Max_F
+        L_M = Max_L / 10 * M / Max_M
+        '''
+        print(F_tranche)
+        print(L_F)
+        '''
+        list_X = []
+        list_Y = []
+        list_X.append((NoeudSet[i.Noeud_label_i - 1].X + NoeudSet[i.Noeud_label_j - 1].X) / 2)
+        list_X.append((NoeudSet[i.Noeud_label_i - 1].X + NoeudSet[i.Noeud_label_j - 1].X) / 2 + L_F_tranche * i.S)
+        list_X_total_Fx.append(
+            (NoeudSet[i.Noeud_label_i - 1].X + NoeudSet[i.Noeud_label_j - 1].X) / 2 + L_F_tranche * i.S)
+        list_Y.append((NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2)
+        list_Y.append((NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2 - L_F_tranche * i.C)
+        list_Y_total_Fx.append(
+            (NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2 - L_F_tranche * i.C)
+        plot3.append([list_X, list_Y])
+        list_X = []
+        list_Y = []
+        list_X.append((NoeudSet[i.Noeud_label_i - 1].X + NoeudSet[i.Noeud_label_j - 1].X) / 2)
+        list_X.append((NoeudSet[i.Noeud_label_i - 1].X + NoeudSet[i.Noeud_label_j - 1].X) / 2 + L_F_normal * i.S)
+        list_X_total_Fy.append(
+            (NoeudSet[i.Noeud_label_i - 1].X + NoeudSet[i.Noeud_label_j - 1].X) / 2 + L_F_normal * i.S)
+        list_Y.append((NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2)
+        list_Y.append((NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2 - L_F_normal * i.C)
+        list_Y_total_Fy.append(
+            (NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2 - L_F_normal * i.C)
+        plot4.append([list_X, list_Y])
+        list_X = []
+        list_Y = []
+        list_X.append((NoeudSet[i.Noeud_label_i - 1].X + NoeudSet[i.Noeud_label_j - 1].X) / 2)
+        list_X.append((NoeudSet[i.Noeud_label_i - 1].X + NoeudSet[i.Noeud_label_j - 1].X) / 2 + L_M * i.S)
+        list_X_total_M.append((NoeudSet[i.Noeud_label_i - 1].X + NoeudSet[i.Noeud_label_j - 1].X) / 2 + L_M * i.S)
+        list_Y.append((NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2)
+        list_Y.append((NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2 - L_M * i.C)
+        list_Y_total_M.append((NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2 - L_M * i.C)
+        plot5.append([list_X, list_Y])
+        # print(i.Noeud_label_i)
+        j += 1
+        if j == N_parties_maillage:
+            # print("*************")
+            j = 0
+            plot3.append([list_X_total_Fx, list_Y_total_Fx])
+            plot3_list.append(plot3)
+            list_X_total_Fx = []
+            list_Y_total_Fx = []
+            plot4.append([list_X_total_Fy, list_Y_total_Fy])
+            plot4_list.append(plot4)
+            list_X_total_Fy = []
+            list_Y_total_Fy = []
+            plot5.append([list_X_total_M, list_Y_total_M])
+            plot5_list.append(plot5)
+            list_X_total_M = []
+            list_Y_total_M = []
+
+    j = 0
     for i in range(N_noeud):
         ui = "u" + str(i + 1) + "°"
         vi = "v" + str(i + 1) + "°"
@@ -391,11 +555,13 @@ def CalculerPortique(liste_points,liste_poutres) :
             j += 1
         if thi in F_final.index:
             j += 1
-    
-    # for i in range(N_noeud):
-    #     print(NoeudSet[i].X)
-    #     print(NoeudSet[i].Y)
-    
+
+    '''
+    for i in range(N_noeud):
+        print(NoeudSet[i].X)
+        print(NoeudSet[i].Y)
+    '''
+
     plotdeux = []
     for i in ElementSet:
         list_X = []
@@ -406,18 +572,31 @@ def CalculerPortique(liste_points,liste_poutres) :
         # print(i.Noeud_label_j)
         # print(NoeudSet[i.Noeud_label_j - 1].X)
         # print(NoeudSet[i.Noeud_label_j - 1].Y)
-        list_X.append(NoeudSet[i.Noeud_label_i-1].X)
-        list_X.append(NoeudSet[i.Noeud_label_j-1].X)
-        list_Y.append(NoeudSet[i.Noeud_label_i-1].Y)
-        list_Y.append(NoeudSet[i.Noeud_label_j-1].Y)
-        plotdeux.append([list_X,list_Y])
+        list_X.append(NoeudSet[i.Noeud_label_i - 1].X)
+        list_X.append(NoeudSet[i.Noeud_label_j - 1].X)
+        list_Y.append(NoeudSet[i.Noeud_label_i - 1].Y)
+        list_Y.append(NoeudSet[i.Noeud_label_j - 1].Y)
+        plotdeux.append([list_X, list_Y])
+
+    '''
+    for i in range(N_noeud):
+        print("Noeud N°", i + 1)
+        print("u" + str(i + 1) + "° =", deplacement_total[3*i])
+        print("v" + str(i + 1) + "° =", deplacement_total[3*i+1])
+        print("theta" + str(i + 1) + " =",deplacement_total[3*i+2])
+    '''
+
+    print("Max_Force_tranche = {}".format(Max_F_tranche))
+    print("Max_Force_normal = {}".format(Max_F_normal))
+    
+
         # plt.plot(list_X,list_Y)
     
     # plt.xlabel('x')
     # plt.ylabel('y')
     
     # plt.show()
-    return plotun , plotdeux
+    return plotun , plotdeux , plot3 , plot4 , plot5 , plot3_list, plot4_list, plot5_list
     
 CL_d=[]
 CL_f=[]
@@ -425,6 +604,10 @@ RessortSet=[]
 ElementSet=[]
 NoeudSet=[]
 ElementSet2 = []
+plot3_list = []
+plot4_list = []
+plot5_list = []
+
 
 
 """ NOTES :
