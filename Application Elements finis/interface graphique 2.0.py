@@ -11,16 +11,16 @@ from tkinter import ttk
 from PortiqueBien import CalculerPortique
 from code_pour_poutre import liste_des_demandes_utilisateur
 from Fichier_barre import Calculer_Barre
-from section_inertie import getInertie
 import matplotlib
 matplotlib.use('TkAgg')
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg#, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
+
 
 def main():
     global liste_noeuds, liste_poutres
     main_w = tk.Tk() # crée la fenêtre principale
-    main_w.geometry("900x750+0+8") # dimentions dimXxdimY+écartAuBordX+écartAuBordY
+    main_w.geometry("750x750+0+8") # dimentions dimXxdimY+écartAuBordX+écartAuBordY
     main_w.title('Calcul de strucure par la Méthode éléments finis') # titre
     
     if True or 'Barre de Menu':
@@ -31,17 +31,17 @@ def main():
             if temp_filename!='':
                 with open(temp_filename, "r") as f:
                     liste_noeuds, liste_poutres = json.load(f)
-                for i in Liste_listboxNoeuds:
-                    i.delete(0,tk.END)
-                    for j in liste_noeuds[:-1]:
-                        i.insert(tk.END, j[0]+" "+str(j[1]))
-                listboxNoeud_update(len(liste_noeuds)-1)
-                for i in Liste_listboxPoutres:
-                    i.delete(0,tk.END)
-                    for j in liste_poutres[:-1]:
-                        i.insert(tk.END, j[0]+" "+str(j[1]))
-                update_poutres(len(liste_poutres)-1)
-                valid_chargement()
+                    for i in Liste_listboxNoeuds:
+                        i.delete(0,tk.END)
+                        for j in liste_noeuds[:-1]:
+                            i.insert(tk.END, j[0]+" "+str(j[1]))
+                    listboxNoeud_update(len(liste_noeuds)-1)
+                    for i in Liste_listboxPoutres:
+                        i.delete(0,tk.END)
+                        for j in liste_poutres[:-1]:
+                            i.insert(tk.END, j[0]+" "+str(j[1]))
+                    update_poutres(len(liste_poutres)-1)
+                    valid_chargement()
                     
         def sauvegarder():
             temp_filename = tk.filedialog.asksaveasfilename()
@@ -50,23 +50,22 @@ def main():
                     json.dump((liste_noeuds, liste_poutres), f)
         
         def change_model():
-            Combomodel.set(('Modèle Poutre', 'Modèle Barre / Treillis', 'Modèle Portique')[modele.get()-1])
             Ynoeud.config(state= (tk.DISABLED if modele.get() in (1,) else tk.NORMAL))
             Znoeud.config(state= (tk.DISABLED if modele.get() in (1,2,3) or D2.get() else tk.NORMAL))
-            listeEntry[0].config(state= (tk.DISABLED if modele.get() in (1,) or ListeCheck[0].instate(['selected']) else tk.NORMAL))
-            listeEntry[1].config(state= (tk.DISABLED if ListeCheck[1].instate(['selected']) else tk.NORMAL))
-            listeEntry[2].config(state= (tk.DISABLED if modele.get() in (1,2,3) or D2.get() or ListeCheck[2].instate(['selected']) else tk.NORMAL))
-            listeEntry[3].config(state= (tk.DISABLED if modele.get() in (1,2,3) or D2.get() or ListeCheck[3].instate(['selected']) else tk.NORMAL))
-            listeEntry[4].config(state= (tk.DISABLED if modele.get() in (1,2,3) or D2.get() or ListeCheck[4].instate(['selected']) else tk.NORMAL))
-            listeEntry[5].config(state= (tk.DISABLED if modele.get() in (2,) or ListeCheck[5].instate(['selected']) else tk.NORMAL))
-            listeEntryR[0].config(state= (tk.DISABLED if modele.get() in (1,2,3) or ListeCheck[0].instate(['selected']) else tk.NORMAL))
-            listeEntryR[1].config(state= (tk.DISABLED if modele.get() in (1,2,3) or ListeCheck[1].instate(['selected']) else tk.NORMAL))
-            listeEntryR[2].config(state= (tk.DISABLED if modele.get() in (1,2,3) or D2.get() or ListeCheck[2].instate(['selected']) else tk.NORMAL))
+            listeEntry[0].config(state= (tk.DISABLED if modele.get() in (1,) else tk.NORMAL))
+            listeEntry[2].config(state= (tk.DISABLED if modele.get() in (1,2,3) or D2.get() else tk.NORMAL))
+            listeEntry[3].config(state= (tk.DISABLED if modele.get() in (1,2,3) or D2.get() else tk.NORMAL))
+            listeEntry[4].config(state= (tk.DISABLED if modele.get() in (1,2,3) or D2.get() else tk.NORMAL))
+            listeEntry[5].config(state= (tk.DISABLED if modele.get() in (2,) else tk.NORMAL))
+            listeEntryR[0].config(state= (tk.DISABLED if modele.get() in (1,3) else tk.NORMAL))
+            listeEntryR[1].config(state= (tk.DISABLED if modele.get() in (1,3) else tk.NORMAL))
+            listeEntryR[2].config(state= (tk.DISABLED if modele.get() in (1,3) or D2.get() else tk.NORMAL))
             for i in (2,3,4):
                 ListeCheck[i].state((['disabled'] if D2.get() else ['!disabled']))
             listeEntrees[0].config(state= (tk.DISABLED if modele.get() in (1,) else tk.NORMAL))
             listeEntrees[1].config(state= (tk.DISABLED if modele.get() in (2,) else tk.NORMAL))
             listeRepartie[0].config(state= (tk.DISABLED if modele.get() in (2,) else tk.NORMAL))
+            
             
         barre_de_menu = tk.Menu(main_w)
         main_w.config(menu=barre_de_menu)
@@ -105,11 +104,13 @@ def main():
         autres_menu.add_command(label='Crédit,command=credit')
         barre_de_menu.add_cascade(label='Autres', menu=autres_menu)
     
-        
+    
+    
     Liste_listboxNoeuds = []
     Liste_listboxPoutres = []
     
-    PanedwindowPortique = ttk.Panedwindow(main_w, orient="horizontal")
+    ongletsEtape = ttk.Notebook(main_w)
+    PanedwindowPortique = ttk.Panedwindow(ongletsEtape, orient="horizontal")
     
     if True or 'Inputs': # juste pour structurer le programme
         
@@ -236,7 +237,7 @@ def main():
             def update_deg_liberte(libertes):
                 for i in range(len(libertes)):
                     ListeCheck[i].state([('' if libertes[i] else '!')+'selected'])
-                change_model()
+                    lock(i)
             
             def appliquer_chargements():
                 global liste_noeuds
@@ -270,13 +271,13 @@ def main():
                         liste_noeuds[selectd_index][4] = [float(listeEntryR[0].get()), float(listeEntryR[1].get()), float(listeEntryR[2].get())]
                         
                         update_deg_liberte((0,0,0,0,0,0))
-                        Combobox.set('')
                         for i in listeEntry:
                             i.delete(0,tk.END)
                             i.insert(0,'0')
                         for i in listeEntryR:
                             i.delete(0,tk.END)
                             i.insert(0,'0')
+                        # Liste_listboxNoeuds[1].focus()
                         Liste_listboxNoeuds[1].see(selectd_index)
                         Liste_listboxNoeuds[1].selection_clear(selectd_index)
                         Liste_listboxNoeuds[1].selection_set(selectd_index+1)
@@ -297,6 +298,11 @@ def main():
                     ongletsInput.tab(1, image = Fleche_verte, compound=tk.LEFT)
                 else:
                     ongletsInput.tab(1, image = Fleche_rouge, compound=tk.LEFT)
+                    
+            def lock(index):
+                listeEntry[index].config(state = (tk.NORMAL if ListeCheck[index].instate(['!selected']) else tk.DISABLED))
+                if index <=2:
+                    listeEntryR[index].config(state = (tk.NORMAL if ListeCheck[index].instate(['!selected']) else tk.DISABLED))
                 
             tk.Label(frameChargements, text='Définir les propriétés des nœuds :').grid(row=0) 
             tk.Label(frameChargements, text='Choix du nœud :').grid(row=1)
@@ -308,7 +314,7 @@ def main():
             ListeCheck = []
             temp_text=("Bloquage selon X","Bloquage selon Y","Bloquage selon Z","Bloquage en rotation selon X","Bloquage en rotation selon Y","Bloquage en rotation selon Z")
             for i in range(6):
-                ListeCheck.append(ttk.Checkbutton(frameDeplacements, text = temp_text[i], command= change_model))
+                ListeCheck.append(ttk.Checkbutton(frameDeplacements, text = temp_text[i], command= lambda index=i: lock(index)))
                 ListeCheck[i].state(['!alternate'])
                 ListeCheck[i].bind("<Button-1>", lambda evt: Combobox.set(''))
                 ListeCheck[i].grid(row=i%3, column = i//3)
@@ -374,7 +380,7 @@ def main():
                     plein = True
                     for i in listeEntrees:
                         try:
-                            if not(float(i.get())) and i.cget("state")!=tk.DISABLED:
+                            if not(float(i.get())) and i.cget(tk.state)!=tk.DISABLED:
                                 plein = False
                                 tk.messagebox.showerror('Erreur', 'Aucune propriété de poutre ne peut être nulle.')
                                 i.focus()
@@ -442,57 +448,6 @@ def main():
                 else:
                     tk.messagebox.showerror('Erreur', 'Aucun nœud sélectionné.')
             
-            def selectionner_geométrie():
-                listargs = (('b',),('b','b1'),('b','h'),('b','h','b1','h1'),('b','h','b1','b2','h1'),('b','h','b1','h1'),('b','h','b1','h1'),('b','h','b1','b2','h1'),('b','h'),('R',),('R','R1'),('R',),('R',),('D2','D1'),('b','h'),('D2','D1'))
-                def choix_geo(evt):
-                    if ComboG.current()>=0:
-                        for i in range(len(listlabel)):
-                            listEntry[i].delete(0,tk.END)
-                            listEntry[i].insert(0,'0')
-                            try:
-                                listlabel[i].config(text= listargs[ComboG.current()][i])
-                                listEntry[i].config(state= tk.NORMAL)
-                            except IndexError:
-                                listlabel[i].config(text= '')
-                                listEntry[i].config(state= tk.DISABLED)
-                def choix_sec():
-                    valide = True
-                    for i in range(len(listlabel)):
-                        if listlabel[i].cget('text')!='' and float(listEntry[i].get())==0:
-                            valide = False
-                            listEntry[i].select_range(0,tk.END)
-                            break
-                    if valide and ComboG.current()>=0:
-                        entrees = []
-                        for i in range(len(listlabel)):
-                            if listlabel[i].cget('text')!='':
-                                entrees.append(float(listEntry[i].get()))
-                        inertie, aire = getInertie(ComboG.current(), entrees)
-                        listeEntrees[0].delete(0,tk.END)
-                        listeEntrees[0].insert(0,str(aire))
-                        listeEntrees[1].delete(0,tk.END)
-                        listeEntrees[1].insert(0,str(inertie))
-                geometrie = tk.Tk()
-                geometrie.geometry("380x270+0+8") # dimentions dimXxdimY+écartAuBordX+écartAuBordY
-                geometrie.title("Choix de la section et calcul de l'inertie") # titre
-                frameG = tk.Frame(geometrie)
-                frameG.pack(side=tk.LEFT, expand = tk.Y, fill = tk.BOTH)
-                tk.Label(frameG, text = 'Choix du type de section :').grid(row=0)
-                ComboG = ttk.Combobox(frameG, values = ('Carré','Carré creux','Rectangle','Rectangle creux','Profil I','Profil T','Profil L','Profil Z','Triangle rectangle','Cercle','Cercle creux','Demi-cercle','Quart de cercle','Ovale','Croix','Losange'), state = "readonly")
-                ComboG.grid(row=1)
-                ComboG.bind('<<ComboboxSelected>>', choix_geo)
-                listlabel = []
-                listEntry =[]
-                for i in range(5):
-                    listlabel.append(tk.Label(frameG, text=''))
-                    listlabel[i].grid(row = 2*i+2)
-                    listEntry.append(tk.Entry(frameG))
-                    listEntry[i].insert(0,'0')
-                    listEntry[i].grid(row = 2*i+3)
-                tk.Button(frameG, text='Appliquer section', command=choix_sec).grid(row=12)
-                geometrie.mainloop()
-                    
-    
             Poutre_rouge = tk.PhotoImage(file="images\\Poutre_rouge.png").subsample(6,6)
             Poutre_verte = tk.PhotoImage(file="images\\Poutre_verte.png").subsample(10,10)
             
@@ -505,10 +460,9 @@ def main():
             tk.Label(framePoutre, text='Choix des nœuds à lier :').grid(row=5)
             Liste_listboxNoeuds.append(tk.Listbox(framePoutre, selectmode=tk.MULTIPLE, exportselection=False))
             Liste_listboxNoeuds[2].grid(row=6)
-            tk.Button(framePoutre, text = "Sélectionner géométrie", command = selectionner_geométrie).grid(row=7)
-            tk.Label(framePoutre, text='Aire de la section (m²) :').grid(row=8)
-            tk.Label(framePoutre, text='Inertie de la poutre (m^4) :').grid(row=10)
-            tk.Label(framePoutre, text='Module de Young (Pa) :').grid(row=12)
+            tk.Label(framePoutre, text='Aire de la section (m²) :').grid(row=7)
+            tk.Label(framePoutre, text='Inertie de la poutre (m^4) :').grid(row=9)
+            tk.Label(framePoutre, text='Module de Young (Pa) :').grid(row=11)
             listeEntrees = []
             def next_Props(index):
                 if index==2:
@@ -520,11 +474,11 @@ def main():
             for i in range(3):
                 listeEntrees.append(tk.Entry(framePoutre))
                 listeEntrees[i].insert(0,'0')
-                listeEntrees[i].grid(row = 9+i*2)
+                listeEntrees[i].grid(row = 8+i*2)
                 listeEntrees[i].bind('<Return>', lambda evt, index=i:next_Props(index))
                 
             frameRepartie = tk.LabelFrame(framePoutre, text = 'Charge répartie sur la poutre')
-            frameRepartie.grid(row=14)
+            frameRepartie.grid(row=13)
             listeRepartie = []
             tk.Label(frameRepartie, text = 'Charge normale répartie (N/m) :').grid(row=0, column = 0) # ajouter ressort en torsion ?
             # tk.Label(frameRepartie, text = '').grid(row=1, column = 0) # Charge répartie selon Y (N/m) :
@@ -540,51 +494,21 @@ def main():
                 listeRepartie[i].insert(0,'0')
                 listeRepartie[i].grid(row=i, column = 1)
                 listeRepartie[i].bind('<Return>', lambda evt, index=i:next_Repartie(evt,index))
-            tk.Button(framePoutre, text = 'Ajouter poutre', command = ajouter_poutre).grid(row= 15)
+            tk.Button(framePoutre, text = 'Ajouter poutre', command = ajouter_poutre).grid(row= 14)
             
         ongletsInput.add(framePoutre)
         ongletsInput.tab(2, text='Poutres',image=Poutre_rouge, compound=tk.LEFT)
             
     PanedwindowPortique.add(ongletsInput)
+    PanedwindowPortique.add(tk.Canvas(PanedwindowPortique))
+    PanedwindowPortique.sashpos(0, 10)
+    ongletsEtape.add(PanedwindowPortique)
+    ongletsEtape.tab(0, text="Données d'entrée")
     
     if True or 'Output': # juste pour structurer le programme
         
         def Calculer():
-            
-            def afficher_results(text_result, graphresult):
-                
-                PanedwindowCalc.add(tk.Label(PanedwindowCalc, text = text_result))
-                
-                for i in range(len(graphresult)):
-                    if len(ongletsOutput.tabs())-1<i+1:
-                        listFrame.append(tk.Frame(ongletsOutput))
-                        liste_figure.append(Figure(figsize=(16, 9), dpi=80))
-                        liste_graph.append(liste_figure[i].add_subplot(111))
-    
-                        liste_frame.append(FigureCanvasTkAgg(liste_figure[i], master=listFrame[i]))
-                        
-                        
-                        NavigationToolbar2Tk(liste_frame[i], listFrame[i]).update()
-                        liste_frame[i].get_tk_widget().pack()
-                        ongletsOutput.add(listFrame[i])
-                        
-                    ongletsOutput.tab(i+1, text=graphresult[i][0], compound=tk.LEFT)
-                    liste_graph[i].cla()
-                    liste_graph[i].set_xlabel('x')
-                    liste_graph[i].set_ylabel(graphresult[i][0])
-                        # if len(graphresult[i][j+1])>2:
-                        #     pass
-                        #     img = (plt.imread("images\\encastrement.jpg"), plt.imread("images\\rotule.jpg"))
-                            
-                        #     imgliaison = 
-                        #     fig, ax = plt.subplots()
-                        #     ax.imshow(img, extent=[0, 400, 0, 300])
-                    
-                    for j in range(len(graphresult[i])-1):
-                        liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1])
-                    liste_frame[i].draw()
-                    
-            # afficher_results('Strint \ntest', [['graphi1',[[0,1,2,3],[1,3,5,7]],[[0,1,2,3,4,5,6],[0,1,0,1,0,2,0]]],['graphi2',[[0,1,2,3],[0,1,4,9]]]])
+            print(liste_noeuds, '\n', liste_poutres)
             
             vert = True
             for i in liste_noeuds:
@@ -596,7 +520,7 @@ def main():
                 for j in i[1]:
                     if not(j in temp_noeuds):
                         temp_noeuds.append(j)
-            if len(liste_noeuds)==len(temp_noeuds) and vert and len(liste_noeuds)>=2:
+            if len(liste_noeuds)==len(temp_noeuds) and vert:
                 if modele.get() == 1:
                     N_element = len(liste_noeuds)
                     listeabcisse = []
@@ -622,90 +546,41 @@ def main():
                     listedebutchargerepartie = []
                     for i in temp_poutres:
                         listedebutchargerepartie.append(i[5][0])
-                    nombrepointsentre2noeuds = int(tailleMaillage.get())
+                    nombrepointsentre2noeuds = 1
                     print(N_element,listeabcisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force)
                     
-                    afficher_results('',liste_des_demandes_utilisateur(N_element,listeabcisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force))
+                    liste_des_demandes_utilisateur(N_element,listeabcisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force)
                     
                     
                 elif modele.get() == 2:
-                    afficher_results('',Calculer_Barre(liste_noeuds, liste_poutres))
+                    Calculer_Barre(liste_noeuds, liste_poutres)
                     
                 elif modele.get() == 3:
                     plotun, plotdeux = CalculerPortique(liste_noeuds, liste_poutres)
                     
-                    # f = Figure(figsize=(16, 9), dpi=80)
-                    # a = f.add_subplot(111)
-                    # for i in plotun:
-                    #     a.plot(i[0],i[1],'-.', c="red", marker='o')
-                    # for j in plotdeux:
-                    #     a.plot(j[0],j[1])
-                    # a.set_xlabel('x')
-                    # a.set_ylabel('y')
+                    f = Figure(figsize=(16, 9), dpi=80)
+                    a = f.add_subplot(111)
+                    for i in plotun:
+                        a.plot(i[0],i[1],'-.', c="red", marker='o')
+                    for j in plotdeux:
+                        a.plot(j[0],j[1])
+                    a.set_xlabel('x')
+                    a.set_ylabel('y')
                     
-                    # graph = FigureCanvasTkAgg(f, master=framegraph)
-                    # NavigationToolbar2Tk(graph, framegraph).update()
-                    # graph.get_tk_widget().pack()
-                    
+                    graph = FigureCanvasTkAgg(f, master=framegraph)
+                    graph.get_tk_widget().grid(row = 0)            
             else:
                 tk.messagebox.showerror('Erreur', "Les données d'entrée sont incomplètes")
         
-        ongletsOutput = ttk.Notebook(PanedwindowPortique)
+        panedCalc = ttk.Panedwindow(ongletsEtape, orient = tk.HORIZONTAL)
         
-        PanedwindowCalc = ttk.Panedwindow(ongletsOutput, orient="horizontal")
-        Calculframe = tk.Frame(PanedwindowCalc)
-        tk.Label(Calculframe, text = "taille du maillage (m)").grid(row=0)
-        tailleMaillage = tk.Entry(Calculframe)
-        tailleMaillage.grid(row=1)
-        def ComboChangeModel(evt):
-            if Combomodel.current()>=0:
-                modele.set(Combomodel.current()+1)
-                change_model()
-        def refresh_struct():
-            temp_X = []
-            temp_Y = []
-            a.cla()
-            for i in liste_poutres:
-                for j in liste_noeuds:
-                    if i[1][0]==j[0]:
-                        temp_X.append(j[1][0])
-                        temp_Y.append(j[1][1])
-                    elif i[1][1]==j[0]:
-                        temp_X.append(j[1][0])
-                        temp_Y.append(j[1][1])
-            a.plot(temp_X,temp_Y,'-.', c="red", marker='o')
-            graph.draw()
-        def disp_dataframe():
-            ####### emplacement du code pour afficher les dataframes
-            pass
-            ####### si tu veux tu peux le faire Lansana
-        Combomodel = ttk.Combobox(Calculframe, values = ('Modèle Poutre', 'Modèle Barre / Treillis', 'Modèle Portique'), state = "readonly")
-        Combomodel.bind('<<ComboboxSelected>>', ComboChangeModel)
-        Combomodel.grid(row = 2)
-        tk.Button(Calculframe,text = 'Recharger la structure', command = refresh_struct).grid(row = 4)
-        listFrame = []
-        liste_figure = []
-        liste_graph = []
-        liste_frame = []
-        tk.Button(Calculframe,text = 'Lancer le calcul', command = Calculer).grid(row = 5, rowspan = 2, sticky=tk.N+tk.S)
-        tk.Button(Calculframe,text = 'Afficher matrices', command = disp_dataframe()).grid(row = 7)
-        
-        img = tk.PhotoImage(file="images\\Logo_EPF.png").subsample(2,2)
-        tk.Label(Calculframe,image = img, compound=tk.LEFT).grid(row = 8)
-        # tk.Label(Calculframe, text = 'coucou').grid(row = 7)
-        PanedwindowCalc.add(Calculframe)
-        ongletsOutput.add(PanedwindowCalc)
-        canvasStruc = tk.Frame(PanedwindowCalc)
-        PanedwindowCalc.add(canvasStruc)
-        f = Figure(figsize=(16, 9), dpi=80)
-        a = f.add_subplot(111)
-        graph = FigureCanvasTkAgg(f, master=canvasStruc)
-        NavigationToolbar2Tk(graph, canvasStruc).update()
-        graph.get_tk_widget().pack()
-        # graph.show()
-        ongletsOutput.tab(0, text='Lancer le calcul', compound=tk.LEFT)
-    PanedwindowPortique.add(ongletsOutput)
-    PanedwindowPortique.pack(side=tk.LEFT, expand = tk.Y, fill = tk.BOTH)
+        BoutonCalculer = tk.Button(panedCalc,text = 'Lancer le calcul', command = Calculer)
+        panedCalc.add(BoutonCalculer)
+        framegraph = tk.LabelFrame(panedCalc, text = 'graph')
+        panedCalc.add(framegraph)
+        ongletsEtape.add(panedCalc)
+        ongletsEtape.tab(1, text="Résultats du calcul")
+        ongletsEtape.pack(side=tk.LEFT, expand = tk.Y, fill = tk.BOTH)
     change_model()
     main_w.mainloop()
 
