@@ -449,9 +449,9 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     for k in range(0,len(d_assemblee)):
         if d_assemblee[k]==[0]:
             L.append(k)
-    L=list(reversed(L)) #inverse la liste des lignes et colonnes a supprimer
+    L=list(reversed(L)) #inverse la liste des colonnes a supprimer
     
-    for l in range (len(L)): #supprime les lignes et colonnes inutiles
+    for l in range (len(L)):
         matricerigidite=np.delete(matricerigidite, L[l], 1)
         matricerigidite=np.delete(matricerigidite, L[l], 0)
     
@@ -471,7 +471,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
             i=i+1
     
     
-    #calcul de la matrice des forces externes
+    #♣calcul de la matrice des forces externes
     F_assemblee=np.dot(K_assemblee,d_assemblee) ##########################"on enleve ?
     
     
@@ -503,7 +503,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     
     #en calculant les forces internes théoriquement on se rend compte que aux noeuds, si la longueur entre 2 noeuds n'est pas la même sur la même poutre alors les forces internes calculées ne sont pas les mêmes sur les 2 systemes prenant en commpte un même vrai noeud.
     #on va donc représenter toutes les forces calculées pour les vrais noeuds (non maillage),
-    """
+    
     rigidite_pour_internes=matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(liste_abscisse_allongee[1]-liste_abscisse_allongee[0],EI)
     rigidite_pour_internes=rigidite_pour_internes+np.transpose(rigidite_pour_internes)-np.diag(np.diag(rigidite_pour_internes))
     d_pour_internes.append(d_assemblee_liste[0])
@@ -517,8 +517,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     force_internes_totales.append(forces_internes[3])
     liste_abscisse_allongee_pour_forces_internes.append(liste_abscisse_allongee[0])
     liste_abscisse_allongee_pour_forces_internes.append(liste_abscisse_allongee[1])
-    """
-    for k in range(len(liste_abscisse_allongee)-1):
+    for k in range(1,len(liste_abscisse_allongee)-1):
         d_pour_internes=[]
         rigidite_pour_internes=matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(liste_abscisse_allongee[k+1]-liste_abscisse_allongee[k],EI)
         rigidite_pour_internes=rigidite_pour_internes+np.transpose(rigidite_pour_internes)-np.diag(np.diag(rigidite_pour_internes))
