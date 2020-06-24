@@ -143,25 +143,6 @@ def nommage_matrice_barre_lignes(listnoeud):
 
         return A
 
-def nommage_matrice_poutre_colonnes(n_noeud):
-        # Ici on créer une chaine composé des noms des colonnes des matrices poutres
-        A = []
-        for i in range(n_noeud):
-            A.append("d" + str(i+1) + "y")
-            A.append("phi" +str(i+1))
-        return A
-
-
-
-def nommage_matrice_poutre_lignes(n_noeud):
-
-        # Ici on créer une chaine composé des noms des lignes des matrices poutres
-        A = []
-        for i in range(n_noeud):
-            A.append("F" + str(i+1) + "y")
-            A.append("M" + str(i+1))
-        return A
-
 
 def creation_K_assemble(N_noeud,list_K,list_ressort):
 
@@ -228,124 +209,6 @@ def create_d_assemble(d,N_Noeud):
         
         return Tab
         
-
-
-#pour version 2 du code (encore non utilisé)
-#Pour barre/treillis
-def moment_quadratique_et_aire_section_rectangle(Largeur_section,Hauteur_section):
-    Aire_section=Largeur_section*Hauteur_section
-    return Aire_section
-
-def moment_quadratique_et_aire_section_cylindrique(diametre_section):
-    Aire_section=pi*((diametre_section/2)**2)
-    return Aire_section
-
-
-
-############# pour les poutres
-
-#Créer la matrice locale pour poutre
-
-def matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(Longueur_poutre,EI):   #L est la longueur entre 2 noeuds
-
-    k=np.array([[12,6*Longueur_poutre,-12,6*Longueur_poutre],[0,4*Longueur_poutre**2,-6*Longueur_poutre,2*Longueur_poutre**2],[0,0,12,-6*Longueur_poutre],[0,0,0,4*Longueur_poutre**2]]) #matrice  sans EI/Longueur_poutre
-
-    m=EI/Longueur_poutre              #constante devant la matrice
-
-    k=[i*m for i in k]                #matrice rigidité finie
-
-    return k
-
-#fonction ajoutant 1 ligne et 1 colonne à un tableau
-
-def ettendre_1ligne_et_1colonne(tableau):
-
-    tableau=append(tableau,[zeros(shape(tableau)[0])],axis=0)
-
-    tableau=append(tableau,zeros((shape(tableau)[0],1)),axis=1)
-
-    return tableau
-
-#fonction ajoutant 1 ligne et 1 colonne à un tableau
-
-def ettendre_1ligne_et_1colonne(tableau):
-
-    tableau=append(tableau,[zeros(shape(tableau)[0])],axis=0)
-
-    tableau=append(tableau,zeros((shape(tableau)[0],1)),axis=1)
-
-    return tableau
-
-#fonction combinant les matrices élémentaires 2 par 2 : # on garde la matrice des 2 premiers noeuds et on ajoute les matrices les une après les autres dans le sens croissants des abscisses des noeuds # on obtient à la fin la matrice triangulaire supérieure car la partie inférieure et symétrique
-
-def fonction_matrice_totale_triangulairesup(tableau1,tableau2):
-
-    resultat=ettendre_1ligne_et_1colonne(ettendre_1ligne_et_1colonne(tableau1))
-
-    lim21=shape(tableau1)[0]-2
-
-    resultat[lim21][lim21]+=tableau2[0][0]
-
-    resultat[lim21][lim21+1]+=tableau2[0][1]
-
-    resultat[lim21+1][lim21+1]+=tableau2[1][1]
-
-    resultat[lim21+2][lim21+2]+=tableau2[2][2]
-
-    resultat[lim21+2][lim21+3]+=tableau2[2][3]
-
-    resultat[lim21+3][lim21+3]+=tableau2[3][3]
-
-    resultat[lim21][lim21+2]+=tableau2[0][2]
-
-    resultat[lim21][lim21+3]+=tableau2[0][3]
-
-    resultat[lim21+1][lim21+2]+=tableau2[1][2]
-
-    resultat[lim21+1][lim21+3]+=tableau2[1][3]
-
-    print(resultat)
-
-    return resultat #matrice de rigidité globale sans la partie symétrique
-
-
-
-def calcul_matrice_triangulaire_sup(tab,EI) :#faire la matrice assemblée #permet de dire où va le nouveau tableau : il faut bien dire que pour le premier il est en haut à gauche et quand on ajoute ca va sur le bloc en bas a droite
-
-    for i in range (0,len(tab)-1):
-
-        if i==0:
-
-            f=matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(tab[i+1]-tab[i],EI)
-
-        else :
-
-            f=fonction_matrice_totale_triangulairesup(f,matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(tab[i+1]-tab[i],EI))
-
-    return f
-
-
-
-def calcul_matrice_totale(listeabscisses,EI): #ajouter la partie symétrique a la matrice de rigidité
-
-    K_assemblee=calcul_matrice_triangulaire_sup(sorted(listeabscisses),EI)
-
-    K_assemblee=K_assemblee+np.transpose(K_assemblee)-np.diag(np.diag(K_assemblee))
-
-    return K_assemblee
-
-
-
-#pour version 2 du code (encore non utilisé)
-#Pour poutre
-def moment_quadratique_et_aire_section_rectangle(Largeur_section,Hauteur_section):
-    I=Largeur_section*(Hauteur_section**3)/12
-    return IGz
-
-def moment_quadratique_et_aire_section_cylindrique(diametre_section):
-    I=pi*(diametre_section**4)/64
-    return I
-
 def dessinBarres(liste_poutre,liste_noeud,liste_noeud2):
     figure = pyplot.figure(figsize = (10, 10))
     axes = figure.add_subplot(111)
@@ -463,6 +326,7 @@ def Calculer_Barre(liste_points,liste_poutres):
     for i in range(len(liste_poutres)):
          ElementSet[i].create_d_local(deplacement, N_noeud)
          ElementSet[i].create_force_axial()
+         
     liste_abscisses = []
     liste_ordonnee = []
     NoeudSet2 = []
@@ -482,6 +346,7 @@ def Calculer_Barre(liste_points,liste_poutres):
     del CL_d[:]
     del CL_f[:]
     del RessortSet[:]
+    del Liaison[:]
     
     return list_graph
     
