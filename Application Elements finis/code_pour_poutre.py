@@ -585,14 +585,16 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     
     poutre=[0 for i in range(len(listeabscisse))] #toujours 0 en ordonnées , 
     
-    graph1=["déplacement en m",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,d_assemblee_liste]]
+    graph1=["déplacement en m",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,deplacement_y]]
+    graph2=["déplacement rotationnel en m",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,deplacement_phi]]
     
-    graph2=["effort tranchant en kN",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee_pour_forces_internes,effort_tranchant]]
+    graph3=["effort tranchant en N",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee_pour_forces_internes,effort_tranchant]]
             
-    graph3=["effort tranchant en kN.m",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee_pour_forces_internes,moment]]
+    graph4=["effort tranchant en N.m",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee_pour_forces_internes,moment]]
     
     #graph4=[dessin poutre????????]
     
-    liste_des_graphs=[graph1,graph2,graph3]
+    liste_des_graphs=[graph1,graph2,graph3,graph4]
+    
     
     return liste_des_graphs
