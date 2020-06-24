@@ -82,7 +82,7 @@ class Element(object):
         
         d = self.deplacement_local.to_numpy()
         self.force_axe = self.k_barre * numpy.mat(A) * numpy.mat(B) * numpy.mat(d)
-        print(self.force_axe)
+        print(self.force_axe[0])
     
             
     def create_d_local(self,deplacement,N_noeud):
@@ -325,6 +325,7 @@ def Calculer_Barre(liste_points,liste_poutres):
     
     for i in range(len(liste_poutres)):
          ElementSet[i].create_d_local(deplacement, N_noeud)
+         print("Force axial barre ",i+1)
          ElementSet[i].create_force_axial()
          
     liste_abscisses = []
@@ -335,7 +336,7 @@ def Calculer_Barre(liste_points,liste_poutres):
         NoeudSet2.append(N)
     
     list_a , list_b = dessinBarres(ElementSet,NoeudSet,NoeudSet2)
-    graph = ["déplacement (en m)",*list_a,*list_b]
+    graph = ["déplacement (en m)",*list_b]
     list_graph = []
     list_graph.append(graph)
     

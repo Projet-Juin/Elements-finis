@@ -581,7 +581,7 @@ def main():
                         #     ax.imshow(img, extent=[0, 400, 0, 300])
                     
                     for j in range(len(graphresult[i])-1):
-                        liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1])
+                        liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1],'r--')
                     liste_frame[i].draw()
                     
             # afficher_results('Strint \ntest', [['graphi1',[[0,1,2,3],[1,3,5,7]],[[0,1,2,3,4,5,6],[0,1,0,1,0,2,0]]],['graphi2',[[0,1,2,3],[0,1,4,9]]]])
