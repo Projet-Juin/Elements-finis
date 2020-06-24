@@ -16,6 +16,8 @@ import matplotlib
 matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
+import pandas
+from pandastable import Table
 
 def main():
     global liste_noeuds, liste_poutres
@@ -446,6 +448,9 @@ def main():
                 listargs = (('b',),('b','b1'),('b','h'),('b','h','b1','h1'),('b','h','b1','b2','h1'),('b','h','b1','h1'),('b','h','b1','h1'),('b','h','b1','b2','h1'),('b','h'),('R',),('R','R1'),('R',),('R',),('D2','D1'),('b','h'),('D2','D1'))
                 def choix_geo(evt):
                     if ComboG.current()>=0:
+                        img1 = tk.PhotoImage(file="images\\section "+ComboG.get()+".png").subsample(2,2)
+                        imageL.configure(image= img1 )
+                        imageL.image=img1
                         for i in range(len(listlabel)):
                             listEntry[i].delete(0,tk.END)
                             listEntry[i].insert(0,'0')
@@ -472,15 +477,19 @@ def main():
                         listeEntrees[0].insert(0,str(aire))
                         listeEntrees[1].delete(0,tk.END)
                         listeEntrees[1].insert(0,str(inertie))
-                geometrie = tk.Tk()
+                # geometrie = tk.Tk()
+                geometrie = tk.Toplevel()
                 geometrie.geometry("380x270+0+8") # dimentions dimXxdimY+écartAuBordX+écartAuBordY
                 geometrie.title("Choix de la section et calcul de l'inertie") # titre
                 frameG = tk.Frame(geometrie)
                 frameG.pack(side=tk.LEFT, expand = tk.Y, fill = tk.BOTH)
-                tk.Label(frameG, text = 'Choix du type de section :').grid(row=0)
+                tk.Label(frameG, text = 'Choix du type de section :').grid(row = 0)
+                imageL=tk.Label(frameG, compound=tk.LEFT)
+                imageL.grid(column=1, rowspan = 8)
                 ComboG = ttk.Combobox(frameG, values = ('Carré','Carré creux','Rectangle','Rectangle creux','Profil I','Profil T','Profil L','Profil Z','Triangle rectangle','Cercle','Cercle creux','Demi-cercle','Quart de cercle','Ovale','Croix','Losange'), state = "readonly")
                 ComboG.grid(row=1)
                 ComboG.bind('<<ComboboxSelected>>', choix_geo)
+                
                 listlabel = []
                 listEntry =[]
                 for i in range(5):
@@ -490,9 +499,8 @@ def main():
                     listEntry[i].insert(0,'0')
                     listEntry[i].grid(row = 2*i+3)
                 tk.Button(frameG, text='Appliquer section', command=choix_sec).grid(row=12)
-                geometrie.mainloop()
+                # geometrie.mainloop()
                     
-    
             Poutre_rouge = tk.PhotoImage(file="images\\Poutre_rouge.png").subsample(6,6)
             Poutre_verte = tk.PhotoImage(file="images\\Poutre_verte.png").subsample(10,10)
             
@@ -581,7 +589,7 @@ def main():
                         #     ax.imshow(img, extent=[0, 400, 0, 300])
                     
                     for j in range(len(graphresult[i])-1):
-                        liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1])
+                        liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1],graphresult[i][j+1][2])
                     liste_frame[i].draw()
                     
             # afficher_results('Strint \ntest', [['graphi1',[[0,1,2,3],[1,3,5,7]],[[0,1,2,3,4,5,6],[0,1,0,1,0,2,0]]],['graphi2',[[0,1,2,3],[0,1,4,9]]]])
@@ -676,9 +684,12 @@ def main():
             a.plot(temp_X,temp_Y,'-.', c="red", marker='o')
             graph.draw()
         def disp_dataframe():
-            ####### emplacement du code pour afficher les dataframes
-            pass
-            ####### si tu veux tu peux le faire Lansana
+            newWindow = tk.Toplevel()
+            df = pandas.DataFrame(0,index=["d1x"],columns=["d1x"])
+            frame = tk.Frame(newWindow)
+            frame.pack(fill='both', expand=True)
+            pt = Table(frame, dataframe=df)
+            pt.show()
         Combomodel = ttk.Combobox(Calculframe, values = ('Modèle Poutre', 'Modèle Barre / Treillis', 'Modèle Portique'), state = "readonly")
         Combomodel.bind('<<ComboboxSelected>>', ComboChangeModel)
         Combomodel.grid(row = 2)
@@ -688,7 +699,7 @@ def main():
         liste_graph = []
         liste_frame = []
         tk.Button(Calculframe,text = 'Lancer le calcul', command = Calculer).grid(row = 5, rowspan = 2, sticky=tk.N+tk.S)
-        tk.Button(Calculframe,text = 'Afficher matrices', command = disp_dataframe()).grid(row = 7)
+        tk.Button(Calculframe,text = 'Afficher matrices', command = disp_dataframe).grid(row = 7)
         
         img = tk.PhotoImage(file="images\\Logo_EPF.png").subsample(2,2)
         tk.Label(Calculframe,image = img, compound=tk.LEFT).grid(row = 8)
@@ -702,7 +713,6 @@ def main():
         graph = FigureCanvasTkAgg(f, master=canvasStruc)
         NavigationToolbar2Tk(graph, canvasStruc).update()
         graph.get_tk_widget().pack()
-        # graph.show()
         ongletsOutput.tab(0, text='Lancer le calcul', compound=tk.LEFT)
     PanedwindowPortique.add(ongletsOutput)
     PanedwindowPortique.pack(side=tk.LEFT, expand = tk.Y, fill = tk.BOTH)

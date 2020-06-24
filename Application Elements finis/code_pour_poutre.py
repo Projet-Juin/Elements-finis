@@ -590,7 +590,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     
     graph3=["effort tranchant en N",[listeabscisse,poutre,'b',[deg_point],],[liste_abscisse_allongee_pour_forces_internes,effort_tranchant,'r--']]
             
-    graph4=["moment fléchissant en N.m",[listeabscisse,poutre,'b',[deg_point]],[liste_abscisse_allongee_pour_forces_internes,moment,'r--'],'r--']
+    graph4=["moment fléchissant en N.m",[listeabscisse,poutre,'b',[deg_point]],[liste_abscisse_allongee_pour_forces_internes,moment,'r--']]
     
     
     #graph4=[dessin poutre????????]
