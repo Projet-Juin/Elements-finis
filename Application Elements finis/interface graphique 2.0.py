@@ -688,7 +688,7 @@ def main():
         liste_graph = []
         liste_frame = []
         tk.Button(Calculframe,text = 'Lancer le calcul', command = Calculer).grid(row = 5, rowspan = 2, sticky=tk.N+tk.S)
-        tk.Button(Calculframe,text = 'Afficher matrices', command = disp_dataframe()).grid(row = 6)
+        tk.Button(Calculframe,text = 'Afficher matrices', command = disp_dataframe()).grid(row = 7)
         
         img = tk.PhotoImage(file="images\\Logo_EPF.png").subsample(2,2)
         tk.Label(Calculframe,image = img, compound=tk.LEFT).grid(row = 8)
