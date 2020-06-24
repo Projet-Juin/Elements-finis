@@ -396,8 +396,8 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
         F_assemblee[-1]+=f
         F_pour_dessin.append(f)
     
-    """
-    ########################### pour le dessin 
+    
+    ### pas ok pour les forces
     
     liste_ordonnee=[]
     for k in range(len(listeabscisse)):
@@ -425,7 +425,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     pyplot.legend()
     pyplot.show()
     
-    """
+    
     
     
     EI=E*I
@@ -442,6 +442,8 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     F_assemblee=M
     
     F_assemblee=np.asarray(F_assemblee).reshape(len(F_assemblee),1) #convertir la ligne en matrice colonne array
+    #F_repartie=np.asarray(F_repartie).reshape(len(F_repartie),1)
+    
     
     
     #calcul de la matrice de rigidité a utiliser dans le systeme a resoudre
@@ -499,10 +501,6 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     forces_internes=[]
     force_internes_totales=[]
     d_pour_internes=[]
-    liste_abscisse_allongee_pour_forces_internes=[] 
-    
-    #en calculant les forces internes théoriquement on se rend compte que aux noeuds, si la longueur entre 2 noeuds n'est pas la même sur la même poutre alors les forces internes calculées ne sont pas les mêmes sur les 2 systemes prenant en commpte un même vrai noeud.
-    #on va donc représenter toutes les forces calculées pour les vrais noeuds (non maillage),
     
     rigidite_pour_internes=matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(liste_abscisse_allongee[1]-liste_abscisse_allongee[0],EI)
     rigidite_pour_internes=rigidite_pour_internes+np.transpose(rigidite_pour_internes)-np.diag(np.diag(rigidite_pour_internes))
@@ -515,8 +513,6 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     force_internes_totales.append(-forces_internes[1])
     force_internes_totales.append(forces_internes[2])
     force_internes_totales.append(forces_internes[3])
-    liste_abscisse_allongee_pour_forces_internes.append(liste_abscisse_allongee[0])
-    liste_abscisse_allongee_pour_forces_internes.append(liste_abscisse_allongee[1])
     for k in range(1,len(liste_abscisse_allongee)-1):
         d_pour_internes=[]
         rigidite_pour_internes=matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(liste_abscisse_allongee[k+1]-liste_abscisse_allongee[k],EI)
@@ -526,73 +522,41 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
         d_pour_internes.append(d_assemblee_liste[2*k+2])
         d_pour_internes.append(d_assemblee_liste[2*k+3])
         forces_internes=np.dot(rigidite_pour_internes,d_pour_internes)
-        if liste_abscisse_allongee[k] in listeabscisse :
-            liste_abscisse_allongee_pour_forces_internes.append(liste_abscisse_allongee[k])
-            force_internes_totales.append(-forces_internes[0])
-            force_internes_totales.append(-forces_internes[1])
         force_internes_totales.append(forces_internes[2])
         force_internes_totales.append(forces_internes[3])
-        liste_abscisse_allongee_pour_forces_internes.append(liste_abscisse_allongee[k+1])
-
     
     print("force_internes_totales")
     print(force_internes_totales)
     
-    """
+    
     plt.plot(liste_abscisse_allongee, deplacement_y)
     plt.plot(liste_abscisse_allongee, deplacement_phi)
     plt.grid()
     plt.legend(["deplacement y","deplacement phi"])
     plt.show()
-    """
+    
+    #F_assemblee=F_assemblee+F_repartie
     
     
     effort_tranchant=[]
     moment=[]
     
-    for k in range(len(liste_abscisse_allongee_pour_forces_internes)):
+    for k in range(len(liste_abscisse_allongee)):
         effort_tranchant.append(force_internes_totales[2*k])
         moment.append(force_internes_totales[2*k+1])
     
-    """
-    plt.plot(liste_abscisse_allongee_pour_forces_internes, effort_tranchant)
+    
+    plt.plot(liste_abscisse_allongee, effort_tranchant)
     plt.grid()
     plt.legend(["effort tranchant"])
     plt.show()
-    plt.plot(liste_abscisse_allongee_pour_forces_internes, moment)
+    plt.plot(liste_abscisse_allongee, moment)
     plt.grid()
     plt.legend(["moment fléchissant"])
     plt.show()
     #print("***matrice forces externes")
     #F_assemblee=pd.DataFrame(F_assemblee,index=nommage_matrice_poutre_lignes(int(np.shape(F_assemblee)[0]-(np.shape(F_assemblee)[0]/2))),columns=['force'])
     #print(F_assemblee)
+    
+    
 
-    """
-
-###########################"modifié a partir d'ici pour ce qui est à retourner
-    
-    deg_point=[]
-    for k in type_appui:
-        if k=="encastrement":
-            deg_point.append((0,0,0))
-        if k=="rotule":
-            deg_point.append((1,1,0))            
-        if k=="rien":
-            deg_point.append((1,1,1))
-            
-            #listeabscisse, poutre, liste_abscisse_allongee, d_assemblee_liste, effort_tranchant, moment sont des listes
-
-    
-    poutre=[0 for i in range(len(listeabscisse))] #toujours 0 en ordonnées , 
-    
-    graph1=["déplacement en m",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee,d_assemblee_liste]]
-    
-    graph2=["effort tranchant en kN",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee_pour_forces_internes,effort_tranchant]]
-            
-    graph3=["effort tranchant en kN.m",[listeabscisse,poutre,[deg_point]],[liste_abscisse_allongee_pour_forces_internes,moment]]
-    
-    #graph4=[dessin poutre????????]
-    
-    liste_des_graphs=[graph1,graph2,graph3]
-    
-    return liste_des_graphs
