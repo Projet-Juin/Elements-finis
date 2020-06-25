@@ -507,7 +507,7 @@ def main():
                 tk.Label(frameG, text = 'Choix du type de section :').grid(row = 0)
                 imageL=tk.Label(frameG, compound=tk.LEFT)
                 imageL.grid(column=1, rowspan = 8)
-                ComboG = ttk.Combobox(frameG, values = ('Carré','Carré creux','Rectangle','Rectangle creux','Profil I','Profil T','Profil L','Profil Z','Triangle rectangle','Cercle','Cercle creux','Demi-cercle','Quart de cercle','Ovale','Croix','Losange'), state = "readonly")
+                ComboG = ttk.Combobox(frameG, values = ('Carré','Carré creux','Rectangle','Rectangle creux','Profil L','Profil Z','Triangle rectangle','Cercle','Cercle creux','Demi-cercle','Quart de cercle','Ovale','Croix','Losange'), state = "readonly")
                 ComboG.grid(row=1)
                 ComboG.bind('<<ComboboxSelected>>', choix_geo)
                 
