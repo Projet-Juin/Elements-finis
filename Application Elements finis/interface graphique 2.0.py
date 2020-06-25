@@ -23,6 +23,7 @@ def main():
     main_w = tk.Tk() # crée la fenêtre principale
     main_w.geometry("900x750+0+8") # dimentions dimXxdimY+écartAuBordX+écartAuBordY
     main_w.title('Calcul de strucure par la Méthode éléments finis') # titre
+    main_w.wm_iconbitmap('images\\petitlogo1.ico')
     
     if True or 'Barre de Menu':
         
@@ -656,8 +657,9 @@ def main():
                     listedebutchargerepartie = []
                     for i in temp_poutres:
                         listedebutchargerepartie.append(i[5][0])
-                    try :
-                        if int(tailleMaillage.get())<=1:
+                    
+                    try:
+                        if int(tailleMaillage.get())>=1:
                             nombrepointsentre2noeuds = int(tailleMaillage.get())
                     except TypeError:
                         tk.messagebox.showerror('Erreur', "La donnée taille de maillage ne peut pas être interprétée comme int")
@@ -681,7 +683,7 @@ def main():
                     
                 elif modele.get() == 3:
                     try :
-                        if int(tailleMaillage.get())<=1:
+                        if int(tailleMaillage.get())>=1:
                             nombrepointsentre2noeuds = int(tailleMaillage.get())
                     except TypeError:
                         tk.messagebox.showerror('Erreur', "La donnée taille de maillage ne peut pas être interprétée comme int")
