@@ -68,6 +68,8 @@ def main():
             listeEntrees[0].config(state= (tk.DISABLED if modele.get() in (1,) else tk.NORMAL))
             listeEntrees[1].config(state= (tk.DISABLED if modele.get() in (2,) else tk.NORMAL))
             listeRepartie[0].config(state= (tk.DISABLED if modele.get() in (2,) else tk.NORMAL))
+            tailleMaillage.config(state= (tk.DISABLED if modele.get() in (2,) else tk.NORMAL))
+            
             
         def credit():
             root=tk.Toplevel()
@@ -627,6 +629,7 @@ def main():
                     if not(j in temp_noeuds):
                         temp_noeuds.append(j)
             if len(liste_noeuds)==len(temp_noeuds) and vert and len(liste_noeuds)>=2:
+                nombrepointsentre2noeuds = 1
                 if modele.get() == 1:
                     N_element = len(liste_noeuds)
                     listeabcisse = []
@@ -676,7 +679,12 @@ def main():
                     Combodata.config(values= temp_nomdata)
                     
                 elif modele.get() == 3:
-                    graphs, dataframes = CalculerPortique(liste_noeuds, liste_poutres)
+                    try :
+                        if int(tailleMaillage.get())<=1:
+                            nombrepointsentre2noeuds = int(tailleMaillage.get())
+                    except TypeError:
+                        tk.messagebox.showerror('Erreur', "La donnée taille de maillage ne peut pas être interprétée comme int")
+                    graphs, dataframes = CalculerPortique(liste_noeuds, liste_poutres, nombrepointsentre2noeuds)
                     afficher_results(graphs)
                     dataframesP.append(dataframes)
                     temp_nomdata=[]
