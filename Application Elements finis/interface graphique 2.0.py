@@ -70,28 +70,23 @@ def main():
             listeRepartie[0].config(state= (tk.DISABLED if modele.get() in (2,) else tk.NORMAL))
             
         def credit():
-            # root=Tk()
-            # root.title("Solve Structure --- Crédits")
-            # root.geometry("600x375")
-            # tk.Label(root,justify='center',bg=gris_5,font=("Arial", 14, "bold italic"),text='SOLVE STRUCTURE --- VERSION 1.0').pack(fill='both')
-            # label8=Label(root,justify='center',bg=gris_5,font=font_texte2,text= 'En partenariat avec l\'EPF, Solve Structure est programme qui à pour \nintérêt d\'étudier l\'efffet que peut avoir une charge sur une poutre.')
-            # label8.pack(fill='both')
-            # label2=Label(root,justify='center',bg=gris_5,font=font_texte2,text= 'L\'application a été conçu par l\'Equipe de Solve Structure :\n')
-            # label2.pack(fill='both')
-            # label4=Label(root,justify='center',bg=gris_5,font=font_texte2,text= 'Partie RDM : \nAgnès DURIEZ --- Clara FERRU --- Henri FORJOT\n')
-            # label4.pack(fill='both')
-            # label6=Label(root,justify='center',bg=gris_5,font=font_texte2,text= 'Partie Eléments finis : \nOmbline DELASSUS --- Lansana DIOMANDE --- Guillaume WEBER --- Xingyu XIA\n')
-            # label6.pack(fill='both')
-            # logo_1 = PhotoImage(file='images/EPF-couleur_crédit.png')
-            # logo_2 = PhotoImage(file='images/logo_crédit.png')
-            # labellogo_1=Label(root,image=logo_1)
-            # labellogo_1.image = logo_1
-            # labellogo_1.pack(anchor='s')
-            # labellogo_2=Label(root,image=logo_2)
-            # labellogo_2.image = logo_2
-            # labellogo_2.pack(anchor='s')
-            # root.mainloop()
-            pass
+            root=tk.Toplevel()
+            root.title("Solve Structure --- Crédits")
+            root.geometry("600x500")
+            tk.Label(root,font=("Arial", 14, "bold italic"),text='SOLVE STRUCTURE --- VERSION 1.0').pack(fill='both')
+            tk.Label(root,justify='center',text= "A la demande de l'EPF, une équipe d'étudiants a mis en place le logiciel SolveStructure.\nC'est un programme ayant pour objectif d'étudier les effets d'une ou plusieurs charges sur une structure.\n").pack(fill='both')
+            tk.Label(root,justify='center',text= 'L\'application a été conçu par :\n').pack(fill='both')
+            tk.Label(root,justify='center',text= 'Partie RDM : \nAgnès DURIEZ --- Clara FERRU --- Henri FORJOT\n').pack(fill='both')
+            tk.Label(root,justify='center',text= 'Partie Eléments finis : \nOmbline DELASSUS --- Lansana DIOMANDE --- Guillaume WEBER --- Xingyu XIA\n').pack(fill='both')
+            logo_1 = tk.PhotoImage(file='images\\Logo_EPF.png')
+            logo_2 = tk.PhotoImage(file='images\\logo_crédit.png')
+            labellogo_1=tk.Label(root,image=logo_1)
+            labellogo_1.image = logo_1
+            labellogo_1.pack(anchor='s')
+            labellogo_2=tk.Label(root,image=logo_2)
+            labellogo_2.image = logo_2
+            labellogo_2.pack(anchor='s')
+            
         barre_de_menu = tk.Menu(main_w)
         main_w.config(menu=barre_de_menu)
         menu_modele = tk.Menu(barre_de_menu) # Création d'un menu élts finis
@@ -527,7 +522,6 @@ def main():
                 if Combomateriau.current()>=0:
                     listeEntrees[2].delete(0,tk.END)
                     listeEntrees[2].insert(0,list_Young[Combomateriau.current()])
-                    Combomateriau.set('')
             list_Young = [210000000000, 203000000000, 69000000000, 83000000000, 124000000000, 289000000000, 209000000000, 124000000000, 41500000000, 196000000000, 100000000000, 45000000000, 214000000000, 78000000000, 168000000000, 116000000000, 78000000000, 27000000000, 14000000000, 450000000000, 1000000000000, 60000000000, 26000000000, 69000000000, 12000000000, 20000000000, 16000000000, 12000000000, 12000000000, 12400000000, 13000000000, 10000000000, 10000000000, 9500000000, 190000000000, 34500000000, 1100000000000, 2380000000, 2300000000, 3500000000]
             Poutre_rouge = tk.PhotoImage(file="images\\Poutre_rouge.png").subsample(6,6)
             Poutre_verte = tk.PhotoImage(file="images\\Poutre_verte.png").subsample(10,10)
