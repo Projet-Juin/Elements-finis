@@ -81,6 +81,7 @@ def main():
             tk.Label(root,justify='center',text= 'L\'application a été conçu par :\n').pack(fill='both')
             tk.Label(root,justify='center',text= 'Partie RDM : \nAgnès DURIEZ --- Clara FERRU --- Henri FORJOT\n').pack(fill='both')
             tk.Label(root,justify='center',text= 'Partie Eléments finis : \nOmbline DELASSUS --- Lansana DIOMANDE --- Guillaume WEBER --- Xingyu XIA\n').pack(fill='both')
+            tk.Label(root,justify='center',text= 'Nous remercions le professeur Omar SAIFOUNI de nous avoir proposé et accompagné tout au long de \n ce projet de création de logiciel de structure. \n Nous remercions le professeur Maxime PIGEOT de nous avoir apporter un soutien technique pour concevoir \n le logiciel.').pack(fill='both')
             logo_1 = tk.PhotoImage(file='images\\Logo_EPF.png')
             logo_2 = tk.PhotoImage(file='images\\logo_crédit.png')
             labellogo_1=tk.Label(root,image=logo_1)
