@@ -643,8 +643,8 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     
     #graph4=[dessin poutre????????]
     
-    liste_des_graphs=[graph1,graph3,graph4],[deplacement,effort_tranchant_dataframe,moment_dataframe]
+    liste_des_graphs=[graph1,graph3,graph4]
     
-    print(liste_des_graphs)
+    print(liste_des_graphs,[deplacement,effort_tranchant_dataframe,moment_dataframe])
     
-    return liste_des_graphs
+    return liste_des_graphs,[deplacement,effort_tranchant_dataframe,moment_dataframe]
