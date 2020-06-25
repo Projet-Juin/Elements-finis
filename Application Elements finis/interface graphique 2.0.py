@@ -22,7 +22,7 @@ def main():
     global liste_noeuds, liste_poutres
     main_w = tk.Tk() # crée la fenêtre principale
     main_w.geometry("900x750+0+8") # dimentions dimXxdimY+écartAuBordX+écartAuBordY
-    main_w.title('Calcul de strucure par la Méthode éléments finis') # titre
+    main_w.title('SolveStructure - Éléments finis') # titre
     main_w.wm_iconbitmap('images\\petitlogo1.ico')
     
     if True or 'Barre de Menu':
@@ -731,23 +731,28 @@ def main():
             pt = Table(frame, dataframe=dataframesP[0][Ndataframe][1])
             pt.show()
             pt.showIndex()
+        tk.Label(Calculframe, text = "Choix du modèle utilisé :").grid(row=2)
         Combomodel = ttk.Combobox(Calculframe, values = ('Modèle Poutre', 'Modèle Barre / Treillis', 'Modèle Portique'), state = "readonly")
         Combomodel.bind('<<ComboboxSelected>>', ComboChangeModel)
-        Combomodel.grid(row = 2)
-        tk.Button(Calculframe,text = 'Recharger la structure', command = refresh_struct).grid(row = 4)
+        Combomodel.grid(row = 3)
+        tk.Label(Calculframe, text = "Afficher la structure obtenue :").grid(row=4)
+        tk.Button(Calculframe,text = 'Recharger la structure', command = refresh_struct).grid(row = 5)
         listFrame = []
         liste_figure = []
         liste_graph = []
         liste_frame = []
-        tk.Button(Calculframe,text = 'Lancer le calcul', command = Calculer).grid(row = 5, rowspan = 2, sticky=tk.N+tk.S)
+        tk.Label(Calculframe, text = "Calcul").grid(row=6)
+        tk.Button(Calculframe,text = 'Lancer le calcul', command = Calculer).grid(row = 7, rowspan = 2, sticky=tk.N+tk.S)
         def changedataframe(evt):
             if Combodata.current()>=0:
                 disp_dataframe(Combodata.current())
+        tk.Label(Calculframe, text = "Afficher les matrices de sortie").grid(row=9)
+        tk.Label(Calculframe, text = "une fois le calcul effectué :").grid(row=10)
         Combodata = ttk.Combobox(Calculframe, values = (), state = "readonly")
         Combodata.bind('<<ComboboxSelected>>', changedataframe)
-        Combodata.grid(row = 7)
+        Combodata.grid(row = 11)
         img = tk.PhotoImage(file="images\\Logo_EPF.png").subsample(2,2)
-        tk.Label(Calculframe,image = img, compound=tk.LEFT).grid(row = 8)
+        tk.Label(Calculframe,image = img, compound=tk.LEFT).grid(row = 12)
         PanedwindowCalc.add(Calculframe)
         ongletsOutput.add(PanedwindowCalc)
         canvasStruc = tk.Frame(PanedwindowCalc)
