@@ -82,7 +82,8 @@ class Element(object):
         
         d = self.deplacement_local.to_numpy()
         self.force_axe = self.k_barre * numpy.mat(A) * numpy.mat(B) * numpy.mat(d)
-        print(self.force_axe)
+        print(np.squeeze(np.asarray(self.force_axe[1])))
+        force_axial_barre.append(np.squeeze(np.asarray(self.force_axe[1])))
     
             
     def create_d_local(self,deplacement,N_noeud):
@@ -120,7 +121,6 @@ class Ressort(object):
         for i in E:
             if i in self.resistance.columns:
                 Tab[i][i] = self.resistance[i][i]
-        print(Tab)
         return Tab
         
 
@@ -133,7 +133,15 @@ def nommage_matrice_barre_colonnes(listnoeud):
 
             A.append("d" + str(listnoeud[i]) + "y")
         return A
+    
+def nommage_matrice_force_axial(N_barre):
+        # Ici on créer une chaine composé des noms des colonnes des matrices barres
+        A = []
+        for i in range(N_barre):
 
+            A.append("Force barre" + str(i+1))
+        return A
+    
 def nommage_matrice_barre_lignes(listnoeud):
         # Ici on créer une chaine composé des noms des lignes des matrices barres
         A = []
@@ -161,7 +169,6 @@ def creation_K_assemble(N_noeud,list_K,list_ressort):
 
     #Avec les elements de la liste E en titre de colonne et en titre de ligne
 
-    print(K_final)
 
     for i in E:
 
@@ -199,7 +206,6 @@ def create_d_assemble(d,N_Noeud):
         for i in E:
             for j in A:
                 if j in d.columns and i in d.index : #Par exemple on compare
-                    print(d[j][i])
                     B.append(d[j][i])
                     Tab[j][i]+= d[j][i]
                 else :
@@ -210,8 +216,6 @@ def create_d_assemble(d,N_Noeud):
         return Tab
         
 def dessinBarres(liste_poutre,liste_noeud,liste_noeud2):
-    figure = pyplot.figure(figsize = (10, 10))
-    axes = figure.add_subplot(111)
     list_a = []
     list_b = []
     for i in liste_poutre:
@@ -221,10 +225,7 @@ def dessinBarres(liste_poutre,liste_noeud,liste_noeud2):
         liste_ordonnee.append(liste_noeud[i.Noeud_label_i-1].Y)
         liste_abscisses.append(liste_noeud[i.Noeud_label_j-1].X)
         liste_ordonnee.append(liste_noeud[i.Noeud_label_j-1].Y)
-        print(liste_abscisses)
-        print(liste_ordonnee)
-        list_a.append([liste_abscisses,liste_ordonnee])
-        pyplot.plot(liste_abscisses,liste_ordonnee)
+        list_a.append([liste_abscisses,liste_ordonnee,'b'])
         # if liste_points[i][2][0] == 0 & :
     for i in liste_poutre:
         liste_abscisses2 = []
@@ -233,10 +234,7 @@ def dessinBarres(liste_poutre,liste_noeud,liste_noeud2):
         liste_ordonnee2.append(liste_noeud2[i.Noeud_label_i-1].Y)
         liste_abscisses2.append(liste_noeud2[i.Noeud_label_j-1].X)
         liste_ordonnee2.append(liste_noeud2[i.Noeud_label_j-1].Y)
-        print(liste_abscisses2)
-        print(liste_ordonnee2)
-        list_b.append([liste_abscisses2,liste_ordonnee2])
-        pyplot.plot(liste_abscisses2,liste_ordonnee2,'r--')
+        list_b.append([liste_abscisses2,liste_ordonnee2,'r--'])
         
     return list_a,list_b
         
@@ -247,8 +245,11 @@ RessortSet=[]
 ElementSet=[]
 NoeudSet=[]
 Liaison = []
+force_axial_barre = []
+
 
 def Calculer_Barre(liste_points,liste_poutres):
+    list_dataframe = []
     N_noeud = len(liste_points)
     for i in range(len(liste_points)):
         N = Noeud(liste_points[i][1][0], liste_points[i][1][1], liste_points[i][3][0], liste_points[i][3][1], liste_points[i][3][2])
@@ -320,24 +321,34 @@ def Calculer_Barre(liste_points,liste_poutres):
     deplacement = linalg.solve(K_final.to_numpy(),F_final.to_numpy())
     deplacement = pandas.DataFrame(deplacement,index = list(K_final.columns), columns = ['d'])
     deplacement = create_d_assemble(deplacement,N_noeud)
-
+    list_dataframe.append(("Deplacement",deplacement))
+    
+    print("deplacement")
     print(deplacement)
     
     for i in range(len(liste_poutres)):
          ElementSet[i].create_d_local(deplacement, N_noeud)
+         print("force axial barre ",i+1)
          ElementSet[i].create_force_axial()
-         
+    
     liste_abscisses = []
     liste_ordonnee = []
     NoeudSet2 = []
     for i in range(len(NoeudSet)):
         N = Noeud(NoeudSet[i].X+ float(deplacement["d"]["d"+str(i+1)+"x"]), NoeudSet[i].Y+ float(deplacement["d"]["d"+str(i+1)+"y"]), NoeudSet[i].Fx,NoeudSet[i].Fy, NoeudSet[i].Mz)
         NoeudSet2.append(N)
-    
+        
     list_a , list_b = dessinBarres(ElementSet,NoeudSet,NoeudSet2)
     graph = ["déplacement (en m)",*list_a,*list_b]
+    print("Efforts intérieurs : ")
+    
     list_graph = []
     list_graph.append(graph)
+    matrice_force_barre = [i for i in force_axial_barre]
+    matrice_force_barre = pandas.DataFrame(matrice_force_barre,index = nommage_matrice_force_axial(len(ElementSet)), columns = ['N'])
+    print(matrice_force_barre)
+    
+    list_dataframe.append(("Effort Normal",force_axial_barre))
     
     
     del ElementSet[:]
@@ -347,8 +358,9 @@ def Calculer_Barre(liste_points,liste_poutres):
     del CL_f[:]
     del RessortSet[:]
     del Liaison[:]
+    del force_axial_barre[:]
     
-    return list_graph
+    return list_graph , list_dataframe
     
     
          
