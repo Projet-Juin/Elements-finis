@@ -223,25 +223,6 @@ def fonction_liste_force_allongee(liste_force,nombrepointsentre2noeuds):
     return liste_force_allongee
 
 
-
-# N_element=3
-
-# listeabscisse=[1,4,7]
-
-# nombrepointsentre2noeuds=1
-
-# I=0.0004
-
-# E=210000000
-
-# type_appui=['encastrement','rien','encastrement']
-
-# listedebutchargerepartie=[0,0]
-
-# listeressort=[0,0,0]
-
-# liste_force=[[0,0],[10,0],[0,0]]
-
 def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force):
     """
     N_element:nombre de noeuds
@@ -254,7 +235,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     listeressort : dans sous-ligne:constanteraideur,longueurressort] exemple: [[0,0],[566,2],[0,0],[0,0] : mettre des zeros si pas de ressort
     
     """
-    
+    print(N_element,listeabscisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force)
     
     liste_abscisse_allongee=etendre_la_matrice_abscisse(listeabscisse,nombrepointsentre2noeuds)
     
@@ -537,20 +518,8 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     #en calculant les forces internes théoriquement on se rend compte que aux noeuds, si la longueur entre 2 noeuds n'est pas la même sur la même poutre alors les forces internes calculées ne sont pas les mêmes sur les 2 systemes prenant en commpte un même vrai noeud.
     #on va donc représenter toutes les forces calculées pour les vrais noeuds (non maillage),
     
-    rigidite_pour_internes=matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(liste_abscisse_allongee[1]-liste_abscisse_allongee[0],EI)
-    rigidite_pour_internes=rigidite_pour_internes+np.transpose(rigidite_pour_internes)-np.diag(np.diag(rigidite_pour_internes))
-    d_pour_internes.append(d_assemblee_liste[0])
-    d_pour_internes.append(d_assemblee_liste[1])
-    d_pour_internes.append(d_assemblee_liste[2])
-    d_pour_internes.append(d_assemblee_liste[3])
-    forces_internes=np.dot(rigidite_pour_internes,d_pour_internes)
-    force_internes_totales.append(-forces_internes[0])
-    force_internes_totales.append(-forces_internes[1])
-    force_internes_totales.append(forces_internes[2])
-    force_internes_totales.append(forces_internes[3])
-    liste_abscisse_allongee_pour_forces_internes.append(liste_abscisse_allongee[0])
-    liste_abscisse_allongee_pour_forces_internes.append(liste_abscisse_allongee[1])
-    for k in range(1,len(liste_abscisse_allongee)-1):
+
+    for k in range(len(liste_abscisse_allongee)-1):
         d_pour_internes=[]
         rigidite_pour_internes=matrice_rigidite_elementaire_poutre_1valeur_de_Longueur_poutre(liste_abscisse_allongee[k+1]-liste_abscisse_allongee[k],EI)
         rigidite_pour_internes=rigidite_pour_internes+np.transpose(rigidite_pour_internes)-np.diag(np.diag(rigidite_pour_internes))
@@ -571,13 +540,6 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     print("force_internes_totales")
     print(force_internes_totales)
     
-    """
-    plt.plot(liste_abscisse_allongee, deplacement_y)
-    plt.plot(liste_abscisse_allongee, deplacement_phi)
-    plt.grid()
-    plt.legend(["deplacement y","deplacement phi"])
-    plt.show()
-    """
     
     
     effort_tranchant=[]
@@ -602,20 +564,6 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     print(moment_dataframe)
     
     
-    """
-    plt.plot(liste_abscisse_allongee_pour_forces_internes, effort_tranchant)
-    plt.grid()
-    plt.legend(["effort tranchant"])
-    plt.show()
-    plt.plot(liste_abscisse_allongee_pour_forces_internes, moment)
-    plt.grid()
-    plt.legend(["moment fléchissant"])
-    plt.show()
-    #print("***matrice forces externes")
-    #F_assemblee=pd.DataFrame(F_assemblee,index=nommage_matrice_poutre_lignes(int(np.shape(F_assemblee)[0]-(np.shape(F_assemblee)[0]/2))),columns=['force'])
-    #print(F_assemblee)
-
-    """
 
 ###########################"modifié a partir d'ici pour ce qui est à retourner
     
