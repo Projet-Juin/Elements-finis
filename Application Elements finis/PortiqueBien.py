@@ -197,9 +197,10 @@ def create_d_assemble(d,N_Noeud):
     return d_assemble
 
 
-def CalculerPortique(liste_points,liste_poutres, N) :
+def CalculerPortique(liste_points,liste_poutres,N) :
     N_noeud = len(liste_points)
-    taille_maillage = N
+    N1 = len(liste_points)
+    taille_maillage = 10
     Max_L = 0
     
     for i in range(len(liste_points)):
@@ -413,7 +414,11 @@ def CalculerPortique(liste_points,liste_poutres, N) :
             j += 1
         else:
             deplacement_total.append([0])
-
+    deplacement1 = []
+    for i in range(N1):
+        deplacement1.append(deplacement_total[i*3])
+        deplacement1.append(deplacement_total[i * 3+1])
+        deplacement1.append(deplacement_total[i * 3+2])
     Max_F = 0
     Max_M = 0
     list_X_total_Fx = []
@@ -428,12 +433,18 @@ def CalculerPortique(liste_points,liste_poutres, N) :
 
     F_total = numpy.dot(K_assemble, deplacement_total)
     # print(F_total)
+    F1 = []
+    F2 = []
+    M = []
     for i in range(N_noeud):
         if Max_F < numpy.sqrt(F_total[i * 3] ** 2 + F_total[i * 3 + 1] ** 2):
             Max_F = numpy.sqrt(F_total[i * 3] ** 2 + F_total[i * 3 + 1] ** 2)
         if Max_M < numpy.abs(F_total[i * 3 + 2]):
             Max_M = numpy.abs(F_total[i * 3 + 2])
-
+    for i in range(N1):
+        F1.append(F_total[i*3])
+        F2.append(F_total[i*3+1])
+        M.append(F_total[i*3+2])
     print("Max_M = {}".format(Max_M))
     plot3 = []
     plot4 = []
@@ -572,8 +583,7 @@ def CalculerPortique(liste_points,liste_poutres, N) :
         print(NoeudSet[i].Y)
     '''
 
-    plotdeux_X = []
-    plotdeux_Y = []
+
     for i in ElementSet:
 
         # print(i.Noeud_label_i)
@@ -582,10 +592,15 @@ def CalculerPortique(liste_points,liste_poutres, N) :
         # print(i.Noeud_label_j)
         # print(NoeudSet[i.Noeud_label_j - 1].X)
         # print(NoeudSet[i.Noeud_label_j - 1].Y)
+        plotdeux_X = []
+        plotdeux_Y = []
         plotdeux_X.append(NoeudSet[i.Noeud_label_i - 1].X)
         plotdeux_X.append(NoeudSet[i.Noeud_label_j - 1].X)
         plotdeux_Y.append(NoeudSet[i.Noeud_label_i - 1].Y)
         plotdeux_Y.append(NoeudSet[i.Noeud_label_j - 1].Y)
+        plot2 = []
+        plot2.append([plotdeux_X,plotdeux_Y])
+        plot2_list.append(plot2)
 
     '''
     for i in range(N_noeud):
@@ -605,15 +620,16 @@ def CalculerPortique(liste_points,liste_poutres, N) :
     # plt.ylabel('y')
 
     # plt.show()
-    graph1 = ["deplacement en m", [plotun_X,plotun_Y,'b'], [plotdeux_X,plotdeux_Y,'r--']]
-
-    graph2 = ["effort normal en N", [plotun_X,plotun_Y, 'b']]
+    graph1 = ["Déplacement en m", [plotun_X,plotun_Y,'b']]
+    for i in plot2_list:
+        graph1.append([i[0][0],i[0][1],'r--'])
+    graph2 = ["Effort normal en N", [plotun_X,plotun_Y, 'b']]
     for i in plot3_list1:
         graph2.append([i[0][0],i[0][1], 'r--'])
     for i in plot3_list:
         graph2.append([i[0][0],i[0][1], 'r--'])
 
-    graph3 = ["effort tranche en N", [plotun_X,plotun_Y, 'b']]
+    graph3 = ["Effort tranchant en N", [plotun_X,plotun_Y, 'b']]
     for i in plot4_list1:
         graph3.append([i[0][0],i[0][1],'r--'])
     for i in plot4_list:
@@ -623,11 +639,9 @@ def CalculerPortique(liste_points,liste_poutres, N) :
         graph4.append([i[0][0],i[0][1], 'r--'])
     for i in plot5_list:
         graph4.append([i[0][0],i[0][1], 'r--'])
-    
-    print("alors",graph1)
     list_des_graphs = [graph1,graph2,graph3,graph4]
 
-    return list_des_graphs,[]
+    return list_des_graphs,[("déplacement",deplacement1) ,("effort normal",F1),("effort tranchant",F2),("moment fléchissant",M)]
     
 CL_d=[]
 CL_f=[]
@@ -641,6 +655,7 @@ plot5_list = []
 plot3_list1 = []
 plot4_list1 = []
 plot5_list1 = []
+plot2_list = []
 
 
 
