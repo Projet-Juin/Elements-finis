@@ -647,4 +647,4 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     
     print(liste_des_graphs,[deplacement,effort_tranchant_dataframe,moment_dataframe])
     
-    return liste_des_graphs,[deplacement,effort_tranchant_dataframe,moment_dataframe]
+    return liste_des_graphs, [("déplacement",deplacement),("effort tranchant",effort_tranchant_dataframe),("moment fléchissant",moment_dataframe)]

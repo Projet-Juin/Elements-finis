@@ -16,7 +16,6 @@ import matplotlib
 matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
-import pandas
 from pandastable import Table
 
 def main():
@@ -70,6 +69,29 @@ def main():
             listeEntrees[1].config(state= (tk.DISABLED if modele.get() in (2,) else tk.NORMAL))
             listeRepartie[0].config(state= (tk.DISABLED if modele.get() in (2,) else tk.NORMAL))
             
+        def credit():
+            # root=Tk()
+            # root.title("Solve Structure --- Crédits")
+            # root.geometry("600x375")
+            # tk.Label(root,justify='center',bg=gris_5,font=("Arial", 14, "bold italic"),text='SOLVE STRUCTURE --- VERSION 1.0').pack(fill='both')
+            # label8=Label(root,justify='center',bg=gris_5,font=font_texte2,text= 'En partenariat avec l\'EPF, Solve Structure est programme qui à pour \nintérêt d\'étudier l\'efffet que peut avoir une charge sur une poutre.')
+            # label8.pack(fill='both')
+            # label2=Label(root,justify='center',bg=gris_5,font=font_texte2,text= 'L\'application a été conçu par l\'Equipe de Solve Structure :\n')
+            # label2.pack(fill='both')
+            # label4=Label(root,justify='center',bg=gris_5,font=font_texte2,text= 'Partie RDM : \nAgnès DURIEZ --- Clara FERRU --- Henri FORJOT\n')
+            # label4.pack(fill='both')
+            # label6=Label(root,justify='center',bg=gris_5,font=font_texte2,text= 'Partie Eléments finis : \nOmbline DELASSUS --- Lansana DIOMANDE --- Guillaume WEBER --- Xingyu XIA\n')
+            # label6.pack(fill='both')
+            # logo_1 = PhotoImage(file='images/EPF-couleur_crédit.png')
+            # logo_2 = PhotoImage(file='images/logo_crédit.png')
+            # labellogo_1=Label(root,image=logo_1)
+            # labellogo_1.image = logo_1
+            # labellogo_1.pack(anchor='s')
+            # labellogo_2=Label(root,image=logo_2)
+            # labellogo_2.image = logo_2
+            # labellogo_2.pack(anchor='s')
+            # root.mainloop()
+            pass
         barre_de_menu = tk.Menu(main_w)
         main_w.config(menu=barre_de_menu)
         menu_modele = tk.Menu(barre_de_menu) # Création d'un menu élts finis
@@ -104,7 +126,7 @@ def main():
         autres_menu.add_command(label='Aide,command=aide') 
         autres_menu.add_command(label='Conditions de fonctionnement,command=ctds_de_fct') 
         autres_menu.add_separator() 
-        autres_menu.add_command(label='Crédit,command=credit')
+        autres_menu.add_command(label='Crédit',command=credit)
         barre_de_menu.add_cascade(label='Autres', menu=autres_menu)
     
         
@@ -477,7 +499,7 @@ def main():
                         listeEntrees[0].insert(0,str(aire))
                         listeEntrees[1].delete(0,tk.END)
                         listeEntrees[1].insert(0,str(inertie))
-                # geometrie = tk.Tk()
+                
                 geometrie = tk.Toplevel()
                 geometrie.geometry("380x270+0+8") # dimentions dimXxdimY+écartAuBordX+écartAuBordY
                 geometrie.title("Choix de la section et calcul de l'inertie") # titre
@@ -501,6 +523,12 @@ def main():
                 tk.Button(frameG, text='Appliquer section', command=choix_sec).grid(row=12)
                 # geometrie.mainloop()
                     
+            def ComboChangeMateriau(evt):
+                if Combomateriau.current()>=0:
+                    listeEntrees[2].delete(0,tk.END)
+                    listeEntrees[2].insert(0,list_Young[Combomateriau.current()])
+                    Combomateriau.set('')
+            list_Young = [210000000000, 203000000000, 69000000000, 83000000000, 124000000000, 289000000000, 209000000000, 124000000000, 41500000000, 196000000000, 100000000000, 45000000000, 214000000000, 78000000000, 168000000000, 116000000000, 78000000000, 27000000000, 14000000000, 450000000000, 1000000000000, 60000000000, 26000000000, 69000000000, 12000000000, 20000000000, 16000000000, 12000000000, 12000000000, 12400000000, 13000000000, 10000000000, 10000000000, 9500000000, 190000000000, 34500000000, 1100000000000, 2380000000, 2300000000, 3500000000]
             Poutre_rouge = tk.PhotoImage(file="images\\Poutre_rouge.png").subsample(6,6)
             Poutre_verte = tk.PhotoImage(file="images\\Poutre_verte.png").subsample(10,10)
             
@@ -530,9 +558,11 @@ def main():
                 listeEntrees[i].insert(0,'0')
                 listeEntrees[i].grid(row = 9+i*2)
                 listeEntrees[i].bind('<Return>', lambda evt, index=i:next_Props(index))
-                
+            Combomateriau = ttk.Combobox(framePoutre, values = ['Acier de construction', 'Acier inox 18-10', 'Aluminium (Al)', 'Argent (Ag)', 'Bronze', 'Chrome (Cr)', 'Cobalt (Co)', 'Cuivre (Cu)', 'Etain (Sn)', 'Fer (Fe)', 'Laiton (80% Cu, 20% Zn)', 'Magnésium (Mg)', 'Nickel (Ni)', 'Or (Au)', 'Platine (Pt)', 'Titane (Ti)', 'Zinc (Zn)', 'Béton', 'Brique', 'Carbure de Silice (SiC)', 'Diamant (C)', 'Granite', 'Marbre', 'Verre', 'Acajou', 'Bambou', 'Bois de rose (Brésil)', 'Bois de rose (Inde)', 'Chêne', 'Contreplaqué', 'Epicéa', 'Erable', 'Frêne', 'Séquoia', 'Fibre de carbone', 'Kevlar', 'Nanotubes (Carbone)', 'Plexiglass', 'Polycarbonate', 'Résine epoxy'], state = "readonly")
+            Combomateriau.bind('<<ComboboxSelected>>', ComboChangeMateriau)
+            Combomateriau.grid(row = 14)
             frameRepartie = tk.LabelFrame(framePoutre, text = 'Charge répartie sur la poutre')
-            frameRepartie.grid(row=14)
+            frameRepartie.grid(row=15)
             listeRepartie = []
             tk.Label(frameRepartie, text = 'Charge normale répartie (N/m) :').grid(row=0, column = 0) # ajouter ressort en torsion ?
             # tk.Label(frameRepartie, text = '').grid(row=1, column = 0) # Charge répartie selon Y (N/m) :
@@ -548,7 +578,7 @@ def main():
                 listeRepartie[i].insert(0,'0')
                 listeRepartie[i].grid(row=i, column = 1)
                 listeRepartie[i].bind('<Return>', lambda evt, index=i:next_Repartie(evt,index))
-            tk.Button(framePoutre, text = 'Ajouter poutre', command = ajouter_poutre).grid(row= 15)
+            tk.Button(framePoutre, text = 'Ajouter poutre', command = ajouter_poutre).grid(row= 16)
             
         ongletsInput.add(framePoutre)
         ongletsInput.tab(2, text='Poutres',image=Poutre_rouge, compound=tk.LEFT)
@@ -557,11 +587,10 @@ def main():
     
     if True or 'Output': # juste pour structurer le programme
         
-        dataframes = ()
+        dataframesP = []
         def Calculer():
-            
+            # global dataframesP
             def afficher_results(graphresult):
-                global dataframes
                 for i in range(len(graphresult)):
                     if len(ongletsOutput.tabs())-1<i+1:
                         listFrame.append(tk.Frame(ongletsOutput))
@@ -629,11 +658,15 @@ def main():
                     listedebutchargerepartie = []
                     for i in temp_poutres:
                         listedebutchargerepartie.append(i[5][0])
-                    nombrepointsentre2noeuds = int(tailleMaillage.get())
-                    print(N_element,listeabcisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force)
+                    try :
+                        if int(tailleMaillage.get())<=1:
+                            nombrepointsentre2noeuds = int(tailleMaillage.get())
+                    except TypeError:
+                        tk.messagebox.showerror('Erreur', "La donnée taille de maillage ne peut pas être interprétée comme int")
                     
                     graphs, dataframes = liste_des_demandes_utilisateur(N_element,listeabcisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force)
                     afficher_results(graphs)
+                    dataframesP.append(dataframes)
                     temp_nomdata=[]
                     for i in dataframes:
                         temp_nomdata.append(i[0])
@@ -642,6 +675,7 @@ def main():
                 elif modele.get() == 2:
                     graphs, dataframes = Calculer_Barre(liste_noeuds, liste_poutres)
                     afficher_results(graphs)
+                    dataframesP.append(dataframes)
                     temp_nomdata=[]
                     for i in dataframes:
                         temp_nomdata.append(i[0])
@@ -650,6 +684,7 @@ def main():
                 elif modele.get() == 3:
                     graphs, dataframes = CalculerPortique(liste_noeuds, liste_poutres)
                     afficher_results(graphs)
+                    dataframesP.append(dataframes)
                     temp_nomdata=[]
                     for i in dataframes:
                         temp_nomdata.append(i[0])
@@ -662,7 +697,7 @@ def main():
         
         PanedwindowCalc = ttk.Panedwindow(ongletsOutput, orient="horizontal")
         Calculframe = tk.Frame(PanedwindowCalc)
-        tk.Label(Calculframe, text = "taille du maillage (m)").grid(row=0)
+        tk.Label(Calculframe, text = "nombre de point de maillage :").grid(row=0)
         tailleMaillage = tk.Entry(Calculframe)
         tailleMaillage.grid(row=1)
         def ComboChangeModel(evt):
@@ -687,9 +722,10 @@ def main():
             newWindow = tk.Toplevel()
             frame = tk.Frame(newWindow)
             frame.pack(fill='both', expand=True)
-            pt = Table(frame, dataframe=dataframes[Ndataframe][1])
+            print(dataframesP,'691')
+            pt = Table(frame, dataframe=dataframesP[0][Ndataframe][1])
             pt.show()
-            pt.sho
+            pt.showIndex()
         Combomodel = ttk.Combobox(Calculframe, values = ('Modèle Poutre', 'Modèle Barre / Treillis', 'Modèle Portique'), state = "readonly")
         Combomodel.bind('<<ComboboxSelected>>', ComboChangeModel)
         Combomodel.grid(row = 2)
@@ -699,8 +735,7 @@ def main():
         liste_graph = []
         liste_frame = []
         tk.Button(Calculframe,text = 'Lancer le calcul', command = Calculer).grid(row = 5, rowspan = 2, sticky=tk.N+tk.S)
-        # tk.Button(Calculframe,text = 'Afficher matrices', command = disp_dataframe).grid(row = 7)
-        def changedataframe():
+        def changedataframe(evt):
             if Combodata.current()>=0:
                 disp_dataframe(Combodata.current())
         Combodata = ttk.Combobox(Calculframe, values = (), state = "readonly")

@@ -348,7 +348,7 @@ def Calculer_Barre(liste_points,liste_poutres):
     matrice_force_barre = pandas.DataFrame(matrice_force_barre,index = nommage_matrice_force_axial(len(ElementSet)), columns = ['N'])
     print(matrice_force_barre)
     
-    list_dataframe.append(("Effort Normal",force_axial_barre))
+    list_dataframe.append(("Effort Normal",matrice_force_barre))
     
     
     del ElementSet[:]

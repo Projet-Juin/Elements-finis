@@ -13,8 +13,11 @@ pandas.set_option('display.max_columns', None)
 pandas.set_option('display.max_rows', None)
 numpy.set_printoptions(threshold=np.inf)
 
-matplotlib.use('TkAgg')
-
+# matplotlib.use('TkAgg')
+# plt.figure(1)
+# plt.figure(2)
+# plt.figure(3)
+# plt.figure(4)
 class Element(object):
     def __init__(self, List_noeud=[], Aire_section=0, Largeur_section=0, Hauteur_section=0, E=0, I=0, Coef_poisson=0):
         # Importation de données
@@ -473,12 +476,14 @@ def CalculerPortique(liste_points,liste_poutres) :
         list_X.append(NoeudSet[i.Noeud_label_j - 1].X)
         list_Y.append(NoeudSet[i.Noeud_label_i - 1].Y)
         list_Y.append(NoeudSet[i.Noeud_label_j - 1].Y)
+        '''
         plt.figure(2)
         plt.plot(list_X, list_Y, c='r')
         plt.figure(3)
         plt.plot(list_X, list_Y, c='r')
         plt.figure(4)
         plt.plot(list_X, list_Y, c='r')
+        '''
         F_tranche = - Force_interne[0] * i.S + Force_interne[1] * i.C
         F_normal = Force_interne[0] * i.C + Force_interne[1] * i.S
         M = Force_interne[2]
@@ -503,7 +508,9 @@ def CalculerPortique(liste_points,liste_poutres) :
         list_Y.append((NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2 - L_F_tranche * i.C)
         list_Y_total_Fx.append(
             (NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2 - L_F_tranche * i.C)
+        plot3 = []
         plot3.append([list_X, list_Y])
+        plot3_list1(plot3)
         list_X = []
         list_Y = []
         list_X.append((NoeudSet[i.Noeud_label_i - 1].X + NoeudSet[i.Noeud_label_j - 1].X) / 2)
@@ -514,7 +521,9 @@ def CalculerPortique(liste_points,liste_poutres) :
         list_Y.append((NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2 - L_F_normal * i.C)
         list_Y_total_Fy.append(
             (NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2 - L_F_normal * i.C)
+        plot4 = []
         plot4.append([list_X, list_Y])
+        plot4_list1(plot4)
         list_X = []
         list_Y = []
         list_X.append((NoeudSet[i.Noeud_label_i - 1].X + NoeudSet[i.Noeud_label_j - 1].X) / 2)
@@ -523,20 +532,25 @@ def CalculerPortique(liste_points,liste_poutres) :
         list_Y.append((NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2)
         list_Y.append((NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2 - L_M * i.C)
         list_Y_total_M.append((NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2 - L_M * i.C)
+        plot5 = []
         plot5.append([list_X, list_Y])
+        plot5_list1.append(plot5)
         # print(i.Noeud_label_i)
         j += 1
         if j == N_parties_maillage:
             # print("*************")
             j = 0
+            plot3 = []
             plot3.append([list_X_total_Fx, list_Y_total_Fx])
             plot3_list.append(plot3)
             list_X_total_Fx = []
             list_Y_total_Fx = []
+            plot4 = []
             plot4.append([list_X_total_Fy, list_Y_total_Fy])
             plot4_list.append(plot4)
             list_X_total_Fy = []
             list_Y_total_Fy = []
+            plot5 = []
             plot5.append([list_X_total_M, list_Y_total_M])
             plot5_list.append(plot5)
             list_X_total_M = []
@@ -588,15 +602,32 @@ def CalculerPortique(liste_points,liste_poutres) :
 
     print("Max_Force_tranche = {}".format(Max_F_tranche))
     print("Max_Force_normal = {}".format(Max_F_normal))
-    
+
 
         # plt.plot(list_X,list_Y)
-    
+
     # plt.xlabel('x')
     # plt.ylabel('y')
-    
+
     # plt.show()
-    return plotun , plotdeux , plot3 , plot4 , plot5 , plot3_list, plot4_list, plot5_list
+    graph1 = ["deplacement en m", [*plotun, 'b'], [*plotdeux,'r--']]
+    graph2 = ["effort normal en N", [*plotun, 'b']]
+    for i in plot3_list1:
+        graph2.append([*i, 'r--'])
+    for i in plot3_list:
+        graph2.append([*i, 'r--'])
+    graph3 = ["effort tranche en N", [*plotun, 'b']]
+    for i in plot4_list1:
+        graph3.append([*i, 'r--'])
+    for i in plot4_list:
+        graph3.append([*i, 'r--'])
+    graph4 = ["Moment flechissant en N.m", [*plotun, 'b']]
+    for i in plot5_list1:
+        graph4.append([*i, 'r--'])
+    for i in plot5_list:
+        graph4.append([*i, 'r--'])
+    list_des_graphs = [graph1,graph2,graph3,graph4]
+    return list_des_graphs
     
 CL_d=[]
 CL_f=[]
@@ -607,6 +638,9 @@ ElementSet2 = []
 plot3_list = []
 plot4_list = []
 plot5_list = []
+plot3_list1 = []
+plot4_list1 = []
+plot5_list1 = []
 
 
 
