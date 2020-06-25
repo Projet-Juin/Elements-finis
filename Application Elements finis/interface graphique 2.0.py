@@ -689,6 +689,7 @@ def main():
             frame.pack(fill='both', expand=True)
             pt = Table(frame, dataframe=dataframes[Ndataframe][1])
             pt.show()
+            pt.sho
         Combomodel = ttk.Combobox(Calculframe, values = ('Modèle Poutre', 'Modèle Barre / Treillis', 'Modèle Portique'), state = "readonly")
         Combomodel.bind('<<ComboboxSelected>>', ComboChangeModel)
         Combomodel.grid(row = 2)

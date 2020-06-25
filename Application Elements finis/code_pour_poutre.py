@@ -48,6 +48,27 @@ def nommage_matrice_poutre_colonnes(n_noeud):
             A.append("d" + str(i+1) + "y")
             A.append("phi" +str(i+1))
         return A
+    
+def nommage_matrice_poutre_colonnes_deplacement(n_noeud):
+        # Ici on créer une chaine composé des noms des colonnes des matrices poutres
+        A = []
+        for i in range(n_noeud):
+            A.append("d" + str(i+1) + "y")
+        return A    
+
+def nommage_matrice_poutre_colonnes_force(n_noeud):
+        # Ici on créer une chaine composé des noms des colonnes des matrices poutres
+        A = []
+        for i in range(n_noeud):
+            A.append("F" + str(i+1) + "y")
+        return A    
+
+def nommage_matrice_poutre_colonnes_moment(n_noeud):
+        # Ici on créer une chaine composé des noms des colonnes des matrices poutres
+        A = []
+        for i in range(n_noeud):
+            A.append("M" + str(i+1) + "y")
+        return A    
 
 def nommage_matrice_poutre_lignes(n_noeud):
 
@@ -483,17 +504,29 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     print("***matrice déplacements")
     d_assemblee=pd.DataFrame(d_assemblee,index=nommage_matrice_poutre_colonnes(int(np.shape(d_assemblee)[0]-(np.shape(d_assemblee)[0]/2))) ,columns=['deplacement'])
     print(d_assemblee)
-    
+
     
     d_assemblee_liste = d_assemblee['deplacement'].values.tolist()
+    
+
+    
     
     
     deplacement_y=[]
     deplacement_phi=[]
+
     
     for k in range(int(len(d_assemblee_liste)/2)):
         deplacement_y.append(d_assemblee_liste[2*k])
         deplacement_phi.append(d_assemblee_liste[2*k+1])
+        
+    deplacement=[]
+    for k in range(len(liste_abscisse_allongee)):
+        if liste_abscisse_allongee[k] in listeabscisse :
+            deplacement.append(deplacement_y[k])
+    deplacement=pd.DataFrame(deplacement,index=nommage_matrice_poutre_colonnes_deplacement(len(deplacement)) ,columns=['deplacement'])
+
+    print(deplacement)
     
     ### calcul des forces internes
     forces_internes=[]
@@ -554,6 +587,21 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
         effort_tranchant.append(force_internes_totales[2*k])
         moment.append(force_internes_totales[2*k+1])
     
+    effort_tranchant_dataframe=[]
+    for k in range(len(liste_abscisse_allongee)):
+        if liste_abscisse_allongee[k] in listeabscisse :
+            effort_tranchant_dataframe.append(deplacement_y[k])
+    effort_tranchant_dataframe=pd.DataFrame(effort_tranchant_dataframe,index=nommage_matrice_poutre_colonnes_force(len(effort_tranchant_dataframe)) ,columns=['effort tranchant'])
+    print(effort_tranchant_dataframe)
+    
+    moment_dataframe=[]
+    for k in range(len(liste_abscisse_allongee)):
+        if liste_abscisse_allongee[k] in listeabscisse :
+            moment_dataframe.append(deplacement_y[k])
+    moment_dataframe=pd.DataFrame(moment_dataframe,index=nommage_matrice_poutre_colonnes_moment(len(moment_dataframe)) ,columns=['moment fléchissant'])
+    print(moment_dataframe)
+    
+    
     """
     plt.plot(liste_abscisse_allongee_pour_forces_internes, effort_tranchant)
     plt.grid()
@@ -586,7 +634,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     poutre=[0 for i in range(len(listeabscisse))] #toujours 0 en ordonnées , 
     
     graph1=["déplacement en m",[listeabscisse,poutre,'b'],[liste_abscisse_allongee,deplacement_y,'r--']]
-    graph2=["déplacement rotationnel en m",[listeabscisse,poutre,'b',[deg_point]],[liste_abscisse_allongee,deplacement_phi,'r--']]
+    #graph2=["déplacement rotationnel en m",[listeabscisse,poutre,'b',[deg_point]],[liste_abscisse_allongee,deplacement_phi,'r--']]
     
     graph3=["effort tranchant en N",[listeabscisse,poutre,'b',[deg_point],],[liste_abscisse_allongee_pour_forces_internes,effort_tranchant,'r--']]
             
@@ -595,7 +643,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     
     #graph4=[dessin poutre????????]
     
-    liste_des_graphs=[graph1,graph2,graph3,graph4]
+    liste_des_graphs=[graph1,graph3,graph4],[deplacement,effort_tranchant_dataframe,moment_dataframe]
     
     print(liste_des_graphs)
     
