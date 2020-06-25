@@ -557,12 +557,11 @@ def main():
     
     if True or 'Output': # juste pour structurer le programme
         
+        dataframes = ()
         def Calculer():
             
-            def afficher_results(text_result, graphresult):
-                
-                PanedwindowCalc.add(tk.Label(PanedwindowCalc, text = text_result))
-                
+            def afficher_results(graphresult):
+                global dataframes
                 for i in range(len(graphresult)):
                     if len(ongletsOutput.tabs())-1<i+1:
                         listFrame.append(tk.Frame(ongletsOutput))
@@ -633,27 +632,28 @@ def main():
                     nombrepointsentre2noeuds = int(tailleMaillage.get())
                     print(N_element,listeabcisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force)
                     
-                    afficher_results('',liste_des_demandes_utilisateur(N_element,listeabcisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force))
-                    
+                    graphs, dataframes = liste_des_demandes_utilisateur(N_element,listeabcisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force)
+                    afficher_results(graphs)
+                    temp_nomdata=[]
+                    for i in dataframes:
+                        temp_nomdata.append(i[0])
+                    Combodata.config(values= temp_nomdata)
                     
                 elif modele.get() == 2:
-                    afficher_results('',Calculer_Barre(liste_noeuds, liste_poutres))
+                    graphs, dataframes = Calculer_Barre(liste_noeuds, liste_poutres)
+                    afficher_results(graphs)
+                    temp_nomdata=[]
+                    for i in dataframes:
+                        temp_nomdata.append(i[0])
+                    Combodata.config(values= temp_nomdata)
                     
                 elif modele.get() == 3:
-                    plotun, plotdeux = CalculerPortique(liste_noeuds, liste_poutres)
-                    
-                    # f = Figure(figsize=(16, 9), dpi=80)
-                    # a = f.add_subplot(111)
-                    # for i in plotun:
-                    #     a.plot(i[0],i[1],'-.', c="red", marker='o')
-                    # for j in plotdeux:
-                    #     a.plot(j[0],j[1])
-                    # a.set_xlabel('x')
-                    # a.set_ylabel('y')
-                    
-                    # graph = FigureCanvasTkAgg(f, master=framegraph)
-                    # NavigationToolbar2Tk(graph, framegraph).update()
-                    # graph.get_tk_widget().pack()
+                    graphs, dataframes = CalculerPortique(liste_noeuds, liste_poutres)
+                    afficher_results(graphs)
+                    temp_nomdata=[]
+                    for i in dataframes:
+                        temp_nomdata.append(i[0])
+                    Combodata.config(values= temp_nomdata)
                     
             else:
                 tk.messagebox.showerror('Erreur', "Les données d'entrée sont incomplètes")
@@ -683,12 +683,11 @@ def main():
                         temp_Y.append(j[1][1])
             a.plot(temp_X,temp_Y,'-.', c="red", marker='o')
             graph.draw()
-        def disp_dataframe():
+        def disp_dataframe(Ndataframe):
             newWindow = tk.Toplevel()
-            df = pandas.DataFrame(0,index=["d1x"],columns=["d1x"])
             frame = tk.Frame(newWindow)
             frame.pack(fill='both', expand=True)
-            pt = Table(frame, dataframe=df)
+            pt = Table(frame, dataframe=dataframes[Ndataframe][1])
             pt.show()
             pt.sho
         Combomodel = ttk.Combobox(Calculframe, values = ('Modèle Poutre', 'Modèle Barre / Treillis', 'Modèle Portique'), state = "readonly")
@@ -700,11 +699,15 @@ def main():
         liste_graph = []
         liste_frame = []
         tk.Button(Calculframe,text = 'Lancer le calcul', command = Calculer).grid(row = 5, rowspan = 2, sticky=tk.N+tk.S)
-        tk.Button(Calculframe,text = 'Afficher matrices', command = disp_dataframe).grid(row = 7)
-        
+        # tk.Button(Calculframe,text = 'Afficher matrices', command = disp_dataframe).grid(row = 7)
+        def changedataframe():
+            if Combodata.current()>=0:
+                disp_dataframe(Combodata.current())
+        Combodata = ttk.Combobox(Calculframe, values = (), state = "readonly")
+        Combodata.bind('<<ComboboxSelected>>', changedataframe)
+        Combodata.grid(row = 7)
         img = tk.PhotoImage(file="images\\Logo_EPF.png").subsample(2,2)
         tk.Label(Calculframe,image = img, compound=tk.LEFT).grid(row = 8)
-        # tk.Label(Calculframe, text = 'coucou').grid(row = 7)
         PanedwindowCalc.add(Calculframe)
         ongletsOutput.add(PanedwindowCalc)
         canvasStruc = tk.Frame(PanedwindowCalc)
