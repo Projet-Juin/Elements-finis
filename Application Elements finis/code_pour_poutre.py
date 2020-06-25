@@ -503,14 +503,14 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     effort_tranchant_dataframe=[]
     for k in range(len(liste_abscisse_allongee)):
         if liste_abscisse_allongee[k] in listeabscisse :
-            effort_tranchant_dataframe.append(deplacement_y[k])
+            effort_tranchant_dataframe.append(effort_tranchant[k])
     effort_tranchant_dataframe=pd.DataFrame(effort_tranchant_dataframe,index=nommage_matrice_poutre_colonnes_force(len(effort_tranchant_dataframe)) ,columns=['effort tranchant'])
     print(effort_tranchant_dataframe)
     
     moment_dataframe=[]
     for k in range(len(liste_abscisse_allongee)):
         if liste_abscisse_allongee[k] in listeabscisse :
-            moment_dataframe.append(deplacement_y[k])
+            moment_dataframe.append(moment[k])
     moment_dataframe=pd.DataFrame(moment_dataframe,index=nommage_matrice_poutre_colonnes_moment(len(moment_dataframe)) ,columns=['moment fléchissant'])
     print(moment_dataframe)
     
