@@ -661,7 +661,7 @@ def main():
                     try:
                         if int(tailleMaillage.get())>=1:
                             nombrepointsentre2noeuds = int(tailleMaillage.get())
-                    except TypeError:
+                    except ValueError:
                         tk.messagebox.showerror('Erreur', "La donnée taille de maillage ne peut pas être interprétée comme int")
                     
                     graphs, dataframes = liste_des_demandes_utilisateur(N_element,listeabcisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force)
@@ -685,7 +685,7 @@ def main():
                     try :
                         if int(tailleMaillage.get())>=1:
                             nombrepointsentre2noeuds = int(tailleMaillage.get())
-                    except TypeError:
+                    except ValueError:
                         tk.messagebox.showerror('Erreur', "La donnée taille de maillage ne peut pas être interprétée comme int")
                     graphs, dataframes = CalculerPortique(liste_noeuds, liste_poutres, nombrepointsentre2noeuds)
                     afficher_results(graphs)
