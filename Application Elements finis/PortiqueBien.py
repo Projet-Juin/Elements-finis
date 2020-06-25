@@ -238,17 +238,13 @@ def CalculerPortique(liste_points,liste_poutres) :
         if ElementSet[i].Longueur_poutre > Max_L:
             Max_L = ElementSet[i].Longueur_poutre
             
-    plotun = []
+    plotun_X = []
+    plotun_Y = []
     for i in ElementSet:
-        list_X = []
-        list_Y = []
-        list_X.append(NoeudSet[i.Noeud_label_i-1].X)
-        list_X.append(NoeudSet[i.Noeud_label_j-1].X)
-        list_Y.append(NoeudSet[i.Noeud_label_i-1].Y)
-        list_Y.append(NoeudSet[i.Noeud_label_j-1].Y)
-        plotun.append([list_X,list_Y])
-        plt.plot(list_X,list_Y,'-.', c="red", marker='o')
-
+        plotun_X.append(NoeudSet[i.Noeud_label_i-1].X)
+        plotun_X.append(NoeudSet[i.Noeud_label_j-1].X)
+        plotun_Y.append(NoeudSet[i.Noeud_label_i-1].Y)
+        plotun_Y.append(NoeudSet[i.Noeud_label_j-1].Y)
     Element_supprime = []
     for i in range(len(liste_poutres)):
         Nde = int(liste_poutres[i][0].split()[1])
@@ -510,7 +506,7 @@ def CalculerPortique(liste_points,liste_poutres) :
             (NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2 - L_F_tranche * i.C)
         plot3 = []
         plot3.append([list_X, list_Y])
-        plot3_list1(plot3)
+        plot3_list1.append(plot3)
         list_X = []
         list_Y = []
         list_X.append((NoeudSet[i.Noeud_label_i - 1].X + NoeudSet[i.Noeud_label_j - 1].X) / 2)
@@ -523,7 +519,7 @@ def CalculerPortique(liste_points,liste_poutres) :
             (NoeudSet[i.Noeud_label_i - 1].Y + NoeudSet[i.Noeud_label_j - 1].Y) / 2 - L_F_normal * i.C)
         plot4 = []
         plot4.append([list_X, list_Y])
-        plot4_list1(plot4)
+        plot4_list1.append(plot4)
         list_X = []
         list_Y = []
         list_X.append((NoeudSet[i.Noeud_label_i - 1].X + NoeudSet[i.Noeud_label_j - 1].X) / 2)
@@ -576,21 +572,20 @@ def CalculerPortique(liste_points,liste_poutres) :
         print(NoeudSet[i].Y)
     '''
 
-    plotdeux = []
+    plotdeux_X = []
+    plotdeux_Y = []
     for i in ElementSet:
-        list_X = []
-        list_Y = []
+
         # print(i.Noeud_label_i)
         # print(NoeudSet[i.Noeud_label_i-1].X)
         # print(NoeudSet[i.Noeud_label_i - 1].Y)
         # print(i.Noeud_label_j)
         # print(NoeudSet[i.Noeud_label_j - 1].X)
         # print(NoeudSet[i.Noeud_label_j - 1].Y)
-        list_X.append(NoeudSet[i.Noeud_label_i - 1].X)
-        list_X.append(NoeudSet[i.Noeud_label_j - 1].X)
-        list_Y.append(NoeudSet[i.Noeud_label_i - 1].Y)
-        list_Y.append(NoeudSet[i.Noeud_label_j - 1].Y)
-        plotdeux.append([list_X, list_Y])
+        plotdeux_X.append(NoeudSet[i.Noeud_label_i - 1].X)
+        plotdeux_X.append(NoeudSet[i.Noeud_label_j - 1].X)
+        plotdeux_Y.append(NoeudSet[i.Noeud_label_i - 1].Y)
+        plotdeux_Y.append(NoeudSet[i.Noeud_label_j - 1].Y)
 
     '''
     for i in range(N_noeud):
@@ -610,24 +605,29 @@ def CalculerPortique(liste_points,liste_poutres) :
     # plt.ylabel('y')
 
     # plt.show()
-    graph1 = ["deplacement en m", [*plotun, 'b'], [*plotdeux,'r--']]
-    graph2 = ["effort normal en N", [*plotun, 'b']]
+    graph1 = ["deplacement en m", [plotun_X,plotun_Y,'b'], [plotdeux_X,plotdeux_Y,'r--']]
+
+    graph2 = ["effort normal en N", [plotun_X,plotun_Y, 'b']]
     for i in plot3_list1:
-        graph2.append([*i, 'r--'])
+        graph2.append([i[0][0],i[0][1], 'r--'])
     for i in plot3_list:
-        graph2.append([*i, 'r--'])
-    graph3 = ["effort tranche en N", [*plotun, 'b']]
+        graph2.append([i[0][0],i[0][1], 'r--'])
+
+    graph3 = ["effort tranche en N", [plotun_X,plotun_Y, 'b']]
     for i in plot4_list1:
-        graph3.append([*i, 'r--'])
+        graph3.append([i[0][0],i[0][1],'r--'])
     for i in plot4_list:
-        graph3.append([*i, 'r--'])
-    graph4 = ["Moment flechissant en N.m", [*plotun, 'b']]
+        graph3.append([i[0][0],i[0][1], 'r--'])
+    graph4 = ["Moment flechissant en N.m", [plotun_X,plotun_Y, 'b']]
     for i in plot5_list1:
-        graph4.append([*i, 'r--'])
+        graph4.append([i[0][0],i[0][1], 'r--'])
     for i in plot5_list:
-        graph4.append([*i, 'r--'])
+        graph4.append([i[0][0],i[0][1], 'r--'])
+    
+    print("alors",graph1)
     list_des_graphs = [graph1,graph2,graph3,graph4]
-    return list_des_graphs
+
+    return list_des_graphs,[]
     
 CL_d=[]
 CL_f=[]
@@ -641,6 +641,7 @@ plot5_list = []
 plot3_list1 = []
 plot4_list1 = []
 plot5_list1 = []
+
 
 
 
