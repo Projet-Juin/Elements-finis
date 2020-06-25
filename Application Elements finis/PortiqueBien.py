@@ -197,7 +197,7 @@ def create_d_assemble(d,N_Noeud):
     return d_assemble
 
 
-def CalculerPortique(liste_points,liste_poutres,N) :
+def CalculerPortique(liste_points,liste_poutres,taille_maille) :
     N_noeud = len(liste_points)
     N1 = len(liste_points)
     taille_maillage = 10
@@ -435,7 +435,7 @@ def CalculerPortique(liste_points,liste_poutres,N) :
     # print(F_total)
     F1 = []
     F2 = []
-    M = []
+    M1 = []
     for i in range(N_noeud):
         if Max_F < numpy.sqrt(F_total[i * 3] ** 2 + F_total[i * 3 + 1] ** 2):
             Max_F = numpy.sqrt(F_total[i * 3] ** 2 + F_total[i * 3 + 1] ** 2)
@@ -444,7 +444,7 @@ def CalculerPortique(liste_points,liste_poutres,N) :
     for i in range(N1):
         F1.append(F_total[i*3])
         F2.append(F_total[i*3+1])
-        M.append(F_total[i*3+2])
+        M1.append(F_total[i*3+2])
     print("Max_M = {}".format(Max_M))
     plot3 = []
     plot4 = []
@@ -620,16 +620,16 @@ def CalculerPortique(liste_points,liste_poutres,N) :
     # plt.ylabel('y')
 
     # plt.show()
-    graph1 = ["Déplacement en m", [plotun_X,plotun_Y,'b']]
+    graph1 = ["déplacement en m", [plotun_X,plotun_Y,'b']]
     for i in plot2_list:
         graph1.append([i[0][0],i[0][1],'r--'])
-    graph2 = ["Effort normal en N", [plotun_X,plotun_Y, 'b']]
+    graph2 = ["effort normal en N", [plotun_X,plotun_Y, 'b']]
     for i in plot3_list1:
         graph2.append([i[0][0],i[0][1], 'r--'])
     for i in plot3_list:
         graph2.append([i[0][0],i[0][1], 'r--'])
 
-    graph3 = ["Effort tranchant en N", [plotun_X,plotun_Y, 'b']]
+    graph3 = ["effort tranche en N", [plotun_X,plotun_Y, 'b']]
     for i in plot4_list1:
         graph3.append([i[0][0],i[0][1],'r--'])
     for i in plot4_list:
@@ -641,8 +641,41 @@ def CalculerPortique(liste_points,liste_poutres,N) :
         graph4.append([i[0][0],i[0][1], 'r--'])
     list_des_graphs = [graph1,graph2,graph3,graph4]
 
-    return list_des_graphs,[("déplacement",deplacement1) ,("effort normal",F1),("effort tranchant",F2),("moment fléchissant",M)]
-    
+
+    A = []
+    for i in range(N1):
+        A.append("u" + str(i+1) + "°")
+        A.append("v" + str(i+1) + "°")
+        A.append("theta" + str(i+1))
+    deplacement1_D = pandas.DataFrame(deplacement1,index = A)
+    A = []
+    for i in range(N1):
+        A.append("Fx" + str(i + 1))
+    F1_D = pandas.DataFrame(F1, index=A)
+    A = []
+    for i in range(N1):
+        A.append("Fy" + str(i + 1))
+    F2_D = pandas.DataFrame(F2, index=A)
+    A = []
+    for i in range(N1):
+        A.append("M" + str(i + 1))
+    M_D = pandas.DataFrame(M1, index=A)
+    print(("déplacement",deplacement1_D) ,("effort normal",F1_D),("effort tranchant",F2_D),("moment fléchissant",M_D))
+    del CL_d[:]
+    del CL_f[:]
+    del RessortSet[:]
+    del ElementSet[:]
+    del NoeudSet[:]
+    del ElementSet2[:]
+    del plot3_list[:]
+    del plot4_list[:]
+    del plot5_list[:]
+    del plot3_list1[:]
+    del plot4_list1[:]
+    del plot5_list1[:]
+    del plot2_list[:]
+    return list_des_graphs,[("déplacement",deplacement1_D) ,("effort normal",F1_D),("effort tranchant",F2_D),("moment fléchissant",M_D)]
+
 CL_d=[]
 CL_f=[]
 RessortSet=[]

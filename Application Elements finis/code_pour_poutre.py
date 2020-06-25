@@ -4,8 +4,6 @@ Created on Thu Jun 11 13:33:09 2020
 
 @author: ombline delassus
 """
-
-
 import numpy
 import math
 import matplotlib.pyplot as plt
