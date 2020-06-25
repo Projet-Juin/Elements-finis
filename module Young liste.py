@@ -5,6 +5,9 @@ Created on Thu Jun 25 11:59:01 2020
 @author: ombli
 """
 
+
+
+
 liste_materiaux=[("Acier de construction",210000000000),
 #("Acier à ressorts",220000000000),
 ("Acier inox 18-10",203000000000),
@@ -32,7 +35,7 @@ liste_materiaux=[("Acier de construction",210000000000),
 #("Indium (In)",110000000000),
 #("Iridium (Ir)",528000000000),
 ("Laiton (80% Cu, 20% Zn)",100000000000),
-("Lithium (Li)",4900000000),
+#("Lithium (Li)",4900000000),
 ("Magnésium (Mg)",45000000000),
 #("Manganèse (Mn)",198000000000),
 #("Molybdène (Mo)",329000000000),
@@ -52,7 +55,7 @@ liste_materiaux=[("Acier de construction",210000000000),
 #("Ruthénium (Ru)",447000000000),
 #("Scandium (Sc)",74000000000),
 #("Sélénium (Se)",10000000000),
-("Sodium (Na)",10000000000),
+#("Sodium (Na)",10000000000),
 #("Tantale (Ta)",186000000000),
 ("Titane (Ti)",116000000000),
 #("Titanate d'Aluminium (Ti3Al)",140000000000),
@@ -61,7 +64,7 @@ liste_materiaux=[("Acier de construction",210000000000),
 #("Uranium (U)",208000000000),
 #("Vanadium (V)",128000000000),
 ("Zinc (Zn)",78000000000),
-("Zirconium (Zr)",68000000000),
+#("Zirconium (Zr)",68000000000),
 #("Arseniure de Gallium (AsGa)",85500000000),
 ("Béton",27000000000),
 ("Brique",14000000000),
@@ -88,3 +91,14 @@ liste_materiaux=[("Acier de construction",210000000000),
 ("Plexiglass",2380000000),
 ("Polycarbonate",2300000000),
 ("Résine epoxy",3500000000)]
+
+
+"""
+list_materiau=[]
+liste_young=[]
+for i in range (len(liste_materiaux)):
+    materiau,young=liste_materiaux[i]
+    liste_young.append(young)
+    list_materiau.append(materiau)
+    
+"""
