@@ -613,6 +613,7 @@ def main():
                         #     ax.imshow(img, extent=[0, 400, 0, 300])
                     
                     for j in range(len(graphresult[i])-1):
+                        
                         liste_graph[i].plot(graphresult[i][j+1][0],graphresult[i][j+1][1],graphresult[i][j+1][2])
                     liste_frame[i].draw()
                     
