@@ -321,7 +321,7 @@ def Calculer_Barre(liste_points,liste_poutres):
     deplacement = linalg.solve(K_final.to_numpy(),F_final.to_numpy())
     deplacement = pandas.DataFrame(deplacement,index = list(K_final.columns), columns = ['d'])
     deplacement = create_d_assemble(deplacement,N_noeud)
-    list_dataframe.append(deplacement)
+    list_dataframe.append(("Deplacement",deplacement))
     
     print("deplacement")
     print(deplacement)
@@ -348,7 +348,7 @@ def Calculer_Barre(liste_points,liste_poutres):
     matrice_force_barre = pandas.DataFrame(matrice_force_barre,index = nommage_matrice_force_axial(len(ElementSet)), columns = ['N'])
     print(matrice_force_barre)
     
-    list_dataframe.append(force_axial_barre)
+    list_dataframe.append(("Effort Normal",force_axial_barre))
     
     
     del ElementSet[:]
