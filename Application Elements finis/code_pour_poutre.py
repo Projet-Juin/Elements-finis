@@ -180,7 +180,6 @@ def supprimer_inutil_dans_matricerigidite(d_assemblee,matricerigidite):
         matricerigidite=np.delete(matricerigidite, L[l], 1)
         matricerigidite=np.delete(matricerigidite, L[l], 0)
     return matricerigidite
-    #print(matricerigidite)
 
 def mettre_tous_les_deplacements_en_1matrice(d_assemblee,deplacementinconnu):
     i=0
@@ -198,7 +197,6 @@ def fonction_listedebutchargerepartie_allongee(listedebutchargerepartie,nombrepo
         listedebutchargerepartie_allongee.append(listedebutchargerepartie[k])
         for i in range (nombrepointsentre2noeuds):
             listedebutchargerepartie_allongee.append(0)
-    #listedebutchargerepartie_allongee.append(0)
     return listedebutchargerepartie_allongee
 
 
@@ -252,7 +250,6 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     F_assemblee=[0 for i in range(2*N_element_allongee)] #va servir pour le systeme matrice colonne de 0 de taille 2*N_element : a remodifier pour que ca fonctionne
     d_assemblee=[] #pour la matrice de deplacements : en considerant qu'il a rentré les noeuds par ordre croissant abscisses
     
-    F_pour_dessin=[]
     
     for i in range(N_element_allongee-1):
         if liste_abscisse_allongee[i] in listeabscisse :
@@ -262,8 +259,6 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
                 d_assemblee.append([0])
                 d_assemblee.append([0])
                 charge=0
-                F_pour_dessin.append(0)
-                F_pour_dessin.append(0)
                 if not listedebutchargerepartie_allongee[i]==0:
                     charge = listedebutchargerepartie_allongee[i]
                     if liste_abscisse_allongee[i+1] in listeabscisse :
@@ -287,8 +282,6 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
                 d_assemblee.append([0])
                 d_assemblee.append([1])
                 f=liste_force_allongee[i][1]
-                F_pour_dessin.append(0)
-                F_pour_dessin.append(f)
                 F_assemblee[i*2+1]+=f
                 if not listedebutchargerepartie_allongee[i]==0:
                     charge = listedebutchargerepartie_allongee[i]
@@ -313,19 +306,17 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
             if j=="rien":
     
                 charge=0
-                if not listeressort_allongee[i][0]==0:
-                    longueur_ressort=listeressort_allongee[i][1]
-                    listeressort_allongee[i][0]
-                    valeurforce_ressort=force_ressort(listeressort_allongee[i][0],longueur_ressort)
-                    F_assemblee[i*2]+=valeurforce_ressort
+                if not listeressort_allongee[i][0]==0: #a venir
+                    longueur_ressort=listeressort_allongee[i][1]#a venir
+                    listeressort_allongee[i][0]#a venir
+                    valeurforce_ressort=force_ressort(listeressort_allongee[i][0],longueur_ressort)#a venir
+                    F_assemblee[i*2]+=valeurforce_ressort#a venir
                 d_assemblee.append([1])
                 d_assemblee.append([1])
                 f=liste_force_allongee[i][0]
                 F_assemblee[i*2]+=f
-                F_pour_dessin.append(f)
                 f=liste_force_allongee[i][1]
                 F_assemblee[i*2]+=f
-                F_pour_dessin.append(f)
                 print(F_assemblee)
     
                 if not listedebutchargerepartie_allongee[i]==0:
@@ -372,15 +363,11 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     if j=="encastrement": #dy=phi=0
         d_assemblee.append([0])
         d_assemblee.append([0])
-        F_pour_dessin.append(0)
-        F_pour_dessin.append(0)
     if j=="rotule": #dy=0 et phi =/=0
         d_assemblee.append([0])
         d_assemblee.append([1])
         f=liste_force_allongee[-1][1]
         F_assemblee[-1]+=f
-        F_pour_dessin.append(0)
-        F_pour_dessin.append(f)
     if j=="rien": #dy et phi =/=0
         if not listeressort_allongee[i][0]==0:
             longueur_ressort=listeressort_allongee[i][1]
@@ -390,43 +377,9 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
         d_assemblee.append([1])
         d_assemblee.append([1])
         f=liste_force_allongee[-1][0]
-        F_pour_dessin.append(f)
         F_assemblee[-2]+=f
         f=liste_force_allongee[-1][1]
-        F_assemblee[-1]+=f
-        F_pour_dessin.append(f)
-    
-    """
-    ########################### pour le dessin 
-    
-    liste_ordonnee=[]
-    for k in range(len(listeabscisse)):
-        liste_ordonnee.append(0)
-    figure = pyplot.figure(figsize = (10, 10))
-    axes = figure.add_subplot(111)
-    
-    pyplot.plot(listeabscisse, liste_ordonnee, color='r', linestyle=':', marker='o')
-    
-    for k in range(len(listeabscisse)):
-        if type_appui[k]=='encastrement':
-            pyplot.scatter(listeabscisse[k], liste_ordonnee[k]-0.0002, s = 1000, c = 'g', marker = 's', edgecolors = 'b',label="encastrement")
-    
-        if type_appui[k]=="rotule":
-            pyplot.scatter(listeabscisse[k], liste_ordonnee[k]-0.0002, s = 1000, c = 'g', marker = '^', edgecolors = 'b',label="rotule")
-    
-        if type_appui[k]=="rien":
-            pyplot.scatter(listeabscisse[k], liste_ordonnee[k]-0.0002, s = 1000, c = 'g', marker = 'o', edgecolors = 'b',label="appui simple")
-    
-        if not F_pour_dessin[2*k]==0:
-            pyplot.annotate('        ', xy=(listeabscisse[k], liste_ordonnee[k]),xycoords='data',xytext=(0.12, 1), textcoords='axes fraction',arrowprops=dict(facecolor='black', shrink=0.5),horizontalalignment='right', verticalalignment='top',)
-        if not F_pour_dessin[2*k+1]==0:
-           pyplot.annotate('        ',xy=(listeabscisse[k]+0.5, liste_ordonnee[k]-0.0003), xycoords='data', xytext=(-70,30), textcoords='offset points',arrowprops=dict(arrowstyle="->",connectionstyle="angle,angleA=10,angleB=90,rad=20"),fontsize=10)
-    pyplot.ylim(-0.25, 1.5)
-    pyplot.legend()
-    pyplot.show()
-    
-    """
-    
+        F_assemblee[-1]+=f    
     
     EI=E*I
     
@@ -563,7 +516,7 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     
     
 
-###########################"modifié a partir d'ici pour ce qui est à retourner
+###########################a partir d'ici pour ce qui est à retourner
     
     deg_point=[]
     for k in type_appui:
@@ -587,7 +540,6 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     graph4=["moment fléchissant en N.m",[listeabscisse,poutre,'b',[deg_point]],[liste_abscisse_allongee_pour_forces_internes,moment,'r--']]
     
     
-    #graph4=[dessin poutre????????]
     
     liste_des_graphs=[graph1,graph3,graph4]
     
