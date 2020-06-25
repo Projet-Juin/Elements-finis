@@ -21,7 +21,7 @@ from pandastable import Table
 def main():
     global liste_noeuds, liste_poutres
     main_w = tk.Tk() # crée la fenêtre principale
-    main_w.geometry("900x750+0+8") # dimentions dimXxdimY+écartAuBordX+écartAuBordY
+    main_w.geometry("1080x730+0+8") # dimentions dimXxdimY+écartAuBordX+écartAuBordY
     main_w.title('SolveStructure - Éléments finis') # titre
     main_w.wm_iconbitmap('images\\petitlogo1.ico')
     
@@ -82,7 +82,7 @@ def main():
             tk.Label(root,justify='center',text= 'Partie RDM : \nAgnès DURIEZ --- Clara FERRU --- Henri FORJOT\n').pack(fill='both')
             tk.Label(root,justify='center',text= 'Partie Eléments finis : \nOmbline DELASSUS --- Lansana DIOMANDE --- Guillaume WEBER --- Xingyu XIA\n').pack(fill='both')
             tk.Label(root,justify='center',text= 'Nous remercions le professeur Omar SAIFOUNI de nous avoir proposé et accompagné tout au long de \n ce projet de création de logiciel de structure. \n Nous remercions le professeur Maxime PIGEOT de nous avoir apporter un soutien technique pour concevoir \n le logiciel.').pack(fill='both')
-            logo_1 = tk.PhotoImage(file='images\\Logo_EPF.png')
+            logo_1 = tk.PhotoImage(file='images\\Logo_EPF.png').subsample(2,2)
             logo_2 = tk.PhotoImage(file='images\\logo_crédit.png')
             labellogo_1=tk.Label(root,image=logo_1)
             labellogo_1.image = logo_1
@@ -102,28 +102,28 @@ def main():
         menu_modele.add_radiobutton(label='Passer au modèle Barre / Treillis',command=change_model, variable = modele, value = 2)
         menu_modele.add_radiobutton(label='Passer au modèle Portique',command=change_model, variable = modele, value = 3) 
         menu_modele.add_separator()
-        menu_modele.add_checkbutton(label='2D',command=change_model, variable = D2)
+        menu_modele.add_checkbutton(label='2D',command=change_model, variable = D2, state = tk.DISABLED)
         barre_de_menu.add_cascade(label='Choix du modèle', menu=menu_modele)
         
         # Création d'un menu fichier et ajout d'items
         fichier_menu = tk.Menu(barre_de_menu) 
         fichier_menu.add_command(label='Ouvrir',command=ouvrir) 
         fichier_menu.add_command(label='Sauvegarder',command=sauvegarder) 
-        fichier_menu.add_command(label='Redémarrer,command=reboot_programme') 
-        fichier_menu.add_separator() 
+        fichier_menu.add_separator()
+        fichier_menu.add_command(label='Redémarrer',state = tk.DISABLED) 
         fichier_menu.add_command(label='Quitter',command=main_w.destroy)
         barre_de_menu.add_cascade(label='Fichier', menu=fichier_menu)
         
         elts_finis_menu = tk.Menu(barre_de_menu)
-        elts_finis_menu.add_command(label="Ouvrir l'interface Résistance des matériaux,command=switch_elts_finis") 
+        elts_finis_menu.add_command(label="Ouvrir l'interface Résistance des matériaux", state = tk.DISABLED) 
         elts_finis_menu.add_separator()
-        elts_finis_menu.add_command(label='Importer les Inputs d\'Éléments finis,command=import_elts_finis') 
-        elts_finis_menu.add_command(label='Exporter les Inputs d\'Éléments finis,command=export_elts_finis') 
+        elts_finis_menu.add_command(label='Importer les Inputs d\'Éléments finis', state = tk.DISABLED) 
+        elts_finis_menu.add_command(label='Exporter les Inputs d\'Éléments finis', state = tk.DISABLED) 
         barre_de_menu.add_cascade(label='Résistance des Matériaux', menu=elts_finis_menu)
         
         autres_menu = tk.Menu(barre_de_menu) 
-        autres_menu.add_command(label='Aide,command=aide') 
-        autres_menu.add_command(label='Conditions de fonctionnement,command=ctds_de_fct') 
+        autres_menu.add_command(label='Aide',state = tk.DISABLED) 
+        autres_menu.add_command(label='Conditions de fonctionnement',state = tk.DISABLED) 
         autres_menu.add_separator() 
         autres_menu.add_command(label='Crédit',command=credit)
         barre_de_menu.add_cascade(label='Autres', menu=autres_menu)
@@ -754,6 +754,8 @@ def main():
         Combodata.grid(row = 11)
         img = tk.PhotoImage(file="images\\Logo_EPF.png").subsample(2,2)
         tk.Label(Calculframe,image = img, compound=tk.LEFT).grid(row = 12)
+        logo_2 = tk.PhotoImage(file='images\\logo_crédit.png').subsample(2,2)
+        tk.Label(Calculframe,image = logo_2, compound=tk.LEFT).grid(row = 13)
         PanedwindowCalc.add(Calculframe)
         ongletsOutput.add(PanedwindowCalc)
         canvasStruc = tk.Frame(PanedwindowCalc)
@@ -768,7 +770,6 @@ def main():
     PanedwindowPortique.pack(side=tk.LEFT, expand = tk.Y, fill = tk.BOTH)
     change_model()
     main_w.mainloop()
-
 
 liste_noeuds=[]
 liste_poutres=[]
