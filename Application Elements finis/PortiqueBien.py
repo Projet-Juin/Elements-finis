@@ -197,9 +197,9 @@ def create_d_assemble(d,N_Noeud):
     return d_assemble
 
 
-def CalculerPortique(liste_points,liste_poutres) :
+def CalculerPortique(liste_points,liste_poutres, N) :
     N_noeud = len(liste_points)
-    taille_maillage = 10
+    taille_maillage = N
     Max_L = 0
     
     for i in range(len(liste_points)):
