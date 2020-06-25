@@ -620,16 +620,16 @@ def CalculerPortique(liste_points,liste_poutres,N) :
     # plt.ylabel('y')
 
     # plt.show()
-    graph1 = ["déplacement en m", [plotun_X,plotun_Y,'b']]
+    graph1 = ["Déplacement en m", [plotun_X,plotun_Y,'b']]
     for i in plot2_list:
         graph1.append([i[0][0],i[0][1],'r--'])
-    graph2 = ["effort normal en N", [plotun_X,plotun_Y, 'b']]
+    graph2 = ["Effort normal en N", [plotun_X,plotun_Y, 'b']]
     for i in plot3_list1:
         graph2.append([i[0][0],i[0][1], 'r--'])
     for i in plot3_list:
         graph2.append([i[0][0],i[0][1], 'r--'])
 
-    graph3 = ["effort tranche en N", [plotun_X,plotun_Y, 'b']]
+    graph3 = ["Effort tranchant en N", [plotun_X,plotun_Y, 'b']]
     for i in plot4_list1:
         graph3.append([i[0][0],i[0][1],'r--'])
     for i in plot4_list:
