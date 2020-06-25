@@ -16,28 +16,24 @@ def getInertie(N, entrees):
     elif N==3:
         return rectangle_creux(1,*entrees)
     elif N==4:
-        return I(1,*entrees)
-    elif N==5:
-        return T(1,*entrees)
-    elif N==6:
         return L(1,*entrees)
-    elif N==7:
+    elif N==5:
         return Z(1,*entrees)
-    elif N==8:
+    elif N==6:
         return triangle_rectangle(1,*entrees)
-    elif N==9:
+    elif N==7:
         return cercle(1,*entrees)
-    elif N==10:
+    elif N==8:
         return cercle_creux(1,*entrees)
-    elif N==11:
+    elif N==9:
         return demi_cercle(1,*entrees)
-    elif N==12:
+    elif N==10:
         return quart_cercle(1,*entrees)
-    elif N==13:
+    elif N==11:
         return ovale(1,*entrees)
-    elif N==14:
+    elif N==12:
         return croix(1,*entrees)
-    elif N==15:
+    elif N==13:
         return losange(1,*entrees)
 
 def carré(L, b) :

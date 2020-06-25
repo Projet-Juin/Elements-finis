@@ -465,7 +465,7 @@ def main():
                     tk.messagebox.showerror('Erreur', 'Aucun nœud sélectionné.')
             
             def selectionner_geométrie():
-                listargs = (('b',),('b','b1'),('b','h'),('b','h','b1','h1'),('b','h','b1','b2','h1'),('b','h','b1','h1'),('b','h','b1','h1'),('b','h','b1','b2','h1'),('b','h'),('R',),('R','R1'),('R',),('R',),('D2','D1'),('b','h'),('D2','D1'))
+                listargs = (('b',),('b','b1'),('b','h'),('b','h','b1','h1'),('b','h','b1','h1'),('b','h','b1','b2','h1'),('b','h'),('R',),('R','R1'),('R',),('R',),('D2','D1'),('b','h'),('D2','D1'))
                 def choix_geo(evt):
                     if ComboG.current()>=0:
                         img1 = tk.PhotoImage(file="images\\section "+ComboG.get()+".png").subsample(2,2)
@@ -475,7 +475,7 @@ def main():
                             listEntry[i].delete(0,tk.END)
                             listEntry[i].insert(0,'0')
                             try:
-                                listlabel[i].config(text= listargs[ComboG.current()][i])
+                                listlabel[i].config(text= listargs[ComboG.current()][i] + " (m)")
                                 listEntry[i].config(state= tk.NORMAL)
                             except IndexError:
                                 listlabel[i].config(text= '')
@@ -525,6 +525,7 @@ def main():
                 if Combomateriau.current()>=0:
                     listeEntrees[2].delete(0,tk.END)
                     listeEntrees[2].insert(0,list_Young[Combomateriau.current()])
+                    
             list_Young = [210000000000, 203000000000, 69000000000, 83000000000, 124000000000, 289000000000, 209000000000, 124000000000, 41500000000, 196000000000, 100000000000, 45000000000, 214000000000, 78000000000, 168000000000, 116000000000, 78000000000, 27000000000, 14000000000, 450000000000, 1000000000000, 60000000000, 26000000000, 69000000000, 12000000000, 20000000000, 16000000000, 12000000000, 12000000000, 12400000000, 13000000000, 10000000000, 10000000000, 9500000000, 190000000000, 34500000000, 1100000000000, 2380000000, 2300000000, 3500000000]
             Poutre_rouge = tk.PhotoImage(file="images\\Poutre_rouge.png").subsample(6,6)
             Poutre_verte = tk.PhotoImage(file="images\\Poutre_verte.png").subsample(10,10)
@@ -661,7 +662,7 @@ def main():
                     try:
                         if int(tailleMaillage.get())>=1:
                             nombrepointsentre2noeuds = int(tailleMaillage.get())
-                    except TypeError:
+                    except ValueError:
                         tk.messagebox.showerror('Erreur', "La donnée taille de maillage ne peut pas être interprétée comme int")
                     
                     graphs, dataframes = liste_des_demandes_utilisateur(N_element,listeabcisse,nombrepointsentre2noeuds,I,E,type_appui,listedebutchargerepartie,listeressort,liste_force)
@@ -685,7 +686,7 @@ def main():
                     try :
                         if int(tailleMaillage.get())>=1:
                             nombrepointsentre2noeuds = int(tailleMaillage.get())
-                    except TypeError:
+                    except ValueError:
                         tk.messagebox.showerror('Erreur', "La donnée taille de maillage ne peut pas être interprétée comme int")
                     graphs, dataframes = CalculerPortique(liste_noeuds, liste_poutres, nombrepointsentre2noeuds)
                     afficher_results(graphs)
@@ -702,7 +703,7 @@ def main():
         
         PanedwindowCalc = ttk.Panedwindow(ongletsOutput, orient="horizontal")
         Calculframe = tk.Frame(PanedwindowCalc)
-        tk.Label(Calculframe, text = "nombre de point de maillage :").grid(row=0)
+        tk.Label(Calculframe, text = "Nombre de point de maillage :").grid(row=0)
         tailleMaillage = tk.Entry(Calculframe)
         tailleMaillage.grid(row=1)
         def ComboChangeModel(evt):
@@ -727,8 +728,7 @@ def main():
             newWindow = tk.Toplevel()
             frame = tk.Frame(newWindow)
             frame.pack(fill='both', expand=True)
-            print(dataframesP,'691')
-            pt = Table(frame, dataframe=dataframesP[0][Ndataframe][1])
+            pt = Table(frame, dataframe=dataframesP[-1][Ndataframe][1])
             pt.show()
             pt.showIndex()
         tk.Label(Calculframe, text = "Choix du modèle utilisé :").grid(row=2)
