@@ -481,9 +481,15 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     matrice_assemblee=pd.DataFrame(K_assemblee,index=nommage_matrice_poutre_colonnes(int(np.shape(K_assemblee)[0]-(np.shape(K_assemblee)[0]/2))) ,columns=nommage_matrice_poutre_colonnes(int(np.shape(K_assemblee)[0]-(np.shape(K_assemblee)[0]/2))))
     print(matrice_assemblee)
     print("***matrice déplacements")
+    
+
+    #deplacement=[]
+    #for k in range(len(liste_abscisse_allongee)):
+    #    if liste_abscisse_allongee[k] in listeabscisse :
+    #        deplacement.append(d_assemblee[k])
     d_assemblee=pd.DataFrame(d_assemblee,index=nommage_matrice_poutre_colonnes(int(np.shape(d_assemblee)[0]-(np.shape(d_assemblee)[0]/2))) ,columns=['deplacement'])
     print(d_assemblee)
-    
+
     
     d_assemblee_liste = d_assemblee['deplacement'].values.tolist()
     
@@ -586,16 +592,16 @@ def liste_des_demandes_utilisateur(N_element,listeabscisse,nombrepointsentre2noe
     poutre=[0 for i in range(len(listeabscisse))] #toujours 0 en ordonnées , 
     
     graph1=["déplacement en m",[listeabscisse,poutre,'b'],[liste_abscisse_allongee,deplacement_y,'r--']]
-    graph2=["déplacement rotationnel en m",[listeabscisse,poutre,'b',[deg_point]],[liste_abscisse_allongee,deplacement_phi,'r--']]
+    #graph2=["déplacement rotationnel en m",[listeabscisse,poutre,'b',[deg_point]],[liste_abscisse_allongee,deplacement_phi,'r--']]
     
     graph3=["effort tranchant en N",[listeabscisse,poutre,'b',[deg_point],],[liste_abscisse_allongee_pour_forces_internes,effort_tranchant,'r--']]
             
-    graph4=["moment fléchissant en N.m",[listeabscisse,poutre,'b',[deg_point]],[liste_abscisse_allongee_pour_forces_internes,moment,'r--'],'r--']
+    graph4=["moment fléchissant en N.m",[listeabscisse,poutre,'b',[deg_point]],[liste_abscisse_allongee_pour_forces_internes,moment,'r--']]
     
     
     #graph4=[dessin poutre????????]
     
-    liste_des_graphs=[graph1,graph2,graph3,graph4]
+    liste_des_graphs=[graph1,graph3,graph4]
     
     print(liste_des_graphs)
     
