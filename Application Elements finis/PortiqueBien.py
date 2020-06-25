@@ -651,15 +651,15 @@ def CalculerPortique(liste_points,liste_poutres,taille_maille) :
     A = []
     for i in range(N1):
         A.append("Fx" + str(i + 1))
-    F1_D = pandas.DataFrame(F1, index=A)
+    F1_D = pandas.DataFrame(F1, index=A,columns=["Effort Normal (N)"])
     A = []
     for i in range(N1):
         A.append("Fy" + str(i + 1))
-    F2_D = pandas.DataFrame(F2, index=A)
+    F2_D = pandas.DataFrame(F2, index=A,columns=["Effort Tranchant (N)"])
     A = []
     for i in range(N1):
         A.append("M" + str(i + 1))
-    M_D = pandas.DataFrame(M1, index=A)
+    M_D = pandas.DataFrame(M1, index=A , columns=["Moment flechissant (N.m)"])
     print(("déplacement",deplacement1_D) ,("effort normal",F1_D),("effort tranchant",F2_D),("moment fléchissant",M_D))
     del CL_d[:]
     del CL_f[:]
